@@ -1,0 +1,44 @@
+% ERROR PROPAGATION
+In the error analysis of physical experiments, one should always quantify the influence of measurement uncertainties
+on the final results \cite{Uncertainty:Fornasini2008,Uncertainty:Gupta2012,Uncertainty:Grabe2014}.
+In this context one is often interested in a simple function of the observed data.
+A commonly encountered method of \emph{error propagation} is then based on a low-order Taylor approximation of this function.
+This approach is certainly appealing in simple cases.
+% STOCHASTIC PERTURBATION METHOD
+In principle, one may also contemplate it for the uncertainty propagation through general engineering models.
+That is at the basis of the \emph{stochastic perturbation method} \cite{Uncertainty:Kaminski2013}.
+A few introductory remarks are provided hereafter.
+\par % TAYLOR SERIES
+Given that the model \(\mathcal{M}(\bm{x})\) is sufficiently differentiable,
+one can approximate it through a truncated Taylor series around a value \(\bm{x}_0 \in \mathcal{D}_{\bm{x}}\) from its domain.
+Since the approximation will be only accurate in some neighborhood of the expansion point,
+one chooses the mean value \(\bm{\mu}_{\bm{X}} = (\mu_{X_1},\ldots,\mu_{X_\dimParam})^\top\) in \cref{eq:UQ:InputMean}.
+The second-order Taylor approximation of \(\mathcal{M}(\bm{x})\) about this point \(\bm{x}_0 = \bm{\mu}_{\bm{X}}\) is then given as
+\begin{equation} \label{eq:UQ:TaylorSeries}
+  \mathcal{M}(\bm{x}) \approx \mathcal{M}(\bm{\mu}_{\bm{X}}) + \sum\limits_{i=1}^\dimParam \left. \frac{\partial \mathcal{M}}{\partial x_i} \right\rvert_{\bm{\mu}_{\bm{X}}} (x_i - \mu_{X_i})
+  + \frac{1}{2} \sum\limits_{i,j=1}^\dimParam \left. \frac{\partial^2 \mathcal{M}}{\partial x_i \partial x_j} \right\rvert_{\bm{\mu}_{\bm{X}}} (x_i - \mu_{X_i}) (x_j - \mu_{X_j}).
+\end{equation}
+% MEAN VALUE
+With this, one can find the corresponding second-order approximation of the expected value \(\mu_{\tilde{Y}} = \mathds{E}[\mathcal{M}(\bm{X})]\) of the model output in \cref{eq:UQ:OutputMean}.
+A simple calculation yields
+\begin{equation} \label{eq:UQ:TaylorMean}
+  \mu_{\tilde{Y}} \approx \mathcal{M}(\bm{\mu}_{\bm{X}})
+  + \frac{1}{2} \sum\limits_{i,j=1}^\dimParam \left. \frac{\partial^2 \mathcal{M}}{\partial x_i \partial x_j} \right\rvert_{\bm{\mu}_{\bm{X}}} \mathrm{Cov}[X_i,X_j].
+\end{equation}
+For independent inputs with \(\mathrm{Cov}[X_i,X_j] = 0\) whenever \(i \neq j\), the approximation simply becomes
+\(\mu_{\tilde{Y}} \approx \mathcal{M}(\bm{\mu}_{\bm{X}}) + \frac{1}{2} \sum_{i=1}^\dimParam \frac{\partial^2 \mathcal{M}}{\partial x_i^2} \rvert_{\bm{\mu}_{\bm{X}}} \mathrm{Var}[X_i]\).
+% VARIANCE
+Similarly, the first-order approximation of the model output variance \(\sigma_{\tilde{Y}}^2 = \mathrm{Var}[\mathcal{M}(\bm{X})]\) in \cref{eq:UQ:OutputVariance} can be written as
+\begin{equation} \label{eq:UQ:TaylorVariance}
+  \sigma_{\tilde{Y}}^2 \approx \sum\limits_{i,j=1}^\dimParam \left. \frac{\partial \mathcal{M}}{\partial x_i} \right\rvert_{\bm{\mu}_{\bm{X}}}
+  \left. \frac{\partial \mathcal{M}}{\partial x_j} \right\rvert_{\bm{\mu}_{\bm{X}}} \mathrm{Cov}[X_i,X_j].
+\end{equation}
+The well-known law of error propagation \(\sigma_{\tilde{Y}}^2 \approx \sum_{i=1}^\dimParam (\frac{\partial \mathcal{M}}{\partial x_i} \rvert_{\bm{\mu}_{\bm{X}}})^2 \, \mathrm{Var}[X_i]\)
+is a consequence of independent inputs.
+% HIGHER ORDER
+Of course, one could calculate Taylor approximations of higher order than in \cref{eq:UQ:TaylorSeries,eq:UQ:TaylorMean,eq:UQ:TaylorVariance}.
+\par % CRITICISM
+On the downside, these formulas are only accurate in very simple situations,
+e.g.\ for unimodal input distributions for which the expected value indeed indicates most of the probability mass and for models that are very smooth over the typical input variation.
+The applicability of the method is also limited due to the necessity to compute partial derivatives.
+All things considered, local Taylor series approximations do not establish a reliable and viable alternative to more global attempts.

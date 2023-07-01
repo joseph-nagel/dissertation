@@ -1,0 +1,24 @@
+% SUMMARY OF THE RESULTS
+Probabilistic calibration of a hydrological urban drainage simulator was accomplished in this chapter.
+A combination of techniques for Bayesian and surrogate modeling was deployed for that purpose.
+The original training runs of the simulator were statistically compressed and subsequently translated into a functional emulator.
+Inference was then based on the exploration of the posterior distributions related to two different Bayesian models through Markov chain Monte Carlo.
+\par % BAYESIAN MODELS
+The two models differ in their ability to capture measurement and modeling uncertainties.
+With the first model, that only acknowledges independently varying errors, the hydrological parameters were calibrated.
+With the second Bayesian model, that also includes random error correlation and systematic model discrepancy,
+we could additionally quantify the mismatch between the model predictions and the data throughout the rainfall event.
+This was, however, accompanied by a lack of interpretability with regard to the corresponding estimates of the hydrological parameters.
+\par % FORESHADOWING
+This last observation was already foreshadowed in the very setup of the problem.
+While the catchment area has multiple outlets, only a single one at the wastewater treatment plant was considered for parameter calibration purposes.
+A coarse-grained parametrization of the unknowns based on crude averages over hundreds of sub-catchments and channels was used.
+Moreover, the whole procedure was dependent on a single precipitation event for which the rainfall record was taken as if it were measured without error.
+In this context one also has to mention that the predictions of the forward model were highly uncertain and only weakly sensitive to the calibration parameters.
+\par % FUTURE EXTENSIONS
+The preceding discussion suggests a number of possible extensions and future improvements that would allow for more complex and realistic modeling.
+A more refined representation of the uncertain hydrological parameters could be based on a finer graining of the spatial resolution.
+Sparse polynomial chaos expansions and advanced stochastic sampling schemes would allow one to cope with the associated increase in dimensionality.
+Errors and uncertainties in the rainfall input data could be considered by treating and inferring the rainfall as additional unknowns.
+If the data for various different precipitation events were available,
+a more thorough representation and management of the encountered uncertainties could be based on hierarchical Bayesian modeling as developed in \cref{sec:PEM,sec:JRUES}.

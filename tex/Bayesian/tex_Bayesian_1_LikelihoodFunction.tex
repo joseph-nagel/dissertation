@@ -1,0 +1,37 @@
+% STATISTICAL DATA MODEL
+In the following, the unknown parameters of a statistical model are denoted as \(\bm{x} = (x_1,\ldots,x_\dimParam)^\top \in \mathds{R}^\dimParam\).
+The number of unknowns is denoted as \(\dimParam \in \mathds{N}_{>0}\) which is in line with the notation of the preceding chapter.
+It is aimed at the statistical identification of the unknown system parameters with \(\dimData \in \mathds{N}_{>0}\) real measurements
+\(\bm{y} = (y_1,\ldots,y_\dimData)^\top \in \mathds{R}^\dimData\) of related observables.
+In order to draw inferences from the data \(\bm{y}\) about the unknowns \(\bm{x}\), one has to establish the connection between them.
+Therefore one constructs a probabilistic model \(\pi(\bm{y} \cond \bm{x})\) that explains the randomness of the data for given parameter values.
+This is often denoted as
+\begin{equation} \label{eq:Bayesian:DataModel}
+  \bm{Y} \cond \bm{x} \sim \pi(\bm{y} \cond \bm{x}).
+\end{equation}
+% KNOWN COVARIATES
+This equation actually may involve fully known covariates, i.e.\ explanatory control variables or experimental conditions.
+They are omitted here for the sake of notational convenience.
+% INTERPRETATION
+In a way the unknowns \(\bm{x}\) index the data distribution, while the actually acquired data are interpreted
+as a random realization \(\bm{Y} = \bm{y}\) generated from \cref{eq:Bayesian:DataModel} for the true values of the unknowns.
+\par % ASSUMPTIONS
+It is remarked that while the form of \(\pi(\bm{y} \cond \bm{x})\) is seemingly simple,
+it embodies a variety of assumptions and simplifications that are made during the modeling process.
+Even the notions of true parameter values and a data generating mechanism can be seen as conceptualizations.
+Examples of how such statistical data models can be constructed in connection with inverse modeling are discussed in \cref{sec:Bayesian:InverseProblems}.
+\par % LIKELIHOOD FUNCTION
+The \emph{likelihood function} plays a key role in frequentist and Bayesian inference \cite{Statistics:Pawitan2001,Statistics:Rohde2014}.
+For the obtained and therefore fixed observations \(\bm{y}\), it is defined as
+\begin{equation} \label{eq:Bayesian:LikelihoodFunction}
+  \mathcal{L}(\bm{x}) = \pi(\bm{y} \cond \bm{x}).
+\end{equation}
+Hence, the likelihood emerges from evaluating the conditional density in \cref{eq:Bayesian:DataModel} as a function of the unknowns \(\bm{x}\).
+% MAXIMUM LIKELIHOOD ESTIMATION
+In \emph{maximum likelihood estimation} (MLE) the unknown parameters are estimated as
+\begin{equation} \label{eq:Bayesian:MLE}
+  \hat{\bm{x}}_{\mathrm{MLE}} = \operatorname*{arg\,max}_{\bm{x} \in \mathds{R}^\dimParam} \mathcal{L}(\bm{x}).
+\end{equation}
+The point estimator maximizes the likelihood function in \cref{eq:Bayesian:LikelihoodFunction} over the admissible parameter values.
+A weak point of the MLE in \cref{eq:Bayesian:MLE} is that it does not allow for quantifying the unavoidable statistical uncertainty.
+This motivates Bayesian inference which is capable of doing so.

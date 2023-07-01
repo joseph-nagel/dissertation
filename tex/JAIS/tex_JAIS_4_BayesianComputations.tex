@@ -1,0 +1,106 @@
+% MCMC
+More often than not Bayesian posterior distributions do not have analytic closed-form solutions.
+Nevertheless one can explore posteriors through Markov chain Monte Carlo (MCMC) sampling techniques \cite{MCMC:Robert2004}.
+The principle of MCMC is to realize an ergodic Markov chain over the prior support whose invariant distribution equals the posterior.
+% SETUP
+Let \(\pi_0(\bm{q})\) be the prior and \(\pi_1(\bm{q}) \propto \mathcal{L}(\bm{q}) \, \pi_0(\bm{q})\) the posterior of an unknown QoI \(\bm{q}\).
+% INVARIANCE
+The Markov kernel \(\mathcal{K}\) defines the density \(\mathcal{K}(\bm{q}^{(t)},\bm{q}^{(t+1)})\) of the transition probability from \(\bm{q}^{(t)}\) to \(\bm{q}^{(t+1)}\),
+i.e.\ the state of the chain at times \(t\) and \(t+1\).
+The posterior \(\pi_1(\bm{q})\) is said to be an invariant distribution of the Markov chain if \(\pi_1(\bm{q}^{(t+1)}) = \int \pi_1(\bm{q}^{(t)}) \, \mathcal{K}(\bm{q}^{(t)},\bm{q}^{(t+1)}) \, \mathrm{d} \bm{q}^{(t)}\).
+This is abbreviated as \(\pi_1 = \pi_1 \mathcal{K}\).
+% DETAILED BALANCE
+Detailed balance, i.e.\ time reversibility \(\pi_1(\bm{q}^{(t)}) \, \mathcal{K}(\bm{q}^{(t)},\bm{q}^{(t+1)}) = \pi_1(\bm{q}^{(t+1)}) \, \mathcal{K}(\bm{q}^{(t+1)},\bm{q}^{(t)})\),
+is a sufficient condition for the Markov chain to leave the posterior \(\pi_1(\bm{q})\) invariant.
+It normally serves as the guiding principle for the construction of a Markov chain appropriate for posterior exploration.
+% MH & GIBBS SAMPLING
+The Metropolis-Hastings (MH) algorithm establishes a prototypical class of MCMC techniques that relies on this principle \cite{MCMC:Metropolis1953,MCMC:Hastings1970}.
+
+\subsection{The Metropolis-Hastings algorithm} \label{sec:JAIS:Computation:MH}
+% METROPOLIS-HASTINGS
+Initialized at \(\bm{q}^{(0)}\) the MH algorithm generates a Markov chain with steady-state distribution \(\pi_1(\bm{q})\) by iteratively applying the Markov chain transition kernel as follows.
+For a current state \(\bm{q}^{(t)}\) of the Markov chain a candidate state \(\bm{q}^{(\star)} \sim P(\bm{q}^{(\star)} \cond \bm{q}^{(t)})\)
+is sampled from a proposal distribution \(P(\bm{q}^{(\star)} \cond \bm{q}^{(t)})\).
+The proposal state becomes accepted, i.e.\ \(\bm{q}^{(t+1)} = \bm{q}^{(\star)}\), with probability
+\begin{equation} \label{eq:JAIS:MCMC:MHCorrection}
+  \alpha \left( \bm{q}^{(\star)} \cond \bm{q}^{(t)} \right)
+  \, = \, \mathrm{min} \left( 1,\frac{\pi_1(\bm{q}^{(\star)}) \, P(\bm{q}^{(t)} \cond \bm{q}^{(\star)})}{\pi_1(\bm{q}^{(t)}) \, P(\bm{q}^{(\star)} \cond \bm{q}^{(t)})} \right).
+\end{equation}
+Otherwise it is rejected, i.e.\ \(\bm{q}^{(t+1)} = \bm{q}^{(t)}\).
+The MH transition kernel defined this way satisfies detailed balance.
+% UNSCALED POSTERIOR
+Note that the MH correction \cref{eq:JAIS:MCMC:MHCorrection} requires the computation of posterior ratios, hence only unscaled posterior densities have to be evaluated.
+% RANDOM WALK SAMPLING
+Classical random walk Metropolis sampling is based on local proposals, e.g.\ sampling candidate states from a Gaussian
+\(\bm{q}^{(\star)} \sim \mathcal{N}(\bm{q}^{(\star)} \cond \bm{q}^{(t)},\bm{\Sigma}_{\bm{q}})\) with mean \(\bm{q}^{(t)}\) and covariance matrix \(\bm{\Sigma}_{\bm{q}}\).
+% INDEPENDENCE SAMPLING
+Independence MH samplers are based on nonlocal proposals, e.g.\ sampling candidate states from the prior \(\bm{q}^{(\star)} \sim \pi_0(\bm{q}^{(\star)})\)
+or from some suitable approximation of the posterior \(\bm{q}^{(\star)} \sim \hat{\pi}_1(\bm{q}^{(\star)})\).
+
+\subsection{Key challenges} \label{sec:JAIS:Computation:KeyChallenges}
+% KEY CHALLENGE: FORWARD MODEL RUNS
+Typically MCMC sampling calls for a high number of forward model runs for likelihood evaluations in \cref{eq:JAIS:MCMC:MHCorrection}.
+% KEY CHALLENGE: AUTOCORRElATION
+Besides that, the degree as to which MCMC samples are autocorrelated governs their quality as posterior representatives.
+% DESIGN & TUNING
+The design and efficient tuning of MCMC algorithms therefore aims at optimizing the mixing properties, i.e.\ the speed of convergence of the Markov chain towards its equilibrium distribution.
+This is a challenging and highly problem-dependent task.
+% GENERAL BOTTLENECKS
+MCMC methods demand careful convergence diagnostics, i.e.\ the assessment of when the Markov chain has reached its target distribution and has lost the dependency on its initialization \cite{MCMC:Cowles1996,MCMC:Brooks1998:Roberts}.
+Moreover MCMC suffers from difficulties in exploring high-dimensional parameter spaces and multimodal posteriors.
+% KEY CHALLENGES: JOINT vs PUSH-FORWARD
+Multilevel model calibration poses further multilevel-specific MCMC burdens.
+Sampling the posterior \cref{eq:JAIS:PerfectData:Posterior} imposes estimations of the likelihood \cref{eq:JAIS:PerfectData:Likelihood} that is analytically intractable \cite{MCMC:Diggle1984}.
+
+\subsection{Posterior fidelity} \label{sec:JAIS:Computation:PosteriorFidelity}
+% POSTERIOR FIDELITY
+Due to Bayes' law, deterministic closed-form approximations \(\bar{\mathcal{L}}\) of the likelihood \(\mathcal{L}\)
+directly induce approximations on the level of the posterior \(\bar{\pi}_1(\bm{q}) \propto \bar{\mathcal{L}}(\bm{q}) \, \pi_0(\bm{q})\).
+However, if the posterior is explored by means of MCMC and calls to the likelihood function \(\mathcal{L}\) are replaced by calls to a statistical estimator \(\hat{\mathcal{L}}\),
+then a modification is introduced on the level of the Markov chain transition kernel \cite{MCMC:ONeill2000,MCMC:Beaumont2003}.
+% INVARIANT DISTRIBUTION
+There is no reason to expect that the modified MH transition kernel with the ``randomized'' version of \cref{eq:JAIS:MCMC:MHCorrection},
+leaves the posterior invariant, i.e.\ in general \(\pi_1 \neq \pi_1 \hat{\mathcal{K}}\).
+% FIDELITY & FEASIBILITY
+Consequentially there arises the question of whether an equilibrium distribution \(\hat{\pi}_1 = \hat{\pi}_1 \hat{\mathcal{K}}\) actually exists,
+and in the event of that it does, as to what extent the induced distribution \(\hat{\pi}_1\) is in congruence with the true posterior \(\pi_1\).
+% POSTERIOR FIDELITY
+In order to pay tribute to these issues we introduce the term \textit{posterior fidelity} as a qualitative measure of the similarity between \(\hat{\pi}_1\) and \(\pi_1\).
+\par % PARAMETER TUNING
+Moreover there is the practical question of how free algorithmic parameters, e.g.\ the number of response samples \(K\) and the kernel bandwidth \(\bm{H}\),
+can be set in order to provide a convenient trade-off between posterior fidelity and computational feasibility, i.e.\ an ``optimal'' parameter tuning.
+% HEURISTICS
+We suppose that it is indeed possible to define certain criteria that parameter tuning can be based on.
+Even though this is beyond the scope of this paper, we have some preliminary comments.
+% ASSUMPTIONS
+As done below, when postulating the existence and uniqueness of an equilibrium distribution,
+one can further argue that ``small'' changes in the transition kernel only cause ``small'' changes in the distribution.
+% MH ACCEPTANCE
+Given the current state \(\bm{q}^{(t)}\) of the Markov chain, that is assumed to be ergodic, in the MH correction \cref{eq:JAIS:MCMC:MHCorrection}
+a certain ``random'' decision is made whether to approve or to refuse a candidate state \(\bm{q}^{(\star)}\).
+This binary decision follows the computation of the posterior ratio \(\pi_1(\bm{q}^{(\star)}) / \pi_1(\bm{q}^{(t)})\).
+% SINGLE DECISION
+Thus provided that the ratio of estimated likelihoods approximates the true ratio ``reasonably well'', i.e.\ in some sense
+\begin{equation} \label{eq:JAIS:MCMC:LikelihoodRatio}
+  \frac{\hat{\mathcal{L}} \big( \bm{q}^{(\star)} \big)}{\hat{\mathcal{L}} \big( \bm{q}^{(t)} \big)} \approx \frac{\mathcal{L} \big( \bm{q}^{(\star)} \big)}{\mathcal{L} \big( \bm{q}^{(t)} \big)},
+\end{equation}
+an ``appropriate'' decision is being made.
+% POSTERIOR FIDELITY
+High posterior fidelity is ensured on condition that ``appropriate'' decisions are being frequently made over the course of the Markov process, i.e.\ detailed balance is maintained in some average sense.
+That this is indeed the case depends on a complex interplay between the quality of the estimation \(\hat{\mathcal{L}}\) of \(\mathcal{L}\), the true posterior \(\pi_1\) and the proposal distribution \(P\).
+\par % BAYESIAN INVERSION WITH MC FORWARD MODELS
+Similar arguments have been invoked in connection with Bayesian inversion of MC forward models,
+where algorithms have been designed that make use of forward model evaluations at multiple MC resolutions \cite{MCMC:Bal2013}.
+% BIG DATA & BIAS-VARIANCE TRADE-OFF
+Moreover approximate MH corrections have been proposed in the context of big data,
+where evaluating the likelihood for partial chunks of observations from a large dataset trades off the bias and the variance of MCMC posterior sampling \cite{MCMC:Korattikara2014,MCMC:Bardenet2014}.
+% JOHN MCFARLAND
+In order to provide a likelihood simulator that does not exhibit variations between consecutive evaluations for the same arguments,
+it was proposed to employ a common random number generator seed \cite{NASA:McFarland2014:Proc}.
+Once the seed is chosen, likelihood evaluations become effectively deterministic.
+% ANDRIEU & ROBERTS
+The pseudo-marginal approach to MCMC \cite{MCMC:Andrieu2009} provides a strong theoretical result regarding posterior fidelity. 
+It is shown that for unbiased likelihood estimators the exact posterior can be sampled.
+Though this is accompanied by a slowdown in the mixing properties of the Markov chain.
+% BIAS-VARIANCE TRADE-OFF
+With that said one may suppose that it is preferable to minimize the bias in \cref{eq:JAIS:PerfectData:MSE} instead of the total mean squared error.

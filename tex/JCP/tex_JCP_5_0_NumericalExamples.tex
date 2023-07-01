@@ -1,0 +1,39 @@
+% PROOF OF CONCEPT
+Next, the potential and the difficulties of the theory presented in the preceding section are investigated.
+The goal is to give a proof of concept for the basic feasibility of spectral Bayesian inference.
+It is verified that the theory can be successfully applied in practice and further insight into its functioning is obtained.
+Moreover, it is learned about its current shortcomings.
+Four instructive calibration problems from classical statistics and inverse modeling are solved for these purposes.
+The analysis is confined to problems with low-dimensional parameter spaces.
+First, the mean value of a normal distribution is inferred with random data under a conjugate normal prior.
+Second, the mean and standard deviation of a normal distribution are fitted for a joint prior with independent and uniform marginals.
+Third, an inverse heat conduction problem in two spatial dimensions with two unknowns is solved.
+Finally, a similar thermal problem with six unknowns is considered.
+Synthetically created pseudo-data are used in all these example applications.
+\par % CONVERGENCE BEHAVIOR
+As it turns out, one can gain valuable insights into the characteristics of likelihood expansions and posterior emulators by way of comparison.
+Therefore, the analyses for the first three examples proceed analogously.
+For rich experimental designs, the convergence behavior of high-degree SLEs is studied by reference to the LOO error.
+More importantly, the capability of lower-degree SLEs to accurately capture the posterior QoI-expectations is explored for scarcer experimental designs.
+Eventually, aSLE-based posterior surrogates are investigated in order to mitigate the curse of dimensionality.
+All results are compared to reference solutions.
+Where possible, the exact solutions from a conjugate Bayesian analysis are used to this effect.
+Otherwise, corresponding approximations are computed via classical MCMC sampling.
+\par % UQLAB
+The uncertainty quantification platform UQLab \cite{Computing:Marelli2014:Proc,Computing:Uqlab2015:Manual09104} is used throughout the numerical demonstrations.
+It provides a flexible environment for the uncertainty analysis of engineering systems, e.g.\ for uncertainty propagation.
+In this context it ships with a range of regression tools that allow one to easily compute PCEs.
+These tools can be directly applied to the likelihood function in order to compute SLEs.
+OLS is employed as the standard solving routine in the following examples.
+
+\subsection{1D normal fitting}
+\input{tex/JCP/tex_JCP_5_1_NormalFitting1D}
+
+\subsection{2D normal fitting}
+\input{tex/JCP/tex_JCP_5_2_NormalFitting2D}
+
+\subsection{2D inverse heat conduction}
+\input{tex/JCP/tex_JCP_5_3_HeatConduction2D}
+
+\subsection{6D inverse heat conduction}
+\input{tex/JCP/tex_JCP_5_4_HeatConduction6D}

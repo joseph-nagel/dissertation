@@ -1,0 +1,347 @@
+% APPROXIMATIONS & EXPANSIONS
+Different types of probability density approximations are encountered in statistical inference.
+% NONPARAMETRIC FITTING
+This includes series expansions for the population density of a random data sample in nonparametric distribution fitting.
+Here, the unknown density of the data is either directly represented as a linear combination of polynomial basis functions \cite{Statistics:Efromovich2010}
+or as the product of a base density times a superposition of polynomials \cite{Statistics:Jiang2011}.
+% POSTERIOR EXPANSIONS
+The latter type of expansion is also encountered in parametric density estimation of random data
+where one-dimensional posterior densities of the unknown parameter are expanded about a Gaussian baseline.
+This can be based on a Taylor sum at a maximum likelihood estimate \cite{Bayesian:Johnson1967,Bayesian:Johnson1970}
+or on Stein's lemma and numerical integration \cite{Bayesian:Weng2010,Bayesian:Weng2013}.
+% LIKELIHOOD APPROXIMATIONS
+Moreover, different types of likelihood approximations are encountered in inverse modeling.
+This includes direct approaches where the likelihood is approximated itself \cite{Inversion:Orlande2008,Kriging:Dietzel2014}
+and indirect methods where the likelihood is approximated based on a surrogate of the forward model \cite{PCE:Marzouk2007,PCE:Marzouk2009:a,PCE:Marzouk2009:b}.
+These techniques facilitate Bayesian inference within the limits of MCMC sampling.
+\par % SPECTRAL LIKELIHOOD EXPANSIONS
+By linking likelihood approximations to density expansions,
+now we present a spectral formulation of Bayesian inference which targets the emulation of the posterior density.
+Based on the theoretical and computational machinery of PCEs, the likelihood function itself is decomposed into polynomials that are orthogonal with respect to the prior distribution.
+This spectral likelihood expansion enables semi-analytic Bayesian inference.
+Simple formulas are derived for the joint posterior density and its marginals.
+They are regarded as expansions of the posterior about the prior as the reference density.
+The model evidence is shown to be the coefficient of the constant expansion term.
+General QoI-expectations under the posterior and the first posterior moments are obtained through a mere postprocessing of the spectral coefficients.
+After a discussion of the advantages and shortcomings of the spectral method, a change of the reference density is proposed in order to improve the efficacy.
+
+\subsection{Spectral likelihood expansions} \label{sec:JCP:SLE:SLE}
+% FUNCTION SPACE
+The authors C.\ Soize and R.\ Ghanem start their paper \cite{PCE:Soize2004} with the following sentence:
+``Characterizing the membership of a mathematical function in the most suitable functional space is a critical step toward analyzing it and identifying sequences of efficient approximants to it.''
+% LIKELIHOOD FUNCTION
+As discussed in \cref{sec:JCP:Bayesian}, given the data \(\bm{y}\) and the statistical model \(f(\bm{y} \cond \bm{x})\), the likelihood is the function
+\begin{equation} \label{eq:JCP:SLE:LikelihoodFunction}
+  \begin{aligned}
+    \mathcal{L} \colon \mathcal{D}_{\bm{x}} &\rightarrow \mathds{R}^{+} \\
+    \bm{x} &\mapsto f(\bm{y} \cond \bm{x}).
+  \end{aligned}
+\end{equation}
+It maps the parameter space \(\mathcal{D}_{\bm{x}}\) into the set of non-negative real numbers \(\mathds{R}^+\).
+% MEAN SQUARE INTEGRABILITY
+At this place we assume that the likelihood \(\mathcal{L} \in L_{\pi}^2(\mathcal{D}_{\bm{x}})\) is square integrable with respect to the prior.
+From a statistical point of view, this is a reasonable supposition which is necessary in order to invoke the theory of \cref{sec:JCP:PCE}.
+On condition that the likelihood is bounded from above, the mean-square integrability follows immediately from the axioms of probability.
+Note that maximum likelihood estimates (MLE) implicitly rest upon this presumption.
+If \(\bm{x}_{\mathrm{MLE}} \in \operatorname*{arg\,max}_{\bm{x} \in \mathcal{D}_{\bm{x}}} \mathcal{L}(\bm{x})\) is a MLE,
+i.e.\ for all \(\bm{x} \in \mathcal{D}_{\bm{x}}\) it applies that \(\mathcal{L}(\bm{x}) \leq \mathcal{L}(\bm{x}_{\mathrm{MLE}}) < \infty\), then one trivially has
+\(\int_{\mathcal{D}_{\bm{x}}} \mathcal{L}^2(\bm{x}) \, \pi(\bm{x}) \, \mathrm{d} \bm{x}
+\leq \mathcal{L}^2(\bm{x}_{\mathrm{MLE}}) \int_{\mathcal{D}_{\bm{x}}} \pi(\bm{x}) \, \mathrm{d} \bm{x} = \mathcal{L}^2(\bm{x}_{\mathrm{MLE}})< \infty\).
+\par % LIKELIHOOD EXPANSION
+Having identified \(L_{\pi}^2(\mathcal{D}_{\bm{x}})\) as a suitable function space for characterizing the likelihood,
+one can represent the likelihood with respect to the orthonormal basis \(\{\basis_{\bm{\alpha}}\}_{\bm{\alpha} \in \mathds{N}^\dimParam}\).
+This representation is
+\begin{gather}
+  \mathcal{L} = \sum\limits_{\bm{\alpha} \in \mathds{N}^\dimParam} \coeffL_{\bm{\alpha}} \basis_{\bm{\alpha}}, \quad \text{with} \label{eq:JCP:SLE:SLE} \\
+  \coeffL_{\bm{\alpha}}
+  = \langle \mathcal{L}, \basis_{\bm{\alpha}} \rangle_{L_{\pi}^2}
+  = \int\limits_{\mathcal{D}_{\bm{x}}} \mathcal{L}(\bm{x}) \basis_{\bm{\alpha}}(\bm{x}) \, \pi(\bm{x}) \, \mathrm{d} \bm{x}. \label{eq:JCP:SLE:Projection}
+\end{gather}
+We refer to \cref{eq:JCP:SLE:SLE,eq:JCP:SLE:Projection} as a \emph{spectral likelihood expansion} (SLE).
+Notice that the SLE coefficients \(\{\coeffL_{\bm{\alpha}}\}_{\bm{\alpha} \in \mathds{N}^\dimParam}\) are data-dependent.
+This reflects the fact that the likelihood in \cref{eq:JCP:SLE:LikelihoodFunction} depends on the data.
+% RESPONSE SURFACE
+With the truncation scheme in \cref{eq:JCP:PCE:StandardTruncation}, one can limit the infinite series in \cref{eq:JCP:SLE:SLE} to the finite number of terms for which \(\bm{\alpha} \in \mathcal{A}_p\).
+A mean-square convergent response surface of the likelihood is then given as
+\begin{equation} \label{eq:JCP:SLE:TruncatedSLE}
+  \hat{\mathcal{L}}_p(\bm{x}) = \sum\limits_{\bm{\alpha} \in \mathcal{A}_p} \coeffL_{\bm{\alpha}} \basis_{\bm{\alpha}}(\bm{x}).
+\end{equation}
+\par % BAYESIAN INFERENCE
+For the time being we assume that the coefficients of the SLE in \cref{eq:JCP:SLE:SLE} or its response surface in \cref{eq:JCP:SLE:TruncatedSLE} are already known.
+One can then accomplish Bayesian inference by extracting the joint posterior density or a \emph{posterior density surrogate},
+its marginals and the corresponding QoI-expectations directly from the SLE.
+
+\subsection{Joint posterior density}
+% JOINT DENSITY
+We begin with the joint posterior density function and the model evidence.
+By plugging \cref{eq:JCP:SLE:SLE} in \cref{eq:JCP:Bayesian:Posterior} one simply obtains the ``nonparametric'' expression
+\begin{equation} \label{eq:JCP:SLE:Posterior}
+  \pi(\bm{x} \cond \bm{y}) = \frac{1}{\scale} \left( \sum\limits_{\bm{\alpha} \in \mathds{N}^\dimParam} \coeffL_{\bm{\alpha}} \basis_{\bm{\alpha}}(\bm{x}) \right) \pi(\bm{x}).
+\end{equation}
+% SCALE FACTOR
+Due to the orthonormality of the basis, the model evidence is simply found as the coefficient of the constant SLE term.
+This is easily verified by writing \cref{eq:JCP:Bayesian:ScaleFactor} as
+\begin{equation} \label{eq:JCP:SLE:ScaleFactor}
+  \scale = \left\langle 1, \mathcal{L} \right\rangle_{L_{\pi}^2}
+  = \left\langle \basis_{\bm{0}}, \sum\limits_{\bm{\alpha} \in \mathds{N}^\dimParam} \coeffL_{\bm{\alpha}} \basis_{\bm{\alpha}} \right\rangle_{L_{\pi}^2} = \coeffL_{\bm{0}}.
+\end{equation}
+The remarkably simple result in \cref{eq:JCP:SLE:ScaleFactor} completes the expression of the posterior density in \cref{eq:JCP:SLE:Posterior}.
+It is interesting to note that the posterior density is of the form
+\begin{equation} \label{eq:JCP:SLE:EdgeworthExpansion}
+  \pi(\bm{x} \cond \bm{y}) = \pi(\bm{x})
+  \left( 1 + \sum\limits_{\bm{\alpha} \in \mathds{N}^\dimParam \setminus \{\bm{0}\}} \coeffL_{\bm{0}}^{-1} \coeffL_{\bm{\alpha}} \basis_{\bm{\alpha}}(\bm{x}) \right).
+\end{equation}
+In essence, the posterior density is here represented as a ``perturbation'' around the prior.
+The latter establishes the leading term of the expansion and acts as the \emph{reference density}.
+The expression in \cref{eq:JCP:SLE:EdgeworthExpansion} is reminiscent of an \emph{Edgeworth expansion} for a density function
+in asymptotic statistics \cite{Statistics:BarndorffNielsen1989,Statistics:Kolassa2006,Statistics:Small2010}.
+
+\subsection{Quantities of interest}
+% KEY IDENTITIES
+Based on the joint posterior density one can calculate the corresponding QoI-expectations in \cref{eq:JCP:Bayesian:QoI}.
+At this point, the identities in \cref{eq:JCP:Baysian:KeyIdentity,eq:JCP:PCE:KeyIdentity} finally play a key role.
+They allow one to express and treat the posterior expectation of a QoI with \(h \in  L_{\pi}^2(\mathcal{D}_{\bm{x}})\) as the weighted projection onto the likelihood
+\begin{equation} \label{eq:JCP:SLE:KeyIdentity}
+  \mathds{E}[h(\bm{X}) \cond \bm{y}]
+  = \frac{1}{\scale} \mathds{E}[h(\bm{X}) \mathcal{L}(\bm{X})]
+  = \frac{1}{\scale} \left\langle h, \mathcal{L} \right\rangle_{L_{\pi}^2}.
+\end{equation}
+% POSTERIOR EXPECTATION
+Let \(h = \sum_{\bm{\alpha} \in \mathds{N}^\dimParam} \coeffH_{\bm{\alpha}} \basis_{\bm{\alpha}}\)
+with \(\coeffH_{\bm{\alpha}} = \langle h, \basis_{\bm{\alpha}} \rangle_{L_{\pi}^2}\) be the QoI representation in the polynomial basis used.
+The general posterior expectation in \cref{eq:JCP:Bayesian:QoI} follows then from \cref{eq:JCP:SLE:KeyIdentity} by \emph{Parseval's theorem}
+\begin{equation} \label{eq:JCP:SLE:QoI}
+  \mathds{E}[h(\bm{X}) \cond \bm{y}]
+  = \frac{1}{\coeffL_{\bm{0}}} \left\langle \sum\limits_{\bm{\alpha} \in \mathds{N}^\dimParam} \coeffH_{\bm{\alpha}} \basis_{\bm{\alpha}}
+  ,\sum\limits_{\bm{\alpha} \in \mathds{N}^\dimParam} \coeffL_{\bm{\alpha}} \basis_{\bm{\alpha}} \right\rangle_{L_{\pi}^2}
+  = \frac{1}{\coeffL_{\bm{0}}} \sum\limits_{\bm{\alpha} \in \mathds{N}^\dimParam} \coeffH_{\bm{\alpha}} \coeffL_{\bm{\alpha}}.
+\end{equation}
+If the QoI \(h \in \mathds{P}_p\) is known by a multivariate monomial representation of finite order,
+then its representation in the orthogonal basis can always be recovered by a change of basis.
+Examples that relate to the first posterior moments are given shortly hereafter.
+In a more complex case the QoI is a computational model itself and one would have to numerically compute a PCE surrogate.
+While \cref{eq:JCP:PCE:Mean} facilitates the propagation of the prior uncertainty, \cref{eq:JCP:SLE:QoI} promotes the propagation of the posterior uncertainty.
+
+\subsection{Posterior marginals}
+% SUBEXPANSION
+Now the posterior marginals in \cref{eq:JCP:Bayesian:Marginal1D} are derived.
+For some \(j \in \{1,\ldots,\dimParam\}\) let us introduce the new set of multi-indices \(\mathcal{A}^{(j)} = \{(\alpha_1,\ldots,\alpha_\dimParam) \cond \alpha_i = 0 \text{ for } i \neq j\}\).
+With a slight abuse of the notation, the \emph{sub-expansion} of the SLE that only contains terms with \(\bm{\alpha} \in \mathcal{A}^{(j)}\) is denoted as
+\begin{equation} \label{eq:JCP:SLE:SubExpansion1D}
+  \mathcal{L}_j(x_j)
+  = \sum\limits_{\bm{\alpha} \in \mathcal{A}^{(j)}} \coeffL_{\bm{\alpha}} \basis_{\bm{\alpha}}(\bm{x})
+  = \sum\limits_{\mu \in \mathds{N}} \coeffL^{(j)}_{\mu} \basis_{\mu}^{(j)}(x_j),
+  \quad \text{where} \;\, \coeffL^{(j)}_{\mu} = \coeffL_{(0,\ldots,0,\mu,0,\ldots,0)}.
+\end{equation}
+It collects all the polynomials that are constant in all variables \(\bm{x}_{\without j}\), i.e.\ they are non-constant in the single variable \(x_j\) only.
+In this sense the sub-expansion in \cref{eq:JCP:SLE:SubExpansion1D} is virtually a function of \(x_j\) only.
+% 1D POSTERIOR MARGINAL
+For the posterior marginal of the single unknown \(x_j\) in \cref{eq:JCP:Bayesian:Marginal1D} one can derive
+\begin{equation} \label{eq:JCP:SLE:Marginal1D}
+  \pi(x_j \cond \bm{y})
+  = \frac{\pi_j(x_j)}{\scale} \int\limits_{\mathcal{D}_{\bm{x}_{\without j}}} \mathcal{L}(\bm{x}) \, \pi(\bm{x}_{\without j}) \, \mathrm{d} \bm{x}_{\without j}
+  = \frac{1}{\coeffL_{\bm{0}}} \mathcal{L}_j(x_j) \pi_j(x_j).
+\end{equation}
+These equalities apply due to the independent prior \(\pi(\bm{x}) = \pi(\bm{x}_{\without j}) \pi_j(x_j)\) in \cref{eq:JCP:PCE:Prior},
+the orthonormality of the univariate polynomials in \cref{eq:JCP:PCE:Orthonormality:Univariate} and the tensor structure of the multivariate ones in \cref{eq:JCP:PCE:MultivariatePolynomial}.
+% 2D POSTERIOR MARGINAL
+For a pair \(j,k \in \{1,\ldots,\dimParam\}\) with \(j \neq k\) let us introduce yet another set of multi-indices
+\(\mathcal{A}^{(j,k)} = \{(\alpha_1,\ldots,\alpha_\dimParam) \cond \alpha_i = 0 \text{ for } i \neq j,k\}\).
+The sub-expansion of the full SLE that only contains terms with \(\bm{\alpha} \in \mathcal{A}^{(j,k)}\) is denoted as
+\begin{equation} \label{eq:JCP:SLE:SubExpansion2D}
+  \begin{gathered}
+  \mathcal{L}_{j,k}(x_j,x_k)
+  = \sum\limits_{\bm{\alpha} \in \mathcal{A}^{(j,k)}} \coeffL_{\bm{\alpha}} \basis_{\bm{\alpha}}(\bm{x})
+  = \sum\limits_{\mu,\nu \in \mathds{N}} \coeffL^{(j,k)}_{\mu,\nu} \basis_{\mu}^{(j)}(x_j) \basis_{\nu}^{(k)}(x_k), \\
+  \text{where} \;\, \coeffL^{(j,k)}_{\mu,\nu} = \coeffL_{(0,\ldots,0,\mu,0,\ldots,0,\nu,0,\ldots,0)}.
+  \end{gathered}
+\end{equation}
+Since it only contains terms that are constant in \(\bm{x}_{\without j,k}\), the sub-expansion in \cref{eq:JCP:SLE:SubExpansion2D} can be seen as a function of \(x_j\) and \(x_k\).
+The posterior density can then be marginalized as follows
+\begin{equation} \label{eq:JCP:SLE:Marginal2D}
+  \pi(x_j,x_k \cond \bm{y})
+  = \int\limits_{\mathcal{D}_{\bm{x}_{\without j,k}}} \pi(\bm{x} \cond \bm{y}) \, \mathrm{d} \bm{x}_{\without j,k}
+  = \frac{1}{\coeffL_{\bm{0}}} \mathcal{L}_{j,k}(x_j,x_k) \pi_j(x_j) \pi_k(x_k).
+\end{equation}
+Note that the dependency structure of \(\pi(x_j,x_k \cond \bm{y})\) in \cref{eq:JCP:SLE:Marginal2D} is induced by those terms of \(\mathcal{L}_{j,k}(x_j,x_k)\)
+that are not present in \(\mathcal{L}_j(x_j)\) and \(\mathcal{L}_k(x_k)\), i.e.\ the terms \(\coeffL^{(j,k)}_{\mu,\nu} \basis_{\mu}^{(j)}(x_j) \basis_{\nu}^{(k)}(x_k)\) with \(\mu,\nu \neq 0\).
+
+\subsection{First posterior moments}
+% TRANSITION
+With the two marginalizations of the posterior density in \cref{eq:JCP:SLE:Marginal1D,eq:JCP:SLE:Marginal2D}
+one can calculate the entries of the posterior mean in \cref{eq:JCP:Bayesian:PosteriorMean} and the covariance matrix in \cref{eq:JCP:Bayesian:PosteriorCovariance}.
+% POSTERIOR MEAN
+Let \(\{\coeffMu^{(j)}_0,\coeffMu^{(j)}_1\}\) be defined such that \(x_j = \coeffMu^{(j)}_{0} \basis^{(j)}_{0}(x_j) + \coeffMu^{(j)}_{1} \basis^{(j)}_{1}(x_j)\).
+With this univariate representation and \cref{eq:JCP:SLE:Marginal1D} one easily obtains
+\begin{equation} \label{eq:JCP:SLE:PosteriorMargMean}
+  \mathds{E}[X_j \cond \bm{y}]
+  = \frac{1}{\coeffL_{\bm{0}}} \left\langle x_j, \mathcal{L}_j \right\rangle_{L_{\pi_j}^2}
+  = \frac{1}{\coeffL_{\bm{0}}} \left( \coeffMu^{(j)}_{0} \coeffL^{(j)}_{0} + \coeffMu^{(j)}_{1} \coeffL^{(j)}_{1} \right).
+\end{equation}
+Note that one actually has \(\coeffL^{(j)}_{0} = \coeffL_{\bm{0}}\) in this notation.
+% POSTERIOR COVARIANCE
+Diagonal entries of the covariance matrix in \cref{eq:JCP:Bayesian:PosteriorCovariance} can be similarly deduced.
+Let \(\{\coeffVar_0^{(j)},\coeffVar_1^{(j)},\coeffVar_2^{(j)}\}\) the coefficients of the univariate representation
+\((x_j - \mathds{E}[X_j \cond \bm{y}])^2 = \sum_{\mu=0}^2 \coeffVar^{(j)}_{\mu} \basis^{(j)}_{\mu}(x_j)\).
+Then one simply has
+\begin{equation} \label{eq:JCP:SLE:PosteriorMargVariance}
+  \mathrm{Var}[X_j \cond \bm{y}]
+  = \frac{1}{\coeffL_{\bm{0}}} \left\langle \left( x_j - \mathds{E}[X_j \cond \bm{y}] \right)^2, \mathcal{L}_j \right\rangle_{L_{\pi_j}^2}
+  = \frac{1}{\coeffL_{\bm{0}}} \sum\limits_{\mu=0}^2 \coeffVar^{(j)}_{\mu} \coeffL^{(j)}_{\mu}.
+\end{equation}
+Finally, let \(\{\coeffVar_{0,0}^{(j,k)},\coeffVar_{0,1}^{(j,k)},\coeffVar_{1,0}^{(j,k)},\coeffVar_{1,1}^{(j,k)}\}\) be the coefficients of the bivariate PCE with
+\((x_j - \mathds{E}[X_j \cond \bm{y}]) (x_k - \mathds{E}[X_k \cond \bm{y}]) = \sum_{\mu,\nu=0}^1 \coeffVar^{(j,k)}_{\mu,\nu} \basis^{(j)}_{\mu}(x_j) \basis^{(k)}_{\nu}(x_k)\).
+For an off-diagonal entry of \cref{eq:JCP:Bayesian:PosteriorCovariance} one then finds
+\begin{equation} \label{eq:JCP:SLE:PosteriorCovariance}
+  \mathrm{Cov}[X_j,X_k \cond \bm{y}]
+  = \frac{1}{\coeffL_{\bm{0}}} \sum\limits_{\mu,\nu=0}^1 \coeffVar^{(j,k)}_{\mu,\nu} \coeffL^{(j,k)}_{\mu,\nu}.
+\end{equation}
+% POSTPROCESSING RECIPE
+Notation-wise, \cref{eq:JCP:SLE:PosteriorMargMean,eq:JCP:SLE:PosteriorMargVariance,eq:JCP:SLE:PosteriorCovariance} may seem to be somewhat cumbersome.
+Nevertheless, they establish simple recipes of how to obtain the first posterior moments by a postprocessing of the low-degree SLE terms in closed-form.
+Higher-order moments could be obtained similarly.
+Some examples of how the corresponding QoIs can be represented in terms of orthogonal polynomials can be found in \cref{sec:JCP:App:QoIs}.
+
+\subsection{Discussion of the advantages}
+% ANALYTICAL INFERENCE
+In spectral Bayesian inference the posterior is genuinely characterized through the SLE and its coefficients.
+The essential advantage of this approach is that all quantities of inferential relevance can be computed semi-analytically.
+Simple formulas for the joint posterior density and the model evidence emerge in \cref{eq:JCP:SLE:Posterior,eq:JCP:SLE:ScaleFactor}.
+They allow to establish \cref{eq:JCP:SLE:EdgeworthExpansion} as the posterior density surrogate.
+General QoI-expectations under the posterior are then calculated via Parseval's formula in \cref{eq:JCP:SLE:QoI}.
+The posterior marginals are obtained based on sub-expansions of the full SLE in \cref{eq:JCP:SLE:Marginal1D} and the first posterior moments
+have closed-form expressions in \cref{eq:JCP:SLE:PosteriorMargMean,eq:JCP:SLE:PosteriorMargVariance,eq:JCP:SLE:PosteriorCovariance}.
+% COMPARISON TO MCMC
+These striking characteristics clearly distinguish spectral inference from integration and sampling approaches
+where the posterior is summarized by expected values or random draws only.
+As for the latter, one has to rely on kernel estimates of the posterior density and on empirical sample approximations of the QoI-expectations.
+Also, the model evidence is not computed explicitly.
+\par % LINEAR LEAST SQUARES
+The practical computation of the SLE in \cref{eq:JCP:SLE:SLE} can be accomplished analogously to finding the PCE approximation of the forward model in \cref{eq:JCP:PCE:PCE},
+e.g.\ by solving a linear least squares problem as in \cref{eq:JCP:PCE:LeastSquares}.
+This allows one to draw on the vast number of tools that were developed for carrying out this well-known type of regression analysis.
+% CONVERGENCE CRITERION
+An attractive feature of this procedure is that the prediction error of the obtained SLE acts as a natural convergence indicator.
+We recall that the LOO error in \cref{eq:JCP:PCE:ErrorLOO} can be efficiently evaluated as per \cref{eq:JCP:PCE:SimpleLOO},
+i.e.\ without the need for additional forward model runs or regression analyses.
+The existence of an intrinsic convergence criterion is an advantage over traditional MCMC techniques.
+% PARALLEL COMPUTING
+Another advantage of the formulation its amenability to parallel computations.
+While the workload posed by MCMC is inherently serial, running the forward model for each input in the experimental design is embarrassingly parallel.
+Parallelization is also possible on the level of the linear algebra operations that are necessary in order to solve the normal equations.
+
+\subsection{Discussion of the shortcomings}
+% NEGATIVE DENSITIES
+The approximate nature of SLE computations is twofold, i.e.\ only a finite number of terms are kept in the expansion and the coefficients are inexact.
+Unfortunately, a number of inconveniences may arise from these inevitable approximations.
+The SLE and the correspondingly computed posterior density could spuriously take on negative values.
+Also the estimated model evidence in \cref{eq:JCP:SLE:ScaleFactor} could take on negative values \(\scale < 0\).
+Still note that the approximate posterior in \cref{eq:JCP:SLE:Posterior} always integrates to one.
+For reasonably adequate SLEs, we expect that negative values only occur in the distributional tails.
+Even so, the presence of negative values hampers the interpretation of the obtained posterior surrogate as a proper probability density,
+e.g.\ it leads to finite negative probabilities that are somehow irritating.
+From a more practical rather than a technical or philosophical perspective,
+densities are ultimately instrumental to the evaluation of more concrete quantities such as the expectations in \cref{eq:JCP:SLE:QoI}.
+The severity of negative densities has thus to be judged with respect to the distortions of these relevant values.
+As long as their accurate approximation is guaranteed,
+the possibility of negative density values is an unavoidable artifact that can be regarded as a minor blemish.
+And the obtained surrogate density still proves to be expedient to effectively characterize the posterior distribution.
+% PRIOR VIOLATIONS
+In this light, it is more unpleasant that the a posteriori estimates of the model parameters may violate the restrictions that were imposed a priori.
+In \cref{eq:JCP:SLE:PosteriorMargMean} it could indeed happen that \(\mathds{E}[X_j \cond \bm{y}] \notin \mathcal{D}_{x_j}\).
+Estimations of the second order moments in \cref{eq:JCP:SLE:PosteriorMargVariance} could result in unnatural values \(\mathrm{Var}[X_j \cond \bm{y}] < 0\), too.
+Although these problems cannot be remedied unless one solves an appropriately constrained version of \cref{eq:JCP:PCE:LeastSquares}, they unlikely occur if the SLE is sufficiently accurate.
+Anticipating outcomes from later numerical demonstrations, we remark that the occurrence of negative density values is observed,
+while unphysical or unnatural estimates of the first posterior moments are not found.
+\par % CURSE OF DIMENSIONALITY
+The SLE decomposition into a globally smooth basis of tensorized polynomials suffers from some other intrinsic problems.
+Generally, there is the curse of dimensionality, i.e.\ the increase of the number of regressors in \cref{eq:JCP:PCE:Cardinality}.
+% (NON)SMOOTHNESS
+Furthermore, the SLE convergence rate in \cref{eq:JCP:PCE:Convergence} depends on the regularity of the underlying likelihood function.
+For discontinuous forward or error models the SLE approximation with smooth polynomials converges only slowly.
+% (NON)COMPRESSIBILITY
+Likelihood functions often show a peaked structure around the posterior modes and a vanishing behavior elsewhere.
+Hence, any adequate superposition of polynomials has to capture those two different behavioral patterns
+through some kind of ``constructive'' and ``destructive'' interaction between its terms, respectively.
+Due to their global nature, the employed polynomial basis may not admit sparse likelihood representations.
+In turn, a high number of terms might be necessary in order to accurately represent even simple likelihood functions.
+Especially in the case of high-dimensional and unbounded parameter spaces this may cause severe practical problems.
+Of course, in \cref{eq:JCP:SLE:SLE,eq:JCP:SLE:Projection} one could expand the likelihood in a different basis.
+Yet, note that the QoIs in \cref{eq:JCP:SLE:QoI} would also have to be expanded in that basis.
+\par % PRIOR & POSTERIOR
+The role of the prior for spectral inference is manifold.
+Initially the posterior expectations in \cref{eq:JCP:Bayesian:QoI} have been rewritten as the weighted prior expectations in \cref{eq:JCP:Baysian:KeyIdentity}.
+This formulation is accompanied by difficulties in computing posteriors that strongly deviate from the prior.
+The same situation arises for crude MC integration and eventually motivates importance or MCMC sampling that allow to focus on localized regions of high posterior mass.
+Those difficulties become manifest if the prior acts as the sampling distribution for the experimental design.
+In this case, the SLE is only accurate over the regions of the parameter space that accumulate considerable shares of the total prior probability mass.
+Approximation errors of the SLE in regions that are less supported by the prior then induce errors in the computed posterior surrogate.
+Note that this difficulty is also encountered in MCMC posterior exploration with prior-based PCE metamodels.
+Also, the error estimate in \cref{eq:JCP:PCE:SimpleLOO} then only measures the SLE accuracy with respect to the prior which may be misleading for the assessment of the posterior accuracy.
+It is not clear how the errors of the likelihood expansion relate to the induced errors of the posterior surrogate and the posterior moments.
+Moreover, since the prior acts as the reference density of the posterior expansion in \cref{eq:JCP:SLE:EdgeworthExpansion},
+the spectral SLE representation of significantly differing posteriors requires higher order corrections.
+Otherwise put, SLEs are expected to perform better for posteriors that only slightly update or perturb the prior.
+
+\subsection{Change of the reference density}
+% BASELINE CHANGE
+As just discussed, a major drawback of SLEs is their dependency on the prior \(\pi\) as the reference density function.
+The errors are minimized and measured with respect to the prior and the posterior is represented as correction of the standard reference.
+In case that high-order corrections are required, SLEs also suffer from the curse of dimensionality.
+While fully maintaining the advantages of the spectral problem formulation, these shortcomings can be remedied through the introduction of an
+\emph{auxiliary density} \(\newBase\) over the prior support \(\mathcal{D}_{\bm{x}}\) that would optimally mimic the posterior in some sense.
+This \emph{reference density change} allows for the construction of auxiliary expansions that are more accurate with respect to the posterior
+and for a more convenient series expansions of the joint posterior density.
+% IMPORTANCE SAMPLING
+It is analogous to the adjustment of the integration weight in importance sampling,
+where the average over a distribution is replaced by a weighted average over another ancillary distribution.
+% ADAPTIVITY
+An iterative use of this reference change naturally allows for adaptive SLE approaches.
+\par % AUXILIARY EXPANSIONS
+Given that \(\newBase(\bm{x}) \neq 0\) for all \(\bm{x} \in \mathcal{D}_{\bm{x}}\), one may define the auxiliary quantity \(\auxQuantity = \mathcal{L} \pi / \newBase \).
+Under the additional assumption that \(\auxQuantity \in L_{\newBase}^2(\mathcal{D}_{\bm{x}})\), one can expand this quantity in terms of polynomials
+\(\{\basisBase_{\bm{\alpha}}\}_{\bm{\alpha} \in \mathds{N}^\dimParam}\) that are orthogonal with respect to the auxiliary reference.
+Analogous to the expansion of \(\mathcal{L} \in L_{\pi}^2(\mathcal{D}_{\bm{x}})\) in \cref{eq:JCP:SLE:SLE,eq:JCP:SLE:Projection}, this is
+\begin{gather}
+  \auxQuantity
+  = \frac{\mathcal{L} \pi}{\newBase}
+  = \sum\limits_{\bm{\alpha} \in \mathds{N}^\dimParam} \coeffBaseL_{\bm{\alpha}} \basisBase_{\bm{\alpha}}, \quad \text{with} \label{eq:JCP:SLE:BaselineChange:SLE} \\
+  \coeffBaseL_{\bm{\alpha}}
+  = \left\langle \auxQuantity, \basisBase_{\bm{\alpha}} \right\rangle_{L_{\newBase}^2}
+  = \int\limits_{\mathcal{D}_{\bm{x}}} \auxQuantity(\bm{x}) \basisBase_{\bm{\alpha}}(\bm{x}) \, \newBase(\bm{x}) \, \mathrm{d} \bm{x}
+  = \int\limits_{\mathcal{D}_{\bm{x}}} \mathcal{L}(\bm{x}) \basisBase_{\bm{\alpha}}(\bm{x}) \, \pi(\bm{x}) \, \mathrm{d} \bm{x}. \label{eq:JCP:SLE:BaselineChange:Projection}
+\end{gather}
+The coefficients of this \emph{auxiliary SLE} (aSLE) are denoted as \(\{\coeffBaseL_{\bm{\alpha}}\}_{\bm{\alpha} \in \mathds{N}^\dimParam}\).
+They equal the projections \(\coeffBaseL_{\bm{\alpha}} = \langle \mathcal{L}, \basisBase_{\bm{\alpha}} \rangle_{L_{\pi}^2}\) of the likelihood onto the polynomials \(\basisBase_{\bm{\alpha}}\).
+Note that if the new reference \(g = \pi\) equals the prior, then \(\auxQuantity = \mathcal{L}\) is simply the likelihood and the formulation remains unchanged.
+If the density \(g = \pi(\cdot \cond \bm{y})\) equals the posterior, then the quantity \(\auxQuantity = \scale\) equals the model evidence.
+In this case the aSLE \(\auxQuantity = \coeffBaseL_{\bm{0}} \basisBase_{\bm{0}} = \coeffBaseL_{\bm{0}}\) is a constant with a single nonzero term.
+If \(g \approx \pi(\cdot \cond \bm{y})\) only applies in an approximate sense, then one may still speculate that the aSLE is sparser than the corresponding SLE.
+\par % MODEL EVIDENCE
+As in importance sampling, one can then rewrite the expectation values under \(\pi\) in \cref{eq:JCP:Bayesian:ScaleFactor,eq:JCP:Baysian:KeyIdentity} as expectations under \(g\).
+Similar to \cref{eq:JCP:SLE:ScaleFactor}, the model evidence then emerges again as the zeroth expansion term
+\begin{equation} \label{eq:JCP:SLE:BaselineChange:ScaleFactor}
+  \scale
+  = \int\limits_{\mathcal{D}_{\bm{x}}} \auxQuantity(\bm{x}) \, \newBase(\bm{x}) \, \mathrm{d} \bm{x}
+  = \coeffBaseL_{\bm{0}}.
+\end{equation}
+% QUANITIES OF INTEREST
+Let \(h = \sum_{\bm{\alpha} \in \mathds{N}^\dimParam} \coeffBaseH_{\bm{\alpha}} \basisBase_{\bm{\alpha}}\)
+with \(\coeffBaseH_{\bm{\alpha}} = \langle h, \basisBase_{\bm{\alpha}} \rangle_{L_{\newBase}^2}\) be the auxiliary expansion of a QoI.
+Similar to \cref{eq:JCP:SLE:QoI}, for general QoI posterior expectations one may then write
+\begin{equation} \label{eq:JCP:SLE:BaselineChange:KeyIdentity}
+  \mathds{E}[h(\bm{X}) \cond \bm{y}]
+  = \frac{1}{\scale} \int\limits_{\mathcal{D}_{\bm{x}}} h(\bm{x}) \auxQuantity(\bm{x}) \, \newBase(\bm{x}) \, \mathrm{d} \bm{x}
+  = \frac{1}{\coeffBaseL_{\bm{0}}} \sum\limits_{\bm{\alpha} \in \mathds{N}^\dimParam} \coeffBaseH_{\bm{\alpha}} \coeffBaseL_{\bm{\alpha}}.
+\end{equation}
+\par % JOINT DENSITY
+In accordance with the aSLE in \cref{eq:JCP:SLE:BaselineChange:SLE,eq:JCP:SLE:BaselineChange:Projection} the joint density of the posterior distribution is obtained as the asymptotic series
+\begin{equation} \label{eq:JCP:SLE:BaselineChange:Posterior}
+  \pi(\bm{x} \cond \bm{y})
+  = \frac{\auxQuantity(\bm{x}) \newBase(\bm{x})}{\scale}
+  = \frac{1}{\coeffBaseL_{\bm{0}}} \left( \sum\limits_{\bm{\alpha} \in \mathds{N}^\dimParam} \coeffBaseL_{\bm{\alpha}} \basisBase_{\bm{\alpha}}(\bm{x}) \right) \newBase(\bm{x})
+  = \newBase(\bm{x}) \left( 1 + \sum\limits_{\bm{\alpha} \in \mathds{N}^\dimParam \setminus \{\bm{0}\}} \frac{\coeffBaseL_{\bm{\alpha}}}{\coeffBaseL_{\bm{0}}} \basisBase_{\bm{\alpha}}(\bm{x}) \right).
+\end{equation}
+As opposed to \cref{eq:JCP:SLE:EdgeworthExpansion} where the posterior density is represented around the prior \(\pi\),
+in \cref{eq:JCP:SLE:BaselineChange:Posterior} the posterior is expanded about the new reference \(g\).
+If the latter resembles the posterior adequately well, the formulation only calls for small corrections.

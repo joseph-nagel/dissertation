@@ -1,0 +1,64 @@
+% COMPARISON TO SLE
+It is interesting to compare the variational transport formulation of Bayesian inference in this chapter
+to the spectral likelihood expansion (SLE) picture promoted in \cref{sec:JCP}.
+% NONPARAMETRIC REPRESENTATION
+Both approaches specify the joint posterior density in a flexible and nonparametric fashion.
+Of course, the representations of the posterior do actually feature parameters.
+Their number is, however, not dependent on a classical underlying probability model with parametric families of distributions.
+Instead, a wide range of non-classical densities can be represented,
+e.g.\ all posterior probability densities arising from a likelihood function which is mean-square integrable with respect to the prior distribution in the case of SLEs.
+\par % POSTERIOR DENSITY
+In this chapter, the posterior has been represented as a transformation of the prior in \cref{eq:Transport:PriorTransformation,eq:Transport:PriorPosteriorTransformation},
+i.e.\ the prior density composed with the back-transformation times the corresponding Jacobian determinant.
+Based on an SLE, the posterior density had been represented in \cref{eq:JCP:SLE:Posterior,eq:JCP:SLE:EdgeworthExpansion}
+as the product of the prior density and a linear combination of multivariate orthogonal polynomials.
+While the SLE-based posterior density is immediately evaluable as a function of the unknowns,
+the evaluation of the transformation-based posterior density calls for the inverse map and its Jacobian.
+In the following, these representations based on orthogonal series expansions and probability density transforms are compared with each other in some more detail.
+\par % ORTHOGONAL POLYNOMIALS
+Both approaches to Bayesian inference are based on orthogonal polynomials, either for the expansion of probability densities or for the transformation of random variables.
+This is not imperative but very convenient.
+On the one hand, the scalar-valued likelihood in \cref{eq:JCP:SLE:LikelihoodFunction} is spectrally expanded
+in an orthonormal function space basis in \cref{eq:JCP:SLE:SLE,eq:JCP:SLE:Projection}.
+This allows one to fully capitalize on Hilbert space theory.
+On the other hand, orthogonal polynomials provide a sufficiently adjustable representation of the transformation as the vector-valued function in \cref{eq:Transport:PolynomialMap}.
+Properly done, a polynomial chaos expansion of the random vector in \cref{eq:Transport:PosteriorRV} distributed according to the posterior arises.
+\par % INTERPRETABILITY
+As for the spectral Bayesian approach, the SLE admits a statistically meaningful interpretation of the expansion coefficients.
+They are directly related to characteristics of the posterior distribution such as the model evidence in \cref{eq:JCP:SLE:ScaleFactor},
+the first posterior moments in \cref{eq:JCP:SLE:PosteriorMargMean,eq:JCP:SLE:PosteriorMargVariance,eq:JCP:SLE:PosteriorCovariance}
+and more general quantity of interest--posterior expectations in \cref{eq:JCP:SLE:QoI}.
+Moreover, the posterior marginals emerge as sub-SLEs in \cref{eq:JCP:SLE:Marginal1D,eq:JCP:SLE:Marginal2D}.
+In transport map inference, the coefficients of the parametrized transformation are also interpretable, albeit not so conveniently.
+The fact of the matter is that the model evidence is only accessible through an approximate lower bound.
+In order to estimate the first posterior moments one can use the relations in \cref{eq:Transport:OutputMeanVariance,eq:Transport:OutputCovariance}.
+Nonetheless, for more general posterior expectation values one has to resort to a sampling procedure with independent draws.
+This is a limitation of the transportation approach and yet an advantage over the SLE method.
+While SLEs enable the evaluation of the normalized posterior density, they do not allow one to sample from the posterior distribution, at least not straightforwardly.
+\par % JACOBIAN DETERMINANT
+In spectral Bayesian inference the posterior is expanded as kind of a perturbation series about the prior as the reference density.
+This may require high-order expansion terms in case the posterior is significantly different from the prior.
+The baseline density change performed in \cref{eq:JCP:SLE:BaselineChange:SLE,eq:JCP:SLE:BaselineChange:Projection} clears that obstacle.
+It allows one to express the posterior in \cref{eq:JCP:SLE:BaselineChange:Posterior} as a correction to an auxiliary expansion density.
+In transport map inference the problem of higher-order terms is alleviated right from the start.
+That is because random variable transformations are highly effective in moving from one distribution to a completely different one.
+As exemplified through \cref{eq:Transport:UnivariateGaussianTransformation,eq:Transport:ArbitraryGaussianCoupling},
+any arbitrary two Gaussian distributions can be linearly transformed into one another, no matter what the location and dispersion parameters.
+Moderately nonlinear maps may suffice for transporting between more general distributions.
+\par % OPTIMIZATION PROBLEM
+So far we compared how spectral and transformation-based variational Bayesian inference characterize the posterior density function.
+Now we proceed with the practical computations.
+In order to compute an SLE one has to solve a linear stochastic program of the form as in \cref{eq:JCP:PCE:Minimization}.
+The linear least squares minimization in \cref{eq:JCP:PCE:LeastSquaresMatrix} is a discretized variant of that problem.
+It has the appealingly simple ordinary least squares solution in \cref{eq:JCP:PCE:LeastSquaresSolution}.
+The leave-one-out error in \cref{eq:JCP:PCE:SimpleLOO} facilitates the selection of the sample size and expansion order.
+For the computation of a suitable coupling between the prior and posterior one has to solve the nonlinear stochastic optimization problem
+in \cref{eq:Transport:MinimizeKullbackLeibler} through the discretization in \cref{eq:Transport:OptimizationSAA}.
+In principle, this is a more complex problem than linear least squares.
+An independent convergence criterion is established by the variance of \cref{eq:Transport:Lambda} under the prior distribution.
+\par % FORMULATION PROBLEMS
+While both of the discussed approaches establish novel alternatives to traditional techniques in computational Bayesian inference,
+it is remarked that they have their own characteristic flaws.
+The emergence of negative values in the approximations of the likelihood function and posterior density surely is a weakness of the SLE method.
+A shortcoming of inferential transportation is that the formulation actually presupposes the invertibility of the candidate maps.
+However, this is likely violated by the polynomial representation.

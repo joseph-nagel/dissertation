@@ -1,0 +1,30 @@
+% CHALLENGE & REWARD
+Addressing the uncertainty characterization subproblem of the NASA Langley multidisciplinary UQ challenge has turned out to be a challenging yet rewarding task.
+% MULTILEVEL FRAMEWORK
+We began with formulating a generic Bayesian multilevel framework for managing different types of forward model input uncertainties in complex inverse problems.
+% ADDITIONAL POTENTIAL
+Incidentally this showed how the problem could be solved for ``imperfect'' data, e.g.\ in the presence of additional measurement noise, 
+and how the entirety of problem unknowns, including those that are not of declared inferential interest, can be deduced.
+% SELF-REFERENCE
+Although these were not the guiding questions, this is a future research direction in its own \cite{Nagel:PEM2016}.
+% PERFECT DATA
+Bayesian structural prior modeling served as a foundation for devising a multilevel model in the zero-noise or ``perfect'' data limit,
+i.e.\ the data space has been endowed with a probability model that was based on uncertainty propagation.
+% PROBLEM FORMULATION
+Ensuing from those general considerations we have interpreted and solved the challenge problem as Bayesian calibration of a suitably defined multilevel model.
+% INTERPRETATIONS & ASSUMPTIONS
+We thoroughly commented on the assumptions that the adopted approach rests upon as well as the interpretations it entails.
+\par % POSTERIOR FIDELITY & OPEN QUESTIONS
+In turn the problem solution has given rise to new questions of theoretical and practical relevance alike.
+Posterior fidelity was discussed in the context of MCMC posterior exploration and online uncertainty propagation.
+First related thoughts were given and an in-depth consideration has been initiated.
+% STARTING POINT
+The starting point of the latter could be \cref{eq:JAIS:PerfectData:MSE,eq:JAIS:PerfectData:KernelSmoothedLikelihood,eq:JAIS:MCMC:MHCorrection,eq:JAIS:MCMC:LikelihoodRatio}.
+% PARTIAL DATA AUGMENTATION
+With the objective of improving the fidelity of the final results we demonstrated how one can exploit partial data augmentation.
+In addition to improving the estimation of the QoI, in principle this approach allows to infer such problem unknowns that inferential interest is not particularly focused on.
+That way partial data augmentation has provided further insight into the calibration problem posed.
+% OUR CONTRIBUTION
+In sum we hope that these efforts prove to be a solid contribution to the NASA challenge problem in particular and to the theory and practice of Bayesian data analysis and uncertainty quantification in general.
+% FUTURE RESEARCH
+Future research work encompasses the design of more sophisticated methods to simulate the likelihood function and the rigorous assessment of the posterior fidelity.

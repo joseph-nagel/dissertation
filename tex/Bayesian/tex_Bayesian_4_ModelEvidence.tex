@@ -1,0 +1,97 @@
+% MULTIMODEL INFERENCE
+In this section we briefly address the basics of multi-model inference \cite{Statistics:Burnham2002,Statistics:Claeskens2008,Statistics:Ando2010}.
+This subsumes Bayesian model comparison, selection and averaging that are important when there is an abundance of models available for predicting the data
+\cite{Bayesian:Draper1995,Bayesian:Clyde2004,Bayesian:Walker2013}.
+Although these issues are not the main topics of this dissertation, they are revelatory about the probabilistic rationale of single-model parameter calibration.
+\par % CANDIDATE MODELS
+Sometimes a whole set of \(L \in \mathds{N}_{>1}\) candidate models \(\bm{\mathcal{H}} = \{\mathcal{H}_1,\ldots,\mathcal{H}_L\}\) with densities
+\(\pi(\bm{y} \cond \bm{x}_\mathcal{H},\mathcal{H})\) as in \cref{eq:Bayesian:DataModel} possibly explain the data.
+As in \cref{eq:Bayesian:PriorDensity}, each model \(\mathcal{H} \in \bm{\mathcal{H}}\) has its own tuning parameters \(\bm{x}_\mathcal{H} \in \mathds{R}^{\dimParam_\mathcal{H}}\)
+with \(\dimParam_\mathcal{H} \in \mathds{N}_{>0}\) whose prior uncertainty is represented by \(\pi(\bm{x}_\mathcal{H} \cond \mathcal{H})\).
+Consequentially, prior predictive distributions of the form as in \cref{eq:Bayesian:PriorPredictiveDistribution} can be constructed as
+\begin{equation} \label{eq:Bayesian:ModelLikelihood}
+  \pi(\bm{y} \cond \mathcal{H})
+  = \int\limits_{\mathds{R}^{\dimParam_\mathcal{H}}} \pi(\bm{y} \cond \bm{x}_\mathcal{H},\mathcal{H}) \, \pi(\bm{x}_\mathcal{H} \cond \mathcal{H}) \, \mathrm{d} \bm{x}_\mathcal{H}.
+\end{equation}
+\par % PARAMETER ESTIMATION
+The actual data \(\bm{y}\) can be used in order to estimate the unknowns \(\bm{x}_\mathcal{H}\) for each model separately.
+Posteriors \(\pi(\bm{x}_\mathcal{H} \cond \bm{y},\mathcal{H})\) as in \cref{eq:Bayesian:PosteriorDensity} arise in that context.
+% MODEL PLAUSIBILITIES
+One can advance probabilistic reasoning to the next higher level by considering \emph{model uncertainty}.
+A discrete probability distribution \(\pi(\mathcal{H})\) is assigned over the candidate models \(\mathcal{H} \in \bm{\mathcal{H}}\).
+This distribution characterizes the prior plausibility of the hypothesis that \(\mathcal{H}\) is the true model.
+Conditioning on the collected data \(\bm{y}\) results in the corresponding posterior probabilities of the hypothesized models
+\begin{equation} \label{eq:Bayesian:ModelPosterior}
+  \pi(\mathcal{H} \cond \bm{y})
+  = \frac{\pi(\bm{y} \cond \mathcal{H}) \pi(\mathcal{H})}{\sum_{\mathcal{H}^\prime \in \bm{\mathcal{H}}} \pi(\bm{y} \cond \mathcal{H}^\prime) \, \pi(\mathcal{H}^\prime)}.
+\end{equation}
+The role of the likelihood function is filled by the conditional density in \cref{eq:Bayesian:ModelLikelihood} which, for fixed data, is evaluated as a function of the model.
+According to \cref{eq:Bayesian:ModelEvidence} this is exactly the \(\mathcal{H}\)-specific evidence \(\scale_\mathcal{H} = \pi(\bm{y} \cond \mathcal{H})\).
+\par % RELATIVE STATEMENTS
+Beyond revealing the significance of the single-model posterior normalization constant for multi-model inference,
+this also highlights the relative character of Bayesian probabilities in general.
+They are conditional on the modeling assumptions made and have to be assessed with respect to the alternative hypotheses tested.
+In the single-model case, the continuous posterior in \cref{eq:Bayesian:PosteriorDensity} weighs possible parameter values given one specific statistical model.
+In the multi-model case, the discrete posterior in \cref{eq:Bayesian:ModelPosterior} compares statistical models against a number of predefined candidates.
+\par % MODEL COMPARISON/SELECTION
+\emph{Model comparison} and \emph{model selection} can be based on \cref{eq:Bayesian:ModelPosterior,eq:Bayesian:ModelLikelihood}.
+The posterior mode \(\hat{\mathcal{H}} = \operatorname*{arg\,max}_{\mathcal{H} \in \bm{\mathcal{H}}} \pi(\mathcal{H} \cond \bm{y})\) is the best model
+as suggested by the data and the prior information.
+% BAYES FACTORS
+\emph{Bayes factors} are often used for hypothesis testing and pairwise model comparison \cite{Bayesian:Kass1993,Bayesian:Kass1995}.
+For two models, say \(\mathcal{H}_1\) and \(\mathcal{H}_2\), they are defined as the marginal likelihood odds
+\begin{equation} \label{eq:Bayesian:BayesFactor}
+  B_{1,2} = \frac{\pi(\bm{y} \cond \mathcal{H}_1)}{\pi(\bm{y} \cond \mathcal{H}_2)}
+  = \frac{\int_{\mathds{R}^{\dimParam_{\mathcal{H}_1}}} \pi(\bm{y} \cond \bm{x}_{\mathcal{H}_1},\mathcal{H}_1)
+  \, \pi(\bm{x}_{\mathcal{H}_1} \cond \mathcal{H}_1) \, \mathrm{d} \bm{x}_{\mathcal{H}_1}}
+  {\int_{\mathds{R}^{\dimParam_{\mathcal{H}_2}}} \pi(\bm{y} \cond \bm{x}_{\mathcal{H}_2},\mathcal{H}_2)
+  \, \pi(\bm{x}_{\mathcal{H}_2} \cond \mathcal{H}_2) \, \mathrm{d} \bm{x}_{\mathcal{H}_2}}.
+\end{equation}
+This measures the evidence of \(\mathcal{H}_1\) with respect to the alternative model \(\mathcal{H}_2\).
+In case of a uniform prior with \(\pi(\mathcal{H}_1) = \pi(\mathcal{H}_2)\),
+the Bayes factor in \cref{eq:Bayesian:BayesFactor} equals the posterior odds \(B_{1,2} = \pi(\mathcal{H}_1 \cond \bm{y}) / \pi(\mathcal{H}_2 \cond \bm{y})\).
+\par % OCCAM'S RAZOR
+Bayesian model selection provides an automatic implementation of \emph{Occam's razor},
+i.e.\ the common sense that simple models should be preferred over complex ones if they equally well explain the data.
+This is sometimes interpreted as a formal justification of parsimony as a principle.
+Note that simplicity here does not primarily refer to the intricacy of the mathematics or solely to the number of the parameters involved.
+Rather it relates to the predictive spread of the models over their parametric prior uncertainty.
+% AUTOMATIC RAZOR
+The prior predictive distributions in \cref{eq:Bayesian:ModelLikelihood} have to integrate to one \(\int_{\mathds{R}^\dimData} \pi(\bm{y} \cond \mathcal{H}) \, \mathrm{d} \bm{y} = 1\).
+Hence, models \(\mathcal{H}\) for which the predictions according to \(\pi(\bm{y} \cond \mathcal{H})\) occupy larger proportions of the data space \(\mathds{R}^\dimData\)
+have a tendency to lower evidences \cite{Bayesian:MacKay1992,Bayesian:MacKay1995}.
+In this sense, complex models are naturally penalized on the evidence level \(\scale_\mathcal{H}\).
+This obviates the need for an ad hoc discrimination on the prior level \(\pi(\mathcal{H})\).
+\par % LOG-EVIDENCE
+A more quantitative understanding of Occam's razor in the context of Bayesian model selection is obtained as follows.
+Bayes' rule \(\pi(\bm{x}_\mathcal{H} \cond \bm{y},\mathcal{H}) = \scale_\mathcal{H}^{-1} \pi(\bm{y} \cond \bm{x}_\mathcal{H},\mathcal{H}) \pi(\bm{x}_\mathcal{H} \cond \mathcal{H})\)
+can be plugged into the definition of the KL divergence \(D_{\mathrm{KL}}(\pi(\cdot \cond \bm{y},\mathcal{H}) \| \pi(\cdot \cond \mathcal{H}))\)
+between the posterior and the prior in \cref{eq:Bayesian:RelativeEntropy}.
+By solving for the log-evidence one easily derives
+\begin{equation} \label{eq:Bayesian:LogModelEvidence}
+  \log \scale_\mathcal{H}
+  = \int\limits_{\mathds{R}^{\dimParam_\mathcal{H}}} \log(\pi(\bm{y} \cond \bm{x}_\mathcal{H},\mathcal{H}))
+  \, \pi(\bm{x}_\mathcal{H} \cond \bm{y},\mathcal{H}) \, \mathrm{d} \bm{x}_\mathcal{H}
+  - D_{\mathrm{KL}}(\pi(\cdot \cond \bm{y},\mathcal{H}) \| \pi(\cdot \cond \mathcal{H})).
+\end{equation}
+The first term in \cref{eq:Bayesian:LogModelEvidence} is the posterior expectation of the log-likelihood
+and therefore favors models that fit the data well \cite{Bayesian:Vehtari2012,Bayesian:Gelman2014}.
+The second term is the relative entropy that penalizes complex models for which the uncertainty reduction is high \cite{Bayesian:Muto2008,Bayesian:Cheung2010}.
+\par % PREDICTIVE DISTRIBUTION
+With a model-specific posterior distribution of the unknown parameters \(\pi(\bm{x}_\mathcal{H} \cond \bm{y},\mathcal{H})\),
+one can base predictions of future data on an adapted model as in \cref{eq:Bayesian:PosteriorPredictiveDistribution}.
+However, in the multi-model context one has a number of \(\mathcal{H}\)-specific predictive distributions
+\begin{equation} \label{eq:Bayesian:ModelPredictiveDistribution}
+  \pi(\bm{y}^\prime \cond \bm{y},\mathcal{H})
+  = \int\limits_{\mathds{R}^{\dimParam_\mathcal{H}}} \pi(\bm{y}^\prime \cond \bm{x}_\mathcal{H},\mathcal{H})
+  \, \pi(\bm{x}_\mathcal{H} \cond \bm{y},\mathcal{H}) \, \mathrm{d} \bm{x}_\mathcal{H}.
+\end{equation}
+One way to predict new data is to simply use the predictive distribution \(\pi(\bm{y}^\prime \cond \bm{y},\hat{\mathcal{H}})\) of the MAP model \(\hat{\mathcal{H}}\).
+% MODEL AVERAGING
+Another more coherent way would be \emph{Bayesian model averaging} \cite{Bayesian:Raftery1997,Bayesian:Hoeting1999},
+where the distribution of future data is expressed as the posterior-weighted average
+\begin{equation} \label{eq:Bayesian:ModelAverage}
+  \pi(\bm{y}^\prime \cond \bm{y}) = \sum\limits_{\mathcal{H} \in \bm{\mathcal{H}}} \pi(\bm{y}^\prime \cond \bm{y},\mathcal{H}) \, \pi(\mathcal{H} \cond \bm{y}).
+\end{equation}
+The distribution in \cref{eq:Bayesian:ModelAverage} is actually a mixture of the components \(\pi(\bm{y}^\prime \cond \bm{y},\mathcal{H})\) in \cref{eq:Bayesian:ModelPredictiveDistribution}.
+This fully acknowledges both the parameter estimation and the model selection uncertainty.

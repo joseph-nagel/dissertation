@@ -1,0 +1,178 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% INFERENCE IN MULTILEVEL MODELS %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+We will now discuss statistical inference.
+In particular we will demonstrate how conditioning on the observables and marginalization out nuisance are elegant inferential tools of Bayesian multilevel inversion.
+% JOINT & MARGINAL PROBLEM
+A pivotal joint problem formulation will be devised.
+Afterwards an intrinsically marginal problem variant will be presented in \cref{sec:PEM:Multilevel:MarginalizedFormulation}.
+%%%%%%%%%%%%%%%%%%%%
+\par % JOINT PRIOR %
+%%%%%%%%%%%%%%%%%%%%
+In the following \(\tuple{\bm{q}_i}\) denotes a sequence \(\tuple{\bm{q}_i}_{1 \leq i \leq n} = (\bm{q}_1,\bm{q}_2,\ldots,\bm{q}_n)\).
+Summarizing the available parametric and structural prior knowledge in \cref{eq:PEM:Multilevel:Model:ParametricPriorM,eq:PEM:Multilevel:Model:StructuralPriorZ,eq:PEM:Multilevel:Model:StructuralPriorX,eq:PEM:Multilevel:Model:ParametricPriorThetaX},
+the \textit{joint prior} of the entirety of unknowns \((\bm{m},\tuple{\bm{x}_i},\tuple{\bm{\zeta}_i},\bm{\theta}_{\bm{X}})\) factorizes as
+\begin{equation} \label{eq:PEM:Multilevel:Inference:JointPrior}
+  \pi \big( \bm{m},\tuple{\bm{x}_i},\tuple{\bm{\zeta}_i},\bm{\theta}_{\bm{X}} \big)
+  = \left( \prod\limits_{i=1}^n f_{\bm{X} \cond \bm{\Theta}_{\bm{X}}} (\bm{x}_i \cond \bm{\theta}_{\bm{X}}) \right)
+  \left( \prod\limits_{i=1}^n f_{\bm{Z}}(\bm{\zeta}_i \distparam \bm{\theta}_{\bm{Z}_i}) \right)
+  \pi_{\bm{\Theta}_{\bm{X}}} (\bm{\theta}_{\bm{X}}) \, \pi_{\bm{M}} (\bm{m}).
+\end{equation}
+This prior depends only on the collection of experiment-specific hyperparameters \(\tuple{\bm{\theta}_{\bm{Z}_i}}\).
+% CONDITIONAL STRUCTURE
+With the model of single observations in \cref{eq:PEM:Multilevel:Model:Data} one can formulate a conditional distribution for the total data \(\tuple{\bm{y}_i}\).
+For given values of the unknowns \((\bm{m},\tuple{\bm{x}_i},\tuple{\bm{\zeta}_i})\) this yields the product
+\(f (\tuple{\bm{y}_i} \cond \bm{m},\tuple{\bm{x}_i},\tuple{\bm{\zeta}_i}) = \prod_{i=1}^n f_{\bm{E}} (\bm{y}_i-\mathcal{M}(\bm{m},\bm{x}_i,\bm{\zeta}_i,\bm{d}_i) \distparam \bm{\Sigma}_i)\).
+It depends on experiment-specific knowns \((\tuple{\bm{d}_i},\tuple{\bm{\Sigma}_i})\).
+%%%%%%%%%%%%%%%%%%%%%%%%
+\par % JOINT POSTERIOR %
+%%%%%%%%%%%%%%%%%%%%%%%%
+With that said, one can derive the \textit{joint posterior} of the totality of unknowns \((\bm{m},\tuple{\bm{x}_i},\tuple{\bm{\zeta}_i},\bm{\theta}_{\bm{X}})\) by conditioning on the acquired data \(\tuple{\bm{y}_i}\).
+By virtue of Bayes' theorem one obtains
+\begin{equation} \label{eq:PEM:Multilevel:Inference:JointPosterior}
+  \pi \big( \bm{m},\tuple{\bm{x}_i},\tuple{\bm{\zeta}_i},\bm{\theta}_{\bm{X}} \cond \tuple{\bm{y}_i} \big)
+  = \frac{1}{C} \left( \prod\limits_{i=1}^n f_{\bm{E}} \big( \bm{y}_i-\mathcal{M}(\bm{m},\bm{x}_i,\bm{\zeta}_i,\bm{d}_i) \distparam \bm{\Sigma}_i \big) \right)
+  \pi \big( \bm{m},\tuple{\bm{x}_i},\tuple{\bm{\zeta}_i},\bm{\theta}_{\bm{X}} \big).
+\end{equation}
+This posterior \cref{eq:PEM:Multilevel:Inference:JointPosterior} is implicitly dependent on experiment-specific knowns \((\tuple{\bm{\theta}_{\bm{Z}_i}},\tuple{\bm{d}_i},\tuple{\bm{\Sigma}_i})\).
+It is the central object in Bayesian multilevel model calibration.
+\par % SCALE FACTOR
+The model evidence \(C\) is the total probability of the realized data \(\tuple{\bm{y}_i}\), given the underlying multilevel model.
+When introducing the notation \(\mathrm{d} \tuple{\bm{q}_i} = \mathrm{d} \bm{q}_1 \, \mathrm{d} \bm{q}_2 \ldots \mathrm{d} \bm{q}_n\) one can write this as
+\begin{equation} \label{eq:PEM:Multilevel:Inference:ScaleFactor}
+  C = \int\limits_{\mathcal{D}_{\bm{m}}} \int\limits_{\mathcal{D}_{\bm{x}}^n} \int\limits_{\mathcal{D}_{\bm{\zeta}}^n} \int\limits_{\mathcal{D}_{\bm{\theta}_{\bm{X}}}}
+  \left( \prod\limits_{i=1}^n f_{\bm{E}} \big( \bm{y}_i-\mathcal{M}(\bm{m},\bm{x}_i,\bm{\zeta}_i,\bm{d}_i) \distparam \bm{\Sigma}_i \big) \right)
+  \pi \big( \bm{m},\tuple{\bm{x}_i},\tuple{\bm{\zeta}_i},\bm{\theta}_{\bm{X}} \big)
+  \, \mathrm{d} \bm{m} \, \mathrm{d} \tuple{\bm{x}_i} \, \mathrm{d} \tuple{\bm{\zeta}_i} \, \mathrm{d} \bm{\bm{\theta}_{\bm{X}}}.
+\end{equation}
+% SCALE FACTOR
+For the Bayesian computations that will be reviewed in \cref{sec:PEM:Computations}, the factor of proportionality \(C\) does not have to be computed explicitly.
+For that reason it will be occasionally omitted from now on.
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\par % JOINT LIKELIHOOD %
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% POSTERIOR DECOMPOSITION
+One may define a likelihood in order to write the joint posterior \cref{eq:PEM:Multilevel:Inference:JointPosterior} in the familiar textbook-form
+\(\pi(\text{unknowns} \cond \text{data}) \propto \mathcal{L}(\text{unknowns} \distparam \text{data}) \, \pi(\text{unknowns})\).
+% DEFINITION
+Regarded as a function of the unknowns \((\bm{m},\tuple{\bm{x}_i},\tuple{\bm{\zeta}_i})\),
+the \textit{joint likelihood} evaluates the densities in \cref{eq:PEM:Multilevel:ResidualModel} for the collected data \(\tuple{\bm{y}_i}\) by
+\begin{equation} \label{eq:PEM:Multilevel:Inference:JointLikelihood}
+  \mathcal{L} \big( \bm{m},\tuple{\bm{x}_i},\tuple{\bm{\zeta}_i} \distparam \tuple{\bm{y}_i} \big)
+  = \prod\limits_{i=1}^n f_{\bm{E}} \big( \bm{y}_i-\mathcal{M}(\bm{m},\bm{x}_i,\bm{\zeta}_i,\bm{d}_i) \distparam \bm{\Sigma}_i \big).
+\end{equation}
+Apart from its functional arguments and the data it also depends on the total number of experiment-specific knowns \((\tuple{\bm{d}_i},\tuple{\bm{\Sigma}_i})\).
+It does not depend on \(\bm{\theta}_{\bm{X}}\), though.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\par % ELEMINATION OF NUISANCE %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Subsequent to formulating the joint posterior \cref{eq:PEM:Multilevel:Inference:JointPosterior}
+the marginal of the \textit{quantities of interest} (QoI) is obtained by integrating out \textit{nuisance} \cite{Statistics:Basu1977:a,Statistics:Dawid1980:a}.
+% MARGINALIZED POSTERIOR 1
+For instance, given that \((\bm{m},\bm{\theta}_{\bm{X}})\) are declared QoI and the latent variables \((\tuple{\bm{x}_i},\tuple{\bm{\zeta}_i})\) are considered nuisance,
+the correspondingly marginalized posterior becomes
+\begin{equation} \label{eq:PEM:Multilevel:Inference:MarginalizedPosterior1}
+  \pi \big( \bm{m},\bm{\theta}_{\bm{X}} \cond \tuple{\bm{y}_i} \big) = \int\limits_{\mathcal{D}_{\bm{x}}^n} \int\limits_{\mathcal{D}_{\bm{\zeta}}^n}
+  \pi \big( \bm{m},\tuple{\bm{x}_i},\tuple{\bm{\zeta}_i},\bm{\theta}_{\bm{X}} \cond \tuple{\bm{y}_i} \big) \, \mathrm{d} \tuple{\bm{x}_i} \, \mathrm{d} \tuple{\bm{\zeta}_i}.
+\end{equation}
+% MARGINALIZED POSTERIOR 2
+Similarly, provided that hidden variables \((\tuple{\bm{x}_i},\tuple{\bm{\zeta}_i})\) are proclaimed QoI and \((\bm{m},\bm{\theta}_{\bm{X}})\) are deemed nuisance parameters,
+appropriately marginalizing the posterior distribution gives
+\begin{equation} \label{eq:PEM:Multilevel:Inference:MarginalizedPosterior2}
+  \pi \big( \tuple{\bm{x}_i},\tuple{\bm{\zeta}_i} \cond \tuple{\bm{y}_i} \big) = \int\limits_{\mathcal{D}_{\bm{m}}} \int\limits_{\mathcal{D}_{\bm{\theta}_{\bm{X}}}}
+  \pi \big( \bm{m},\tuple{\bm{x}_i},\tuple{\bm{\zeta}_i},\bm{\theta}_{\bm{X}} \cond \tuple{\bm{y}_i} \big) \, \mathrm{d} \bm{m} \, \mathrm{d} \bm{\theta}_{\bm{X}}.
+\end{equation}
+
+\subsection{Marginalized formulation} \label{sec:PEM:Multilevel:MarginalizedFormulation}
+% NUISANCE PARAMETERS
+A common scenario is that inferential interest focuses on the global parameters \((\bm{m},\bm{\theta}_{\bm{X}})\).
+In this particular case, instead of marginalizing the joint posterior distribution \cref{eq:PEM:Multilevel:Inference:JointPosterior} as in \cref{eq:PEM:Multilevel:Inference:MarginalizedPosterior1},
+based on an integrated likelihood function one can formulate an inherently marginal problem \cite{Statistics:Berger1999,Statistics:Severini1999,Statistics:Severini2007}.
+% MARGINALIZATION
+One therefore constructs a marginalized observation model
+\begin{subequations} \label{eq:PEM:Multilevel:Marginal:Model}
+  \begin{align}
+    (\bm{Y}_i \cond \bm{m},\bm{\theta}_{\bm{X}}) &\sim f(\bm{y}_i \cond \bm{m},\bm{\theta}_{\bm{X}}), \;\, \text{for} \;\, i=1,\ldots,n, \label{eq:PEM:Multilevel:Marginal:Data}\\
+    (\bm{M},\bm{\Theta}_{\bm{X}}) &\sim \pi(\bm{m},\bm{\theta}_{\bm{X}}) = \pi_{\bm{M}} (\bm{m}) \, \pi_{\bm{\Theta}_{\bm{X}}}(\bm{\theta}_{\bm{X}}). \label{eq:PEM:Multilevel:Marginal:Prior}
+  \end{align}
+\end{subequations}
+% MARGINAL PRIOR MODEL
+The marginalized model consists of the prior distribution \cref{eq:PEM:Multilevel:Marginal:Prior} of the QoI \((\bm{m},\bm{\theta}_{\bm{X}})\)
+% MARGINAL DATA MODEL
+and the probability model \cref{eq:PEM:Multilevel:Marginal:Data} of the observations \(\bm{y}_i\).
+By integrating out the aleatory variables \((\bm{x}_i,\bm{\zeta}_i)\) in the following way, one can obtain the marginal distributions of the observations
+\begin{equation} \label{eq:PEM:Multilevel:Marginal:Marginalization}
+  f(\bm{y}_i \cond \bm{m},\bm{\theta}_{\bm{X}}) = \int\limits_{\mathcal{D}_{\bm{x}}} \int\limits_{\mathcal{D}_{\bm{\zeta}}}
+  f_{\bm{E}} \big( \bm{y}_i-\mathcal{M}(\bm{m},\bm{x}_i,\bm{\zeta}_i,\bm{d}_i) \distparam \bm{\Sigma}_i \big) \, f_{\bm{X} \cond \bm{\Theta}_{\bm{X}}} (\bm{x}_i \cond \bm{\theta}_{\bm{X}})
+  \, f_{\bm{Z}}(\bm{\zeta}_i \distparam \bm{\theta}_{\bm{Z}_i}) \, \mathrm{d} \bm{x}_i \, \mathrm{d} \bm{\zeta}_i.
+\end{equation}
+These distributions are conditional on \((\bm{m},\bm{\theta}_{\bm{X}})\) and dependent on \((\bm{\theta}_{\bm{Z}_i},\bm{d}_i,\bm{\Sigma}_i)\).
+% MARGINALIZED LIKELIHOOD
+Following this, one can easily formulate an \textit{integrated} or \textit{marginalized likelihood}.
+Evaluated for the actual data \(\tuple{\bm{y}_i}\) and seen as a function of the QoI \((\bm{m},\bm{\theta}_{\bm{X}})\) this version of the likelihood reads as
+\begin{equation} \label{eq:PEM:Multilevel:Marginal:Likelihood}
+  \mathcal{L} \big( \bm{m},\bm{\theta}_{\bm{X}} \distparam \tuple{\bm{y}_i} \big)
+  = f \big( \tuple{\bm{y}_i} \cond \bm{m},\bm{\theta}_{\bm{X}} \big) = \prod_{i=1}^n f(\bm{y}_i \cond \bm{m},\bm{\theta}_{\bm{X}}).
+\end{equation}
+It is the likelihood function corresponding to the case of eliminating all intermediate unobservables \((\tuple{\bm{x}_i},\tuple{\bm{\zeta}_i})\)
+with \cref{eq:PEM:Multilevel:Marginal:Marginalization} on the likelihood rather than on the posterior level.
+% FREQUENTIST INFERENCE
+Note that frequentist inference of \((\bm{m},\bm{\theta}_{\bm{X}})\) could be based on this integrated likelihood formulation.
+% MARGINAL POSTERIOR
+Fully Bayesian inference, however, proceeds by formulating the corresponding posterior distribution.
+With the prior \cref{eq:PEM:Multilevel:Marginal:Prior} and the likelihood \cref{eq:PEM:Multilevel:Marginal:Likelihood}, the posterior is obtained on grounds of Bayes' law
+\begin{equation} \label{eq:PEM:Multilevel:Marginal:Posterior}
+  \pi \big( \bm{m},\bm{\theta}_{\bm{X}} \cond \tuple{\bm{y}_i} \big)
+  = \frac{1}{C} \, \mathcal{L} \big( \bm{m},\bm{\theta}_{\bm{X}} \distparam \tuple{\bm{y}_i} \big) \, \pi(\bm{m},\bm{\theta}_{\bm{X}}).
+\end{equation}
+% SCALE FACTOR & POSTERIORS
+One can easily derive that the normalizing constant \(C\) equals \cref{eq:PEM:Multilevel:Inference:ScaleFactor}
+and show that the posteriors \cref{eq:PEM:Multilevel:Inference:MarginalizedPosterior1,eq:PEM:Multilevel:Marginal:Posterior} are identical.
+% EQUIVALENCE
+This means that, as far as the inference of \((\bm{m},\bm{\theta}_{\bm{X}})\) is concerned, the two problem formulations \cref{eq:PEM:Multilevel:Model,eq:PEM:Multilevel:Marginal:Model} are equivalent.
+% NUMERICAL CHALLENGES
+Those problem formulations pose different numerical obstacles, though.
+In \cref{sec:PEM:Computations} we will discuss Bayesian computations and their multilevel-related issues.
+
+\subsubsection{Monte Carlo integration} \label{sec:PEM:Multilevel:MonteCarloIntegration}
+% MARGINAL DENSITY
+In \cref{eq:PEM:Multilevel:Marginal:Likelihood} the marginalized likelihood \(\mathcal{L} (\bm{m},\bm{\theta}_{\bm{X}} \distparam \tuple{\bm{y}_i})\) is a product of integrals \(f(\bm{y}_i \cond \bm{m},\bm{\theta}_{\bm{X}})\).
+Most often it is not possible to perform the marginalization in \cref{eq:PEM:Multilevel:Marginal:Marginalization} analytically.
+% NUMERICAL INTEGRATION
+Still it can be approximately computed through deterministic or stochastic schemes of numerical integration.
+\par % MONTE CARLO INTEGRATION
+The density \(f(\bm{y}_i \cond \bm{m},\bm{\theta}_{\bm{X}})\) can be evaluated for arbitrary arguments \(\bm{y}_i\) and for fixed values \((\bm{m},\bm{\theta}_{\bm{X}})\) .
+A simple numerical means to that end rests upon stochastic integration via the Monte Carlo (MC) method
+\begin{equation} \label{eq:PEM:Multilevel:Marginal:DensityEstimator}
+  \hat{f} (\bm{y}_i \cond \bm{m},\bm{\theta}_{\bm{X}})
+  = \frac{1}{K} \sum\limits_{k=1}^{K} f_{\bm{E}} \left( \bm{y}_i-\perfect{\bm{\upsilon}}_i^{(k)} \distparam \bm{\Sigma}_i \right),
+  \;\, \text{with} \;\, \left\{
+  \begin{aligned}
+    \bm{x}_i^{(k)}     &\sim f_{\bm{X} \cond \bm{\Theta}_{\bm{X}}}(\bm{x}_i^{(k)} \cond \bm{\theta}_{\bm{X}}),\\
+    \bm{\zeta}_i^{(k)} &\sim f_{\bm{Z}}(\bm{\zeta}_i^{(k)} \distparam \bm{\theta}_{\bm{Z}_i}),\\
+    \perfect{\bm{\upsilon}}_i^{(k)} &= \mathcal{M}(\bm{m},\bm{x}_i^{(k)},\bm{\zeta}_i^{(k)},\bm{d}_i)
+  \end{aligned}
+  \right\} \;\, \text{for} \;\, k=1,\ldots,K.
+\end{equation}
+% MONTE CARLO SAMPLING
+For \(k=1,\ldots,K\) forward model inputs \(\bm{x}_i^{(k)}\) and \(\bm{\zeta}_i^{(k)}\) are independently sampled from their population distributions
+\(f_{\bm{X} \cond \bm{\Theta}_{\bm{X}}}(\bm{x}_i^{(k)} \cond \bm{\theta}_{\bm{X}})\) and \(f_{\bm{Z}}(\bm{\zeta}_i^{(k)} \distparam \bm{\theta}_{\bm{Z}_i})\), respectively.
+% FORWARD MODEL COMPUTATION
+In turn responses \(\perfect{\bm{\upsilon}}_i^{(k)} = \mathcal{M}(\bm{m},\bm{x}_i^{(k)},\bm{\zeta}_i^{(k)},\bm{d}_i)\) are computed accordingly.
+% MARGINAL LIKELIHOOD
+For evaluating \(\mathcal{L} (\bm{m},\bm{\theta}_{\bm{X}} \distparam \tuple{\bm{y}_i})\) as a function of the unknowns \((\bm{m},\bm{\theta}_{\bm{X}})\),
+one has to simulate \cref{eq:PEM:Multilevel:Marginal:DensityEstimator} for the observations \(\bm{y}_i\) that were taken in the experiments \(i=1,\ldots,n\).
+% PRODUCT ESTIMATOR
+Thus a simple MC-based estimator of the marginalized likelihood is given as
+\begin{equation} \label{eq:PEM:Multilevel:Marginal:LikelihoodEstimator}
+  \hat{\mathcal{L}} \big( \bm{m},\bm{\theta}_{\bm{X}} \distparam \tuple{\bm{y}_i} \big)
+  = \prod\limits_{i=1}^n \hat{f} (\bm{y}_i \cond \bm{m},\bm{\theta}_{\bm{X}}).
+\end{equation}
+\par % NUMERICAL EXPENSE
+The stochastic simulator \cref{eq:PEM:Multilevel:Marginal:LikelihoodEstimator} may be costly and numerically inefficient in terms of the number of runs \(K\) of the deterministic model.
+% INSTRUCTIVE PROOF
+It should be understood as an instructive proof for the feasibility of computing the marginal posterior \cref{eq:PEM:Multilevel:Marginal:Posterior}.
+% IMPORTANCE SAMPLING
+In practice more advanced simulators, e.g.\ based on importance sampling, can be applied in similar fashion \cite{MCMC:Beaumont2003,MCMC:Sung2007}.
+% CLASSICAL MODEL EVIDENCE
+More generally speaking, any method for computing the model evidence in classical Bayesian inference is applicable \cite{Bayesian:Bos2002}.

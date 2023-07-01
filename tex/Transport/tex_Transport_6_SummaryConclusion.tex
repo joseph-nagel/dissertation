@@ -1,0 +1,38 @@
+% TRANSPORT-MAP INFERENCE
+An approach to Bayesian inference based on transport maps was investigated in this chapter.
+The prior and the posterior were coupled based on an appropriate change of variables.
+Practically this was done by minimizing the Kullback--Leibler divergence of the back-transformed posterior from the prior.
+The optimization problem faced was regularized in the framework of optimal transportation theory.
+A triangular map with polynomial components was used to parameterize the sought transformation.
+The upside of the technique is that it works in principle and indeed establishes a doable option for probabilistic inference.
+Due to the lack of fundamental alternatives to conventional Markov chain Monte Carlo techniques, this is a very strong point that makes further research attractive and needful.
+\par % COMPUTATIONAL COST
+On the downside, finding an appropriate transformation comes at a high computational price.
+The optimization problem posed involves expectations under the prior distribution over the likelihood function.
+Even though it was found that low-degree polynomials suffice in order to transform between the prior and the posterior distribution,
+a high number of samples from the prior are required for approximating the corresponding utility function.
+This imposes an immense number of likelihood evaluations that are necessary for each call to the utility in every algorithm iteration.
+\par % OPEN QUESIONS
+A host of open questions has been given rise to.
+An in-depth understanding of the optimization problem and its discretization would support the choice of well-suited optimizers and their algorithmic parameters.
+It would be helpful to have a solid criterion assisting in setting the sample size of the Monte Carlo approximation and the polynomial degree of the triangular map.
+% CONVERGENCE CRITERION
+While the model evidence establishes an upper bound of the utility function, it cannot serve as a target value for assessing convergence, since we do not actually know it.
+This is exacerbated because we obtain an acceptable solution to an approximate problem at most by maximizing the sample average function.
+% MODEL EVIDENCE
+Vice versa, the eventually obtained maximum of the utility function does not necessarily serve well as an estimator of the log--model evidence.
+It is biased downwards.
+% SAMPLE SIZE
+As for the Monte Carlo sample size used in the sample average approximation and also the maximal polynomial degree,
+we had to rely on heuristic criteria and checks against the results from a Markov chain Monte Carlo procedure.
+\par % INVERTIBILITY / CHANGE OF VARIABLES
+Another question that was brought up is how one can enforce invertibility of the transformation.
+This is necessary in order to warrant the correctness of the change of variables formula that the optimization objective builds on.
+The issue was recklessly but wittingly ignored in the current approach.
+% COMPLIANCE WITH PRIOR CONSTRAINTS
+Moreover, it would be desirable to restrict the search for transformations to such ones that comply with possibly existing prior constraints and do not map out of the permissible range.
+\par % MCMC ACCELERATION
+Beyond detail improvements of the transport map approach, one could envisage the combination with sampling-based approaches.
+Markov chain Monte Carlo sampling could be accelerated by transforming a standard proposal into a non-standard distribution that strongly overlaps with the posterior.
+Looking at it the other way around, one could also transform a complex posterior into a simpler target distribution.
+Indeed there is ongoing research in these directions \cite{Mapping:Parno2014:arXiv,Mapping:Parno2015:PhD}.

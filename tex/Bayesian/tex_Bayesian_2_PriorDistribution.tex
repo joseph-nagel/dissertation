@@ -1,0 +1,46 @@
+% BAYESIAN STATISTICS
+The Bayesian approach to inference and prediction builds on probabilistic reasoning.
+This way it allows for a more thorough information processing and uncertainty analysis.
+Involving a subjective interpretation of probability, randomness is not only attributed to the data \(\bm{y}\) as in \cref{eq:Bayesian:DataModel}, but also to the unknowns \(\bm{x}\).
+% PRIOR DENSITY
+The modeler's and analyst's ignorance regarding the true parameter values before analyzing the data is represented as a random vector
+\begin{equation} \label{eq:Bayesian:PriorDensity}
+  \bm{X} \sim \pi(\bm{x}).
+\end{equation}
+Here, \(\pi(\bm{x})\) is called the \emph{prior density}.
+Instead of merely acknowledging the fact that the parameter values are not known, their epistemic uncertainty is modeled as a probability distribution.
+The true values are then considered a realization \(\bm{X} = \bm{x}\) of the random vector in \cref{eq:Bayesian:PriorDensity}.
+Note that the randomness does not refer to draws in a frequentist sense, but to a lack of knowledge in a Bayesian sense.
+As detailed in \cref{sec:Bayesian:PosteriorDistribution}, the analyst can update his or her knowledge by conditioning on the realized data.
+Beforehand it is necessary to construct an appropriate prior distribution.
+\par % PRIOR SELECTION
+The selection of the prior distribution is of utmost practical importance in Bayesian inference.
+It is in fact the most controversial aspect.
+On the one hand, the prior allows one to incorporate qualitative and quantitative information other than the data.
+Beyond physical constraints, this includes heterogeneous sources such as expert knowledge, previous experiments and published literature.
+On the other hand, this raises the question of how to encode such information into a probability distribution.
+Similar to the assumptions and compromises that have to be made in order to formulate a probabilistic data model as in \cref{eq:Bayesian:DataModel},
+the determination of the prior parameter model in \cref{eq:Bayesian:PriorDensity} can be understood as a modeling choice.
+As such, it may be subject to various guiding principles.
+\par % CLASSIFICATION
+Very generally, one may classify Bayesian priors according to the way they are chosen, the information they convey and the function they fulfill.
+% SUBJECTIVE/OBJECTIVE
+For a start, one may distinguish between priors that are more \emph{subjective},
+i.e.\ elicited on the basis of one's own or someone else's personal belief \cite{Uncertainty:Ayyub2001,Uncertainty:OHagan2006},
+or more \emph{objective}, i.e.\ constructed according to some formal rules \cite{Bayesian:Kass1996,Bayesian:Ghosh2011}.
+The latter includes the maximum entropy principle \cite{Statistics:Jaynes1957:a,Statistics:Jaynes1957:a,Bayesian:Jaynes1968}.
+% INFORMATIVE/UNINFORMATIVE
+Subjective and objective prior distributions are sometimes also called \emph{informative} and \emph{uninformative}, respectively.
+More generally, these terms can be used in order to characterize the prior with respect to its information content.
+% SPECTRUM
+Real prior distributions may occupy a wide spectrum that ranges from more subjective or informative to rather objective or uninformative.
+% FUNCTION OF THE PRIOR
+There are also more or less functional priors that serve certain purposes.
+They are chosen for mere mathematical convenience or their regularization properties.
+Conjugacy \cite{Bayesian:Diaconis1979}, robustness \cite{Bayesian:Insua2000} and sparsity \cite{Statistics:Tibshirani1996,Statistics:Park2008,Statistics:Ji2008}
+can be for instance achieved by choosing appropriate priors.
+\par % DISTRIBUTION TYPES IN PRACTICE
+In engineering practice, one often designates a well-known family of distributions as candidate priors.
+The corresponding parameters are then set so as to mirror the uncertainty as faithfully as possible.
+Uniform distributions are often chosen for parameters that can be bounded from above and below, e.g.\ due to physical constraints.
+Gaussian or lognormal distributions are often used for parameters that are unbounded or strictly positive, respectively.

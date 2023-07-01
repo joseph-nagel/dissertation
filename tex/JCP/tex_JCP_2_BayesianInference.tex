@@ -1,0 +1,148 @@
+% STATISTICAL INFERENCE
+Let \(\bm{x} = (x_1,\ldots,x_\dimParam)^\top \in \mathcal{D}_{\bm{x}}\)
+with \(\mathcal{D}_{\bm{x}} = \mathcal{D}_{x_1} \times \ldots \times \mathcal{D}_{x_\dimParam} \subset \mathds{R}^\dimParam\) be a vector of unknown parameters.
+The goal of statistical inference is to deduce these unknowns from the observed data \(\bm{y} = (y_1,\ldots,y_\dimData)^\top \in \mathds{R}^\dimData\).
+% PROBABILITY MODELS
+In Bayesian statistics one adapts probabilistic models for representing uncertainty.
+Hence, let \((\Omega,\mathcal{F},\mathcal{P})\) be a suitable probability space with a sample space \(\Omega\), a \(\sigma\)-field \(\mathcal{F}\) and a probability measure \(\mathcal{P}\).
+On this space one can define a prior model of the unknowns and an observational model of the data
+that represent the encountered parameter uncertainties and the experimental situation, respectively.
+\par % PRIOR MODEL
+The epistemic uncertainty of the parameter values is cast as a \(\mathcal{D}_{\bm{x}}\)-valued random vector \(\bm{X} \colon \Omega \rightarrow \mathcal{D}_{\bm{x}} \subset \mathds{R}^\dimParam\).
+Here, the components of \(\bm{X} = (X_1,\ldots,X_\dimParam)^\top\) are \(\mathcal{D}_{x_i}\)-valued random variables
+\(X_i \colon \Omega \rightarrow \mathcal{D}_{x_i} \subset \mathds{R}\) for \(i = 1,\ldots,\dimParam\).
+Since the data have not been processed at this stage, the joint density of \(\bm{X} \sim \pi(\bm{x})\) is called the \emph{prior density}.
+% OBSERVATIONAL MODEL
+Similarly, a \(\mathds{R}^\dimData\)-valued random vector \(\bm{Y} \colon \Omega \rightarrow \mathds{R}^\dimData\) represents the observables.
+The components of \(\bm{Y} = (Y_1,\ldots,Y_\dimData)^\top\) are real-valued random variables \(Y_i \colon \Omega \rightarrow \mathds{R}\) for \(i = 1,\ldots,\dimData\).
+In order to draw inferences from the data about the unknowns, one has to formulate an observational model that establishes a relationship between those quantities.
+Commonly this is a probabilistic representation of the observables \(\bm{Y} \cond \bm{x} \sim f(\bm{y} \cond \bm{x})\) that is conditional on the unknown parameters.
+% LIKELIHOOD FUNCTION
+For the actually acquired data \(\bm{Y} = \bm{y}\), the \emph{likelihood function} \(\mathcal{L}(\bm{x}) = f(\bm{y} \cond \bm{x})\)
+is defined by interpreting the conditional density \(f(\bm{y} \cond \bm{x})\) as a function of the unknowns \(\bm{x}\).
+\par % BAYES' LAW
+Given this setup, one can formulate an updated probability density \(\pi(\bm{x} \cond \bm{y})\) of the unknowns that is conditioned on the realized data.
+This so-called \emph{posterior density} results from \emph{Bayes' law}
+\begin{equation} \label{eq:JCP:Bayesian:Posterior}
+  \pi(\bm{x} \cond \bm{y}) = \frac{\mathcal{L}(\bm{x}) \pi(\bm{x})}{\scale}.
+\end{equation}
+It completely summarizes the available information about the unknowns after the data have been analyzed.
+% SCALE FACTOR
+The \emph{model evidence} \(\scale\) properly normalizes the posterior density.
+It can be written as
+\begin{equation} \label{eq:JCP:Bayesian:ScaleFactor}
+  \scale = \int\limits_{\mathcal{D}_{\bm{x}}} \mathcal{L}(\bm{x}) \, \pi(\bm{x}) \, \mathrm{d} \bm{x}.
+\end{equation}
+\par % POSTERIOR MARGINALS
+One is often interested in the marginals and moments of the posterior.
+The posterior marginal \(\pi(x_j \cond \bm{y})\) of a single unknown \(x_j\) with \(j \in \{1,\ldots,\dimParam\}\) is defined as
+\begin{equation} \label{eq:JCP:Bayesian:Marginal1D}
+  \pi(x_j \cond \bm{y}) = \int\limits_{\mathcal{D}_{\bm{x}_{\without j}}} \pi(\bm{x} \cond \bm{y}) \, \mathrm{d} \bm{x}_{\without j}.
+\end{equation}
+Here, the simplifying notation \(\bm{x}_{\without j} = (x_1,\ldots,x_{j-1},x_{j+1},\ldots,x_\dimParam)^\top\) is introduced.
+% POSTERIOR MOMENTS
+For the mean \(\mathds{E}[\bm{X} \cond \bm{y}]\) and the covariance matrix \(\mathrm{Cov}[\bm{X} \cond \bm{y}]\) of the posterior one has
+\begin{gather}
+  \mathds{E}[\bm{X} \cond \bm{y}] = \int\limits_{\mathcal{D}_{\bm{x}}} \bm{x} \, \pi(\bm{x} \cond \bm{y}) \, \mathrm{d} \bm{x}, \label{eq:JCP:Bayesian:PosteriorMean} \\
+  \mathrm{Cov}[\bm{X} \cond \bm{y}] = \int\limits_{\mathcal{D}_{\bm{x}}} \left( \bm{x} - \mathds{E}[\bm{X} \cond \bm{y}]) (\bm{x} - \mathds{E}[\bm{X} \cond \bm{y}] \right)^\top
+  \pi(\bm{x} \cond \bm{y}) \, \mathrm{d} \bm{x}. \label{eq:JCP:Bayesian:PosteriorCovariance}
+\end{gather}
+\par % POSTERIOR EXPECTATION
+More generally, Bayesian inference focuses the computation of posterior expectation values of the \emph{quantities of interest} (QoI) \(h \colon \mathcal{D}_{\bm{x}} \rightarrow \mathds{R}\).
+These expectations may be formally expressed as
+\begin{equation} \label{eq:JCP:Bayesian:QoI}
+  \mathds{E}[h(\bm{X}) \cond \bm{y}] = \int\limits_{\mathcal{D}_{\bm{x}}} h(\bm{x}) \, \pi(\bm{x} \cond \bm{y}) \, \mathrm{d} \bm{x}.
+\end{equation}
+% KEY IDENTITY
+For later considerations, it is remarked that this integration over the posterior density can be interpreted as a reweighted integration over the prior density
+\begin{equation} \label{eq:JCP:Baysian:KeyIdentity}
+  \mathds{E}[h(\bm{X}) \cond \bm{y}]
+  = \int\limits_{\mathcal{D}_{\bm{x}}} h(\bm{x}) \frac{\mathcal{L}(\bm{x})}{\scale} \pi(\bm{x}) \, \mathrm{d} \bm{x}
+  = \frac{1}{\scale} \mathds{E}[h(\bm{X}) \mathcal{L}(\bm{X})].
+\end{equation}
+
+\subsection{Bayesian inverse problems}
+% INVERSE PROBLEMS
+The Bayesian framework described above can be applied to a vast range of scenarios from classical statistics
+\cite{Bayesian:Jackman2009,Bayesian:Gelman2014:3rd} and inverse modeling \cite{Bayesian:Stuart2010,Bayesian:Ernst2014}.
+% FORWARD MODEL
+In inverse problems, a so-called \emph{forward model} \(\mathcal{M}\) establishes a mathematical representation of the physical system under consideration.
+It is the function
+\begin{equation} \label{eq:JCP:Bayesian:Inverse:ForwardModel}
+  \begin{aligned}
+    \mathcal{M} \colon \mathcal{D}_{\bm{x}} &\rightarrow \mathds{R}^\dimData \\
+    \bm{x} &\mapsto \mathcal{M}(\bm{x})
+  \end{aligned}
+\end{equation}
+that maps model inputs \(\bm{x} \in \mathcal{D}_{\bm{x}} \subset \mathds{R}^\dimParam\) to outputs \(\perfect{\bm{y}} = \mathcal{M}(\bm{x}) \in \mathds{R}^\dimData\).
+% INVERSE PROBLEM
+\emph{Inversion} is the process of inferring the unknown forward model parameters \(\bm{x}\) with the measured data \(\bm{y}\) of its response.
+\par % OBSERVATIONAL MODEL
+A probabilistic model of the observables is commonly constructed supposing that they can be represented as the sum \(\bm{Y} = \perfect{\bm{Y}} + \bm{E}\)
+of the model response vector \(\perfect{\bm{Y}} = \mathcal{M}(\bm{X}) \colon \Omega \rightarrow \mathds{R}^\dimData\) and another random vector \(\bm{E} \colon \Omega \rightarrow \mathds{R}^\dimData\).
+The latter accounts for measurement noise and forward model inadequacy.
+It is assumed that the \emph{residual vector} \(\bm{E}\) is statistically independent from \(\bm{X}\).
+An unknown realization \(\bm{E} = \bm{\varepsilon}\) measures the discrepancy between the actually measured data
+\(\bm{y} = \perfect{\bm{y}} + \bm{\varepsilon}\) and the model response \(\perfect{\bm{y}} = \mathcal{M}(\bm{x})\) at the true value \(\bm{x}\).
+% GAUSSIAN RESIDUAL
+Typically one starts from the premise that the residual \(\bm{E} \sim \mathcal{N}(\bm{\varepsilon} \cond \bm{0},\bm{\Sigma})\) follows a Gaussian distribution.
+Here, \(\bm{\Sigma}\) is a symmetric and positive-definite covariance matrix.
+The observational model is then simply given as \(\bm{Y} \cond \bm{x} \sim \mathcal{N}(\bm{y} \cond \mathcal{M}(\bm{x}),\bm{\Sigma})\).
+% LIKELIHOOD FUNCTION
+For the likelihood this implies
+\begin{equation} \label{eq:JCP:Bayesian:Inverse:Likelihood}
+  \mathcal{L}(\bm{x}) = \frac{1}{\sqrt{(2\pi)^{\dimData} \det(\bm{\Sigma})}}
+  \exp \left( - \frac{1}{2} \left( \bm{y}-\mathcal{M}(\bm{x}) \right)^\top \bm{\Sigma}^{-1} \left( \bm{y}-\mathcal{M}(\bm{x}) \right) \right).
+\end{equation}
+For the actually acquired data \(\bm{y}\), this is understood as a function of the unknowns \(\bm{x}\).
+% INVERSE PROBLEM SOLUTION
+The Bayesian solution to the inverse problem posed is then the posterior in \cref{eq:JCP:Bayesian:Posterior} where the likelihood is given as in \cref{eq:JCP:Bayesian:Inverse:Likelihood}.
+It summarizes the collected information about the unknown forward model inputs.
+
+\subsection{Markov chain Monte Carlo}
+% POSTERIOR COMPUTATION
+Apart from some exceptional cases, the posterior density in \cref{eq:JCP:Bayesian:Posterior} does not exhibit a closed-form expression.
+Thus one settles either for computing expectation values under the posterior or for sampling from the posterior.
+% MONTE CARLO SAMPLING
+The former can be accomplished through stochastic integration techniques such as \emph{Monte Carlo} (MC) \cite{MCMC:Caflisch1998} or \emph{importance sampling} \cite{MCMC:Tokdar2010}.
+% MARKOV CHAIN MONTE CARLO
+For the latter one usually has to resort to \emph{Markov chain Monte Carlo} (MCMC) sampling \cite{MCMC:Gilks1996,MCMC:Brooks2011}.
+An ergodic Markov chain \(\bm{X}^{(1)},\bm{X}^{(2)},\ldots\) over the support \(\mathcal{D}_{\bm{x}}\) is constructed in such a way that the posterior arises as the invariant distribution
+\begin{equation} \label{eq:JCP:Bayesian:InvariantDistribution}
+  \pi(\bm{x}^{(t+1)} \cond \bm{y}) = \int\limits_{\mathcal{D}_{\bm{x}}} \pi(\bm{x}^{(t)} \cond \bm{y}) \, \mathcal{K}(\bm{x}^{(t)},\bm{x}^{(t+1)}) \, \mathrm{d} \bm{x}^{(t)}.
+\end{equation}
+Here, \(\mathcal{K}(\bm{x}^{(t)},\bm{x}^{(t+1)})\) denotes the density of the transition probability from the state \(\bm{x}^{(t)}\)
+of the Markov chain at a time \(t\) to its state \(\bm{x}^{(t+1)}\) at time \(t+1\).
+The \emph{Metropolis-Hastings} (MH) algorithm \cite{MCMC:Metropolis1953,MCMC:Hastings1970} suggests an easy principle
+for the construction of a Markov kernel \(\mathcal{K}\) that satisfies \cref{eq:JCP:Bayesian:InvariantDistribution}.
+It is based on sampling candidates from a proposal distribution and a subsequent accept/reject decision.
+The transition kernel defined this ways satisfies detailed balance,
+i.e.\ time reversibility \(\pi(\bm{x}^{(t)} \cond \bm{y}) \, \mathcal{K}(\bm{x}^{(t)},\bm{x}^{(t+1)}) = \pi(\bm{x}^{(t+1)} \cond \bm{y}) \, \mathcal{K}(\bm{x}^{(t+1)},\bm{x}^{(t)})\).
+This is a sufficient condition for \cref{eq:JCP:Bayesian:InvariantDistribution} to apply.
+% ERGODIC THEOREM
+In practice, one initializes the Markov chain at some \(\bm{x}^{(1)} \in \mathcal{D}_{\bm{x}}\) and then
+iteratively applies the MH updates from \(\bm{x}^{(t)}\) to \(\bm{x}^{(t+1)}\) for a finite number of times \(T\).
+The \emph{ergodic theorem} then ensures that one can approximate the population average in \cref{eq:JCP:Bayesian:QoI} in an asymptotically consistent way as the time average
+\begin{equation} \label{eq:JCP:Bayesian:ErgodicTheorem}
+  \mathds{E}[h(\bm{X}) \cond \bm{y}] \approx \frac{1}{T} \sum\limits_{t=1}^T h(\bm{x}^{(t)}).
+\end{equation}
+\par % MCMC DEFICIENCIES
+A whole string a unpleasant consequences is entailed by the fact that MCMC updates are typically local and serially dependent.
+% AUTOCORRELATION
+The quality of the posterior approximation is governed by the MCMC sample autocorrelation.
+In order to ensure an efficient posterior exploration one has to carefully design and tune the proposal distribution.
+This is an extremely tedious and problem-dependent task.
+Yet, even for comparably efficient MCMC updates, a large number of MCMC iterations may be required in order to achieve an acceptable degree of fidelity of the final results.
+In inverse modeling this requires an even larger number of serial forward solves which can be prohibitively expensive for demanding models.
+% CONVERGENCE CRITERION
+Another intrinsic MCMC weakness is that it lacks a clear convergence and stopping criterion,
+i.e.\ for diagnosing when the chain has forgotten its initialization and has converged to the target distribution in \cref{eq:JCP:Bayesian:InvariantDistribution},
+and for the assessment of when the MC error in \cref{eq:JCP:Bayesian:ErgodicTheorem} has become sufficiently small.
+Even though there are more or less sophisticated convergence diagnostics \cite{MCMC:Cowles1996,MCMC:Brooks1998:Roberts},
+those heuristic checks may very well fail, e.g.\ when separated posterior modes have not yet been detected.
+\par % MODEL EVIDENCE
+The model evidence in \cref{eq:JCP:Bayesian:ScaleFactor} is important in the context of model comparison and selection \cite{Bayesian:Vehtari2012}.
+In engineering applications it often happens that one wants to judge the performance of various competing models against measured data \cite{Bayesian:Beck2004,Bayesian:Yuen2010:b}.
+While in variational Bayesian inference at least a lower bound of the model evidence is implicitly computed as a side product, in the MH algorithm it is not computed at all.
+Avoiding the explicit computation of the model evidence is beneficial for parameter estimation, but it does not allow for model selection.
+To this effect one has to rely on dedicated methods \cite{Bayesian:Han2001,Bayesian:Dellaportas2002}.

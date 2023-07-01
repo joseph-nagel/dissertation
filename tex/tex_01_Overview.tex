@@ -1,0 +1,229 @@
+\begin{refsection}
+
+\section{Motivation}
+% UNCERTAINTY QUANTIFICATION
+The increasing sophistication of computer simulations for predicting the behavior of physical systems necessitates the specification of a growing number of model parameters.
+This motivates the engagement in both forward and inverse uncertainty quantification.
+% FORWARD PROPAGATION
+One can represent the degree as to which the model input parameters are not precisely known as a probability distribution.
+Either this may reflect a lack of knowledge about the true parameter value or a natural variability of the input realizations.
+The stochasticity in the model parameters then induces randomness in the model predictions, the quantification of which is the chief goal of uncertainty forward propagation.
+\par % BAYESIAN INFERENCE
+While uncertainty propagation deals with the characterization of the model response for a given input distribution,
+inverse uncertainty quantification aims at the indirect determination of the actual distribution of the uncertain inputs with experimental measurements of the outputs.
+In Bayesian inverse problems the epistemic uncertainty of the constant but unknown forward model parameters is translated into the prior distribution and probabilistically updated.
+The resulting posterior distribution encodes the reduced level of epistemic uncertainty that remains after integrating the information yielded by the data.
+Point estimates of the parameters and predictive distributions of future outcomes can then be derived.
+\par % KEY CHALLENGE: ALEATORY VARIABILITY
+The Bayesian approach to inverse problems does not only allow for improving one's knowledge about the fixed yet unknown parameters and growing one's confidence in the predictions,
+it also measures the uncertainty in the model input estimation and output prediction.
+Therefore it gains advantage over deterministic solutions to inverse problems.
+A limitation of the approach is that it lacks the possibility to manage the aleatory uncertainty of genuinely random quantities that vary during the experimentation.
+Nuisance variables that merely complicate the analysis or aleatory variables whose distribution is of inferential interest are examples of such quantities.
+They are incorrectly treated as constants in current practice.
+\par % KEY CHALLENGE: COMPUTATIONAL COST
+In addition to the unanswered question of how aleatory variability might be handled,
+another limiting factor of Bayesian inversion is the expense of computing the posterior distribution numerically.
+One of the very few serviceable tools for that purpose is Markov chain Monte Carlo sampling.
+This technique suffers from the absence of a clear convergence criterion and the autocorrelation of the obtained posterior samples.
+It demands an excessive number of serial forward model runs which may easily exceed the available computational budget.
+This prompts researchers and practitioners to implement advanced sampling algorithms and to find completely new solutions.
+
+\section{Contribution}
+% KEY CHALLENGES
+The fact that aleatory variability is ignored, the need for more efficient sampling schemes and the lack of fundamental alternatives
+form obstacles to Bayesian inverse problems in complex applications.
+% CORE CONTRIBUTIONS
+In this dissertation it is tried to overcome these difficulties.
+The core contributions are concisely summarized as follows.
+\begin{enumerate}[label=\arabic*)]
+  \item \label{item:CoreContribution:1} A unifying framework for the management of aleatory uncertainty in inverse problems is developed.
+  \item \label{item:CoreContribution:2} Hamiltonian Monte Carlo is promoted for efficient posterior exploration in high-dimensional spaces.
+  \item \label{item:CoreContribution:3} Novel approaches for computational Bayesian inference and posterior characterization are proposed.
+  \item \label{item:CoreContribution:4} Complex inverse problems from structural, mechanical and also hydrological engineering are solved.
+\end{enumerate}
+\par % SHORT DESCRIPTION
+First, the developed framework in \ref{item:CoreContribution:1} allows one to master inverse problems in the presence of epistemic uncertainty and aleatory variability.
+Unknown parameters can be identified along with the distribution of aleatory variables.
+Second, in \ref{item:CoreContribution:2} the computational cost of sampling high-dimensional posteriors is drastically reduced by Hamiltonian Monte Carlo.
+This is a general-purpose Markov chain Monte Carlo method which proves especially beneficial to the previously devised framework for inversion under polymorphic uncertainty.
+Third, spectral Bayesian inference is proposed as a radically different technique for computing the posterior density in \ref{item:CoreContribution:3}.
+It rests on spectral likelihood expansions and enables semi-analytic and sampling-free Bayesian inference.
+Another recently emerged method based on optimal transportation theory is also investigated and compared to spectral inference.
+\par % APPLICATIONS
+A wide range of practical engineering problems can be addressed with the new methodological developments.
+On the one hand, simple problems with simulated data serve for prototyping and benchmarking purposes.
+Bayesian inversion under multiple types of uncertainty and Hamiltonian Monte Carlo are both applied to the estimation of the material variability throughout an ensemble of structural elements.
+The inverse heat conduction problem posed by calibrating the thermal properties of a composite material with temperature measurements is used to demonstrate the newly devised schemes of inference.
+On the other hand, in \ref{item:CoreContribution:4} some more interesting problems involving real data and realistic models are solved.
+This includes the NASA Langley multidisciplinary uncertainty quantification challenge, the probabilistic assessment of structural masonry,
+and the Bayesian calibration of a hydrological urban drainage simulator.
+\par % PUBLICATIONS
+The methodological progress achieved and the real problems solved are the main outcomes of this doctoral research work.
+They have led to four journal publications \cite{Nagel:JAIS2015,Nagel:PEM2016,Nagel:JRUES2016,Nagel:JCP2016},
+an equal number of conference papers \cite{Nagel:IPW2013:Proc,Nagel:SciTech2014:Proc,Nagel:ICVRAM2014:Proc,Nagel:ICASP2015:Proc}
+and five other presentations \cite{Nagel:MascotNum2014:Pres,Nagel:PANACM2015:Pres,Nagel:SRES2015:Pres,Nagel:SIAMUQ2016:Pres,Nagel:ECCOMAS2016:Pres}.
+The most important contributions \cite{Nagel:JAIS2015,Nagel:PEM2016,Nagel:JRUES2016,Nagel:JCP2016,Nagel:ICASP2015:Proc} are contained as individual chapters later on in the dissertation.
+Postprints of the finally accepted and already published articles \cite{Nagel:JAIS2015,Nagel:PEM2016,Nagel:JRUES2016,Nagel:JCP2016}
+after scholarly peer review and before the copyediting and typesetting are provided.
+The conference paper \cite{Nagel:ICASP2015:Proc} is supplemented with three additional graphics whose inclusion was originally prevented by the template and page limit.
+% BIBLIOGRAPHY
+\printbibliography[heading=subsubbibliography,title={Journal papers},type=article]
+\printbibliography[heading=subsubbibliography,title={Conference proceedings},type=incollection]
+\printbibliography[heading=subsubbibliography,title={Other presentations},type=inproceedings]
+
+\section{Outline}
+% PARTS
+An overview of the doctoral thesis and its structure is now given.
+The document is basically divided into three parts.
+It starts with basic introductions to uncertainty quantification and Bayesian inference in \cref{sec:Introduction}.
+The key contributions of the research work in form of the most important publications are compiled in \cref{sec:Published}.
+Some further unpublished investigations as well as a detailed hydrological case study are conducted in \cref{sec:Further}.
+% CHAPTERS
+A short overview of how the main topics and the associated publications are organized in parts and chapters is tabulated below.
+Detailed chapter summaries follow directly thereafter.
+% TABLE: THESIS OUTLINE
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{llll}
+    \toprule
+    \multirow{2}{*}{\cref{sec:Introduction}} & \cref{sec:Uncertainty} & Uncertainty quantification     & \\
+                                             & \cref{sec:Bayesian}    & Bayesian inference             & \\
+    \midrule
+    \multirow{5}{*}{\cref{sec:Published}}    & \cref{sec:PEM}         & Aleatory variability           & \cite{Nagel:PEM2016} \\
+                                             & \cref{sec:JRUES}       & Hamiltonian Monte Carlo        & \cite{Nagel:JRUES2016} \\
+                                             & \cref{sec:JAIS}        & NASA Langley challenge         & \cite{Nagel:JAIS2015} \\
+                                             & \cref{sec:ICASP}       & Structural masonry             & \cite{Nagel:ICASP2015:Proc} \\
+                                             & \cref{sec:JCP}         & Spectral Bayesian inference    & \cite{Nagel:JCP2016} \\
+    \midrule
+    \multirow{2}{*}{\cref{sec:Further}}      & \cref{sec:Transport}   & Optimal transportation         & \\
+                                             & \cref{sec:Hydrology}   & Hydrological model calibration & \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Elementary introductions}
+% BASIC INTRODUCTIONS
+The thesis starts with two introductory chapters on uncertainty quantification and Bayesian inference in engineering problems.
+This material provides the necessary background information as well as complementary perspectives on the more advanced developments that follow.
+Forward and inverse problems are discussed within the framework of probabilistic uncertainty quantification.
+State-of-the-art techniques for the computational forward and backward propagation of uncertainty are reviewed.
+\par % UNCERTAINTY QUANTIFICATION
+An introduction to uncertainty quantification with a clear focus on probabilistic methods and forward propagation is provided in \cref{sec:Uncertainty}.
+The quantitative characterization of the response distribution of a mechanical model due to randomness in the input parameters,
+e.g.\ material properties, object geometry, environmental loads or operating conditions, is the classical example problem.
+Monte Carlo simulation, Taylor series expansions and more global metamodeling techniques are presented in this context.
+The latter includes stochastic spectral methods such as polynomial chaos expansions which are used throughout the whole dissertation.
+Non-intrusive computations based on a linear least squares minimization problem and its ordinary least squares solution are concentrated on.
+The curse of dimensionality as well as the hope for sparsity are discussed.
+\par % BAYESIAN INFERENCE
+\cref{sec:Bayesian} contains an elementary introduction to the Bayesian data analysis of engineering systems.
+This offers a principled way of quantifying and reducing epistemic parameter uncertainties.
+Experimental data that are only indirectly associated to the actual quantities of interest are analyzed to that end.
+An example is the determination of actually uncertain properties of a material with measurements of its behavior under certain test conditions.
+Basic inferential principles founded on the likelihood function as well as the prior and the posterior distribution are introduced.
+More advanced topics such as evidence-based model comparison and some practical issues related to the parametrization of statistical models are also covered.
+Conventional approaches to computational Bayesian inference based on random sampling or mathematical optimization are surveyed, e.g.\ Markov chain Monte Carlo and variational inference.
+The convenient calculation of the extremely large or small quantities that typically arise in Bayesian computations is discussed.
+Bayesian inverse problems are dealt with in greater detail together with related issues such as the quantification of model prediction error.
+
+\subsection{Aleatory variability}
+% ALEATORY VARIABILITY
+While the Bayesian solution to inverse problems satisfactorily accounts for epistemic types of uncertainty, it does not allow for the incorporation of aleatory types.
+Two examples of this form of uncertainty are the stochastic variation of the environmental or operating conditions over time
+and the randomness within an ensemble of structural elements due to manufacturing tolerances.
+This is a major limitation and motivates the research question of how to deal with aleatory input variability in Bayesian inverse problems.
+The answer to the question is a core topic in the dissertation and occupies two chapters at the very least.
+\par % PEM: ALEATORY VARIABILITY IN INVERSE PROBLEMS
+A hierarchical framework for managing heterogeneous types of uncertainty in Bayesian inverse problems is proposed in \cref{sec:PEM}.
+The formulation rests on multilevel models that interrelate different system components through deterministic simulators and conditional probability distributions.
+It allows one to reduce the epistemic uncertainty of unknowns that are fixed yet unknown and to identify the distribution of quantities that vary throughout a series of experiments.
+Random measurement noise and aleatory nuisance variables are taken into account at the same time.
+All available sources of information such as experimental data and expert knowledge can be harnessed and optimally combined.
+This is especially important in civil engineering applications where information is scarce and uncertainty dominates.
+The framework is demonstrated and its computational challenges are identified through estimating the material variability across equally manufactured structural elements.
+Inference can be either based on a low-dimensional formulation with an integrated likelihood function or on a high-dimensional variant with many unknowns.
+\par % JRUES: HAMILTONIAN MONTE CARLO
+After the framework for Bayesian inversion under epistemic and aleatory uncertainty has been elaborated, specialized solvers have to be implemented for computing the posterior efficiently.
+In \cref{sec:JRUES} we propose Hamiltonian Monte Carlo in order to cope with the practical difficulties of high-dimensional Bayesian multilevel modeling.
+As a member from the extended Markov chain Monte Carlo family, the algorithm explores the posterior in a sampling-based manner.
+The idea is to embed the space of the unknown parameters in an auxiliary space and to perform the Markovian updates in such a way that they mix well in the original space of interest.
+This principle is inspired by systems and concepts from classical and statistical mechanics, i.e.\ Hamiltonian dynamics and the Boltzmann distribution.
+It calls for derivatives of the log--posterior density and the forward model.
+Hamiltonian Monte Carlo is shown to be a highly efficient solver for inverse problems under uncertainty and variability.
+It drastically outperforms a random walk Metropolis algorithm in a benchmark problem with more than hundred unknowns.
+The posterior can be sampled almost independently.
+
+\subsection{Computational methods}
+% COMPUTATIONAL METHODS
+Beyond the treatment of aleatory variability in inverse problems, the development of novel methods for computational Bayesian inference is another central theme of the thesis.
+Although Hamiltonian Monte Carlo is an attractive algorithm, it does not overcome the principal limitations of sampling techniques in general.
+Fundamental alternatives to Markov chain and sequential Monte Carlo are thus needed.
+Two entirely different approaches to compute the posterior distribution numerically are developed and investigated.
+They are based on approximations of the posterior probability density function or correspondingly distributed random variables.
+The identification of the thermal properties of a composite material with inclusions poses a comparably simple inverse heat conduction problem that serves testing and demonstration purposes.
+\par % JCP: SPECTRAL LIKELIHOOD EXPANSIONS
+Spectral Bayesian inference is developed in \cref{sec:JCP} as a completely new and pretty elegant technique for posterior computations.
+The main idea is to decompose the likelihood function into a converging series of orthogonal polynomials.
+If orthogonality is defined with respect to the prior weight, this spectral likelihood expansion has some surprisingly interesting properties.
+It gives rise to a nonparametric representation of the normalized posterior density and enables semi-analytic and sampling-free inference.
+The model evidence as well as the posterior moments are related to the expansion coefficients from which they can be easily extracted.
+Posterior uncertainty propagation through general computational models can be accomplished based on prior polynomial chaos expansions.
+It is proposed to compute the expansion coefficients by a discrete linear least squares projection.
+A perturbation-theoretic interpretation of the orthogonal series expansion of the posterior suggests a change of the reference density from the prior to an auxiliary weight function.
+This improves the accuracy and efficiency of the spectral method dramatically.
+The advantages and shortcomings of spectral Bayesian inference are highlighted by reference to classical distribution fitting and the inverse heat conduction problem.
+\par % ADDITIONAL CHAPTER: TRANSFORMATION-BASED INFERENCE
+Another approach to computational Bayesian inference that was recently devised by Prof.\ Youssef Marzouk and his group at MIT is investigated in \cref{sec:Transport}.
+It is based on the translocation of probability mass from the prior to the posterior measure.
+A function of random variables distributed according to the prior is constructed in such a way that the transformed variables follow the posterior.
+One can establish a connection between variational Bayesian inference and this transport-based formulation.
+This permits to compute the posterior by solving an optimization problem with an information-theoretic optimality criterion.
+The random variable transformation is parametrized through multivariate polynomials up to a certain degree.
+After the computation of a suitable transform, one can draw independent and equally weighted samples from the posterior.
+This compelling feature distinguishes the approach from conventional sampling techniques.
+
+\subsection{Practical applications}
+% PRACTICAL APPLICATIONS
+A number of inverse problems involving real data and forward models are solved with the previously developed methods towards the end of the thesis.
+This can be seen as a justification and appreciation of the more formal developments, but should not hide the fact that it actually motivated some of them in the first place.
+Spectral Bayesian inference for instance originated in the context of the NASA Langley multidisciplinary uncertainty quantification challenge.
+The initial intention to use a polynomial approximation of the log--likelihood function in conjunction with Markov chain Monte Carlo sampling
+has evolved into the idea for a spectral likelihood expansion which renders further posterior sampling completely unnecessary.
+\par % JAIS: PERFECT DATA & NASA UQ CHALLENGE
+\cref{sec:JAIS} is the outcome of participating in the NASA Langley uncertainty quantification challenge in 2013--2014.
+The challenge contained a set of interlinked uncertainty quantification problems from the domain of aerospace engineering.
+In this chapter the calibration sub-problem is interpreted and solved in the developed framework of Bayesian multilevel modeling.
+A black-box model describing the behavior of a miniature civilian aircraft under adverse flight conditions and associated data were provided by NASA.
+The primary goal was the reduction of epistemic uncertainty of the model parameters that are fixed yet unknown
+and the identification of the hyperparameters that determine the distribution of the aleatory variables.
+Due to some peculiarities of the problem statement related to a zero-noise or perfect data condition,
+the likelihood function only arises as the solution to a secondary uncertainty forward propagation problem.
+For that reason it cannot be evaluated exactly.
+A statistical approximation of the likelihood based on Monte Carlo simulation and kernel density estimation is therefore proposed.
+Employing this biased and noisy likelihood estimator for sampling the posterior via Markov chain Monte Carlo alters the Metropolis--Hastings transition kernel.
+The induced modifications on the posterior level are investigated and mitigated by means of partial data augmentation.
+\par % ICASP: STRUCTURAL MASONRY
+Bayesian multilevel modeling also facilitates problem-solving in structural masonry.
+A hierarchical approach to assess the compressive strength of masonry walls is presented in \cref{sec:ICASP}.
+Many current methods suffer from their homogeneous treatment of the composite material or simply fail in uncertainty quantification.
+Other standardized methods overpredict the compressive strength to an alarming extent.
+The devised approach allows one to improve the accuracy of the predictions and assess their quality.
+It models structural masonry heterogeneously and quantifies the arising uncertainties consistently.
+System-level data related to the masonry wall specimens and component-level data of the brick units and mortar are analyzed jointly.
+The experimental data were collected in a series of compressive tests performed by Dr.\ Nebojsa Mojsilovic and his students
+in the laboratories of the Institute of Structural Engineering (IBK) at the ETH Z\"{u}rich.
+After the calibration of the unknown parameters and hyperparameters, one can probabilistically predict the compressive strength based on measurements of the constituent ensembles used.
+\par % ADDITIONAL CHAPTER: HYDROLOGICAL ENGINEERING
+Another real-world problem is solved in \cref{sec:Hydrology} where a hydrological urban drainage simulator is calibrated.
+Epistemic parameter uncertainties are reduced while random measurement noise and systematic modeling errors are anticipated and statistically identified.
+This allows for a thorough treatment of the emerging sources of error and uncertainty in the dynamical simulation of water systems.
+It also suggests the possibility for model correction.
+The catchment area of Adliswil, a municipality located around the river Sihl at the southern end of the city Z\"{u}rich, is studied during a rainfall event.
+Experimental data and training runs of the simulator were provided by the Swiss Federal Institute of Aquatic Science and Technology (Eawag) in D\"{u}bendorf.
+Advanced techniques for dimension reduction, surrogate modeling and stochastic sampling are combined to this effect.
+Principal component analysis allows us to reduce the output dimensionality of the deterministic simulator that predicts a whole times series.
+Sparse polynomial chaos expansions are subsequently used in order to emulate the input-output relationship the forward model defines.
+The posterior distributions of two different Bayesian models are sampled via Markov chain Monte Carlo techniques and compared with each other.
+
+\end{refsection}

@@ -1,0 +1,231 @@
+% REPRESENTATION/COMPUTATION
+After merely representing the simulator in terms of basis functions in \cref{eq:PCE:SpectralExpansion,eq:PCE:PolynomialExpansion},
+one has to actually compute the expansion coefficients in \cref{eq:PCE:SpectralProjection,eq:PCE:PolynomialCoefficient}.
+A straightforward approach is to perform the involved integrals explicitly.
+We discuss an alternative method that is based on the characterization of the subspace projections
+in \cref{eq:PCE:SubspaceProjection,eq:PCE:TruncatedApproximation} as the minimizers of the residual norm in \cref{eq:PCE:Optimality}.
+In order to highlight the analogy of the formulations, this continuous least squares property is revisited before its natural discretization is discussed.
+A linear least squares minimization problem \cite{Statistics:Bjorck2004} arises that way.
+\par % CONTINUOUS LEAST SQUARES
+Let us assume that we have a set of linearly independent basis functions \(\{\basisU_{j}(\bm{x})\}_{j \leq P}\), i.e.\ no basis function is a linear combination of the others.
+They are used in the ansatz \(\mathcal{M}_P(\bm{x}) = \sum_{j=1}^P \coeffM_{j} \basisU_{j}(\bm{x}) \in \mathrm{span}(\{\basisU_{j}(\bm{x})\}_{j \leq P})\)
+for finding the best approximation of the simulator \(\mathcal{M}(\bm{x})\) in that it minimizes the residual.
+To this effect, the coefficient vector \(\bm{\coeffM} = (\coeffM_1,\ldots,\coeffM_P)^\top\) is chosen such that
+\begin{equation} \label{eq:PCE:ContinuousLeastSquares}
+  \bm{\coeffM} = \operatorname*{arg\,min}_{\bm{\coeffM}^\star \in \mathds{R}^P}
+  \int\limits_{\mathcal{D}_{\bm{x}}} \Bigg( \mathcal{M}(\bm{x}) - \sum_{j=1}^P \coeffM_{j}^\star \basisU_{j}(\bm{x}) \Bigg)^2 \pi(\bm{x}) \, \mathrm{d} \bm{x}.
+\end{equation}
+The unique minimum of this \emph{continuous least squares} problem is then obtained when the partial derivatives
+\(\partial \lVert \mathcal{M} - \mathcal{M}_P \rVert_\pi^2 / \partial \coeffM_{j^\prime} = 0\) are zero for \(j^\prime = 1,\ldots,P\).
+This results in the \emph{continuous normal equations}
+\begin{equation} \label{eq:PCE:ContinuousNormalEquations}
+  \sum_{j=1}^P \coeffM_{j} \int\limits_{\mathcal{D}_{\bm{x}}} \basisU_{j}(\bm{x}) \basisU_{j^\prime}(\bm{x}) \, \pi(\bm{x}) \, \mathrm{d} \bm{x}
+  = \int\limits_{\mathcal{D}_{\bm{x}}} \mathcal{M}(\bm{x}) \basisU_{j^\prime}(\bm{x}) \, \pi(\bm{x}) \, \mathrm{d} \bm{x}.
+\end{equation}
+If one chooses orthogonal basis functions, the system of equations can be easily solved for the coefficients \(\coeffM_{j^\prime}\).
+This exactly yields the orthogonal projections \(\coeffM_{j^\prime} = \int_{\mathcal{D}_{\bm{x}}} \mathcal{M}(\bm{x}) \basisU_{j^\prime}(\bm{x}) \, \pi(\bm{x}) \, \mathrm{d} \bm{x}
+/ \int_{\mathcal{D}_{\bm{x}}} \basisU_{j^\prime}^2(\bm{x}) \, \pi(\bm{x}) \, \mathrm{d} \bm{x}\).
+\par % EXPERIMENTAL DESIGN
+A discretization of the continuous case is based on a finite number \(K \geq P\) of model runs.
+They are performed for a representative sample of input values that is called the \emph{experimental design}
+\begin{equation} \label{eq:PCE:ExperimentalDesign}
+  \mathcal{X} = (\bm{x}^{(1)},\ldots,\bm{x}^{(K)}).
+\end{equation}
+We consider the scenario that these inputs are independently sampled from the input probability distribution,
+i.e.\ \(\pi_{\mathcal{X}}(\bm{x}^{(1)},\ldots,\bm{x}^{(K)}) = \pi(\bm{x}^{(1)}) \ldots \pi(\bm{x}^{(K)})\).
+Afterwards one has to compute the corresponding responses \(\mathcal{Y} = (\mathcal{M}(\bm{x}^{(1)}),\ldots,\mathcal{M}(\bm{x}^{(K)}))^\top\).
+% DESIGN MATRIX
+The \emph{design matrix} \(\bm{A} \in \mathds{R}^{K \times P}\) is composed as
+\begin{equation} \label{eq:PCE:DesignMatrix}
+  \bm{A} = \begin{pmatrix}
+             1 & \basisU_{2}(\bm{x}^{(1)}) & \ldots & \basisU_{P}(\bm{x}^{(1)}) \\
+             \vdots & \vdots & \ddots & \vdots \\
+             1 & \basisU_{2}(\bm{x}^{(K)}) & \ldots & \basisU_{P}(\bm{x}^{(K)}) \\
+          \end{pmatrix}.
+\end{equation}
+For \(k = 1,\ldots,K\) and \(l = 1,\ldots,P\) this Vandermonde-like matrix has the entries \(A_{k,l} = \basis_l(\bm{x}^{(k)})\).
+Since one typically has a constant term with \(\basisU_{1}(\bm{x}) = 1\), the elements of the first column of the design matrix in \cref{eq:PCE:DesignMatrix} are equal to one.
+% SYSTEM OF EQUATIONS
+For the computed model outputs one can now establish the equations
+\begin{equation} \label{eq:PCE:DesignSystem}
+  \begin{pmatrix}
+    \mathcal{M}(\bm{x}^{(1)}) \\
+    \vdots \\
+    \mathcal{M}(\bm{x}^{(K)}) \\
+  \end{pmatrix} =
+  \begin{pmatrix}
+    1 & \basisU_{2}(\bm{x}^{(1)}) & \ldots & \basisU_{P}(\bm{x}^{(1)}) \\
+    \vdots & \vdots & \ddots & \vdots \\
+    1 & \basisU_{2}(\bm{x}^{(K)}) & \ldots & \basisU_{P}(\bm{x}^{(K)}) \\
+  \end{pmatrix}
+  \begin{pmatrix}
+    \coeffM_1 \\
+    \coeffM_2 \\
+    \vdots \\
+    \coeffM_P \\
+  \end{pmatrix} +
+  \begin{pmatrix}
+    r_P(\bm{x}^{(1)}) \\
+    \vdots \\
+    r_P(\bm{x}^{(K)}) \\
+  \end{pmatrix}.
+\end{equation}
+In more compact notation one can write \cref{eq:PCE:DesignSystem} as \(\mathcal{Y} = \bm{A} \bm{\coeffM} + \bm{r}_P\).
+The vector \(\bm{r}_P = (r_P(\bm{x}^{(1)}),\ldots,r_P(\bm{x}^{(K)}))^\top\) gathers the differences
+\(r_P(\bm{x}^{(k)}) = \mathcal{M}(\bm{x}^{(k)}) - \mathcal{M}_P(\bm{x}^{(k)})\) between the model and its best approximation over the whole input domain.
+\par % DISCRETE LEAST SQUARES
+It is now tempting to ask for the \(\hat{\mathcal{M}}_P(\bm{x}) = \sum_{j=1}^P \hat{\coeffM}_{j} \basisU_{j}(\bm{x}) \in \mathrm{span}(\{\basisU_{j}(\bm{x})\}_{j \leq P})\)
+that best approximates the response data \(\mathcal{Y}\) over the discrete points in the experimental design \(\mathcal{X}\) rather than the full space \(\mathcal{D}_{\bm{x}}\).
+Therefore consider the system \(\mathcal{Y} = \bm{A} \hat{\bm{\coeffM}} + \bm{r}_{P,K}\),
+where the residual vector \(\bm{r}_{P,K} = (r_{P,K}(\bm{x}^{(1)}),\ldots,r_{P,K}(\bm{x}^{(K)}))^\top\)
+collects the differences \(r_{P,K}(\bm{x}^{(k)}) = \mathcal{M}(\bm{x}^{(k)}) - \hat{\mathcal{M}}_P(\bm{x}^{(k)})\).
+The coefficients \(\hat{\bm{\coeffM}} = (\hat{\coeffM}_1,\ldots,\hat{\coeffM}_P)^\top\) are chosen such that
+\(\lVert \bm{r}_{P,K} \rVert_2^2 = r_{P,K}^2(\bm{x}^{(1)}) + \ldots + r_{P,K}^2(\bm{x}^{(K)})\) is minimal.
+That describes the \emph{discrete least squares} problem
+\begin{equation} \label{eq:PCE:DiscreteLeastSquares}
+  \hat{\bm{\coeffM}} = \operatorname*{arg\,min}_{\bm{\coeffM}^\star \in \mathds{R}^P} \lVert \mathcal{Y} - \bm{A} \bm{\coeffM}^{\star} \rVert_2^2.
+\end{equation}
+\par % NORMAL EQUATIONS
+This is the discrete companion of \cref{eq:PCE:ContinuousLeastSquares}.
+Just as \cref{eq:PCE:ContinuousNormalEquations} was obtained, we zero the partial derivatives
+\(\partial \lVert \mathcal{Y} - \bm{A} \hat{\bm{\coeffM}} \rVert_2^2 / \partial \hat{\coeffM}_{j^\prime} = 0\) for \(j^\prime = 1,\ldots,P\)
+in order to derive the \emph{discrete normal equations}
+\begin{equation} \label{eq:PCE:DiscreteNormalEquations}
+  \bm{A}^\top \bm{A} \hat{\bm{\coeffM}} = \bm{A}^\top \mathcal{Y}.
+\end{equation}
+% ORDINARY LEAST SQUARES
+If one assumes that the columns of \(\bm{A}\) are linearly independent, i.e.\ \(\bm{A}^\top \bm{A}\) is positive-definite and therefore invertible,
+then the unique \emph{ordinary least squares} (OLS) solution is
+\begin{equation} \label{eq:PCE:OrdinaryLeastSquares}
+  \hat{\bm{\coeffM}} = (\bm{A}^\top \bm{A})^{-1} \bm{A}^\top \mathcal{Y}.
+\end{equation}
+% GEOMETRIC INTERPREATION
+Notice that one can write the gradient conditions in \cref{eq:PCE:DiscreteNormalEquations} as \(\bm{A}^\top (\mathcal{Y} - \bm{A} \hat{\bm{\coeffM}}) = \bm{0}\).
+Geometrically interpreted this means that \(\bm{r}_{P,K} \, \bot \, \mathrm{col}(\bm{A})\),
+i.e.\ the residual vector \(\bm{r}_{P,K} = \mathcal{Y} - \bm{A} \hat{\bm{\coeffM}}\) is orthogonal to the column space
+\(\mathrm{col}(\bm{A}) = \{\bm{A} \bm{\coeffM}^\star \colon \bm{\coeffM}^\star \in \mathds{R}^P\}\) of the design matrix \(\bm{A}\).
+% PROJECTION MATRIX
+Sometimes one defines the \emph{hat matrix} \(\bm{H} = \bm{A} (\bm{A}^\top \bm{A})^{-1} \bm{A}^\top\).
+It projects \(\mathcal{Y}\) onto the column space by \(\hat{\mathcal{Y}} = \bm{H} \mathcal{Y} = \bm{A} (\bm{A}^\top \bm{A})^{-1} \bm{A}^\top \mathcal{Y} = \bm{A} \hat{\bm{\coeffM}}\),
+where \(\hat{\bm{\coeffM}}\) is from \cref{eq:PCE:OrdinaryLeastSquares}.
+\par % METAMODEL
+The abovementioned projection gives indeed just the approximations \(\hat{\mathcal{Y}} = (\hat{\mathcal{M}}_P(\bm{x}^{(1)}),\ldots,\hat{\mathcal{M}}_P(\bm{x}^{(K)}))^\top\)
+of how the model responds to the experimental design \(\mathcal{X}\).
+Yet, the exact values are known anyway.
+For arbitrary inputs values \(\bm{x} \in \mathcal{D}_{\bm{x}}\) the emulation of the original simulator \(\mathcal{M}(\bm{x})\) is based on
+\begin{equation} \label{eq:PCE:Metamodel}
+  \hat{\mathcal{M}}_P(\bm{x}) = \sum_{j=1}^P \hat{\coeffM}_{j} \basisU_{j}(\bm{x}).
+\end{equation}
+
+\subsection{Prediction errors}
+% PREDICTION ERRORS
+At this point one ought to give particular attention to various kinds of prediction errors \cite{Statistics:Breiman1992,Statistics:Borra2010}.
+Notwithstanding that minimizing the empirical residual norm in \cref{eq:PCE:DiscreteLeastSquares} is a plausible way of proceeding,
+it does not necessarily warrant accuracy of the metamodel in \cref{eq:PCE:Metamodel} for unseen input data.
+There are certainly various ways of quantifying the predictions errors.
+A short overview of a few related concepts is provided now.
+Since the terminology is inconsistent throughout the literature in various fields, one always has to specify the error measure under consideration clearly.
+\par % GENERALIZATION ERROR
+Let us denote the surrogate model that was obtained for a specific experimental design \(\mathcal{X}\) by  \(\hat{\mathcal{M}}_P^{\mathcal{X}}(\bm{x})\).
+The \emph{generalization error} of this predictor is defined as the expectation value under the input distribution
+\begin{equation} \label{eq:PCE:GeneralizationError}
+  \mathrm{Err} \left[ \hat{\mathcal{M}}_P^{\mathcal{X}} \right]
+  = \mathds{E} \left[ \left( \mathcal{M}(\bm{X}) - \hat{\mathcal{M}}_P^{\mathcal{X}}(\bm{X}) \right)^2 \right]
+  = \int\limits_{\mathcal{D}_{\bm{x}}} \left( \mathcal{M}(\bm{x}) - \hat{\mathcal{M}}_P^{\mathcal{X}}(\bm{x}) \right)^2 \pi(\bm{x}) \, \mathrm{d} \bm{x}.
+\end{equation}
+This is exactly the error that we tried to minimize.
+% EXPECTED GENERALIZATION ERROR
+One may define the \emph{expected generalization error} by additionally averaging over the distribution of the experimental design
+\begin{equation} \label{eq:PCE:AverageGeneralizationError}
+  \overline{\mathrm{Err}} \left[ \hat{\mathcal{M}}_P \right] = \mathds{E}_{\mathcal{X}} \left[ \mathrm{Err} \left[ \hat{\mathcal{M}}_P^{\mathcal{X}} \right] \right].
+\end{equation}
+This can be interpreted as an error of the procedure or rule of computing a predictor rather than of a specific predictor itself.
+% EXPECTED PREDICTION ERRROR
+One can also define the \emph{expected prediction error} at a single point \(\bm{x}_0 \in \mathcal{D}_{\bm{x}}\) as
+\begin{equation} \label{eq:PCE:ExpectedPredictionError}
+  \overline{\mathrm{Err}} \left[ \hat{\mathcal{M}}_P(\bm{x}_0) \right]
+  = \mathds{E}_{\mathcal{X}} \left[ \left( \mathcal{M}(\bm{x}_0) - \hat{\mathcal{M}}_P^{\mathcal{X}}(\bm{x}_0) \right)^2 \right]
+  = \text{Bias}_{\mathcal{X}}^2 \left[ \hat{\mathcal{M}}_P^{\mathcal{X}}(\bm{x}_0) \right] + \text{Var}_{\mathcal{X}} \left[ \hat{\mathcal{M}}_P^{\mathcal{X}}(\bm{x}_0) \right].
+\end{equation}
+The classical trade-off between the estimation bias
+\(\mathrm{Bias}_{\mathcal{X}}[\hat{\mathcal{M}}_P^{\mathcal{X}}(\bm{x}_0)] = \mathds{E}_{\mathcal{X}}[\hat{\mathcal{M}}_P^{\mathcal{X}}(\bm{x}_0)] - \mathcal{M}(\bm{x}_0)\)
+and the variance \(\mathrm{Var}_{\mathcal{X}}[\hat{\mathcal{M}}_P^{\mathcal{X}}(\bm{x}_0)]
+= \mathds{E}_{\mathcal{X}}[(\hat{\mathcal{M}}_P^{\mathcal{X}}(\bm{x}_0) - \mathds{E}_{\mathcal{X}}[\hat{\mathcal{M}}_P^{\mathcal{X}}(\bm{x}_0)])^2]\) has emerged here.
+\par % DISCUSSION
+The generalization error in \cref{eq:PCE:GeneralizationError} measures the inaccuracy of a single approximation in a weighted sense over the model input space.
+This is a quantity we would like to know once we have a metamodel at hand.
+In contrast, the errors in \cref{eq:PCE:AverageGeneralizationError,eq:PCE:ExpectedPredictionError}
+provide statistical information about the approximation method with respect to the sampling distribution of the experimental design.
+These are quantities whose minimization is targeted in the design of efficient metamodeling algorithms.
+\par % CROSS VALIDATION
+After the computation of several metamodels, e.g.\ of various orders and with different experimental designs, the ones that generalize poorly can be separated out in a validation step.
+This usually requires additional simulations which the metamodeling predictions can be checked against.
+In \cref{sec:JCP} a discussion of leave-one-out cross validation in the present linear context is found.
+It allows one to cross-validate the metamodeling procedure against points in the experimental design without further simulations.
+This can guide the practical computation and selection of such metamodels that satisfactorily generalize beyond the experimental design.
+
+\subsection{Relation to linear regression}
+% RELATION TO LINEAR REGRESSION
+It is interesting to note that the residual error minimization for function approximation is formally evocative of statistical linear regression \cite{Statistics:Su2012}.
+These two problems are different in nature, though.
+The function approximation problem deals with nonparametric approximations to completely unknown and possibly complex functions.
+It features an experimental design with random inputs and noise-free simulations.
+On the contrary, classical regression is concerned with simple models that are assumed to represent the truth and have a well-known parametric form.
+It is a statistical estimation problem involving fixed covariates and noisy observations.
+The linear statistical model is discussed in \cref{sec:Bayesian:InverseProblems:LinearRegression} later on.
+Under some standard assumptions related to the measurement errors, the maximum likelihood estimate indeed coincides with the least squares minimizer.
+Hence, the extremization objective and its solution are technically identical for both the function approximation and the parameter estimation problem.
+\par % BIASEDNESS
+However, other results from linear regression theory, e.g.\ statements regarding the unbiasedness of the estimator of the coefficient vector, cannot be transferred.
+Since this is often neglected, the latter thought shall be engrossed a bit.
+The bias of a statistical estimator is the difference between the expectation value of this estimator under its sampling distribution and the true value.
+Let us denote the expectation value of the OLS solution in \cref{eq:PCE:OrdinaryLeastSquares}
+over the population distribution of the experimental design by \(\mathds{E}_\mathcal{X}[\hat{\bm{\coeffM}}]\).
+With \cref{eq:PCE:DesignSystem} we immediately see that
+\begin{equation} \label{eq:PCE:CoefficientBias}
+  \mathds{E}_\mathcal{X}[\hat{\bm{\coeffM}}^{\mathcal{X}}]
+  = \mathds{E}_\mathcal{X}[(\bm{A}^\top \bm{A})^{-1} \bm{A}^\top \mathcal{Y}]
+  = \mathds{E}_\mathcal{X}[(\bm{A}^\top \bm{A})^{-1} \bm{A}^\top (\bm{A} \bm{\coeffM} + \bm{r}_P)]
+  = \bm{\coeffM} + \mathds{E}_\mathcal{X}[(\bm{A}^\top \bm{A})^{-1} \bm{A}^\top \bm{r}_P].
+\end{equation}
+Here, all quantities but the true projection coefficient \(\bm{\coeffM}\) depend on the design over which the expectation is taken.
+The corresponding index has been dropped for notational convenience.
+In the context of function approximation with a random experimental design, the bias of the OLS estimate \(\hat{\bm{\coeffM}}\) is thus given as
+\(\mathrm{Bias}_\mathcal{X}[\hat{\bm{\coeffM}}] = \mathds{E}_\mathcal{X}[\hat{\bm{\coeffM}}] - \bm{\coeffM} = \mathds{E}_\mathcal{X}[(\bm{A}^\top \bm{A})^{-1} \bm{A}^\top \bm{r}_P]\).
+It is dependent on the vector of residual errors \(\bm{r}_P = \mathcal{Y} - \bm{A} \bm{\coeffM}\) which is not quite the same as \(\bm{r}_{P,K} = \mathcal{Y} - \bm{A} \hat{\bm{\coeffM}}\).
+Thus the bias can only vanish asymptotically in the limit \(P \to \infty\) such that \(\mathds{E}[r_P^2(\bm{X})] \to 0\).
+For finite \(P < \infty\) it is zero only if it happens that
+\(\mathcal{M}(\bm{x}) = \mathcal{M}_P(\bm{x}) = \sum_{j=1}^P \coeffM_{j} \basisU_{j}(\bm{x}) \in \mathrm{span}(\{\basisU_{j}(\bm{x})\}_{j \leq P})\) for which one has \(\bm{r}_P = \bm{0}\).
+
+\subsection{Relation to Monte Carlo integration}
+% GRAMIAN MATRIX
+The matrix \(\bm{A}^\top \bm{A}\) in \cref{eq:PCE:DiscreteNormalEquations,eq:PCE:OrdinaryLeastSquares}
+plays a crucial role in least squares regression and its statistical design \cite{Statistics:Fedorov1997,Statistics:Pukelsheim2006}.
+It is the symmetric and positive-semidefinite \emph{Gramian matrix} of the columns of the design matrix \(\bm{A} = (\bm{A}_1,\bm{A}_2,\ldots,\bm{A}_P)\).
+For \(j,j^\prime = 1,\ldots,P\) the entries of the Gramian are \(\bm{A}_j^\top \bm{A}_{j^\prime}\).
+\par % EMPIRICAL ORTHOGONALITY
+If the columns of the design matrix are empirically orthogonal in the sense that for all \(j \neq j^\prime\) one has
+\(\bm{A}_j^\top \bm{A}_{j^\prime} = \sum_{k=1}^K \basisU_{j}(\bm{x}^{(k)}) \basisU_{j^\prime}(\bm{x}^{(k)}) = 0\),
+then the Gramian matrix becomes diagonal
+\begin{equation} \label{eq:PCE:GramianMatrix}
+  \bm{A}^\top \bm{A} = \begin{pmatrix}
+                         \bm{A}_1^\top \bm{A}_1 & \ldots & \bm{A}_1^\top \bm{A}_P \\
+                         \vdots & \ddots & \vdots \\
+                         \bm{A}_P^\top \bm{A}_1 & \ldots & \bm{A}_P^\top \bm{A}_P \\
+                       \end{pmatrix}
+                     = \begin{pmatrix}
+                         \sum_{k=1}^K \basisU^2_{1}(\bm{x}^{(k)}) & \ldots & 0 \\
+                         \vdots & \ddots & \vdots \\
+                         0 & \ldots & \sum_{k=1}^K \basisU^2_{P}(\bm{x}^{(k)}) \\
+                       \end{pmatrix}.
+\end{equation}
+For the components of \(\hat{\bm{\coeffM}} = (\bm{A}^\top \bm{A})^{-1} \bm{A}^\top \mathcal{Y}\) one then finds
+\(\hat{\coeffM}_j = \sum_{k=1}^K \basisU_{j}(\bm{x}^{(k)}) \mathcal{M}(\bm{x}^{(k)}) / \sum_{k=1}^K \basisU^2_{j}(\bm{x}^{(k)})\) for \(j = 1,\ldots,P\).
+% INDEPENDENT ESTIMATES
+This means that the coefficients are estimated independently from each other, in the sense that the estimate \(\hat{\coeffM}_j\) for a certain \(j\)
+does not at all depend on the inclusion of further terms \(\basisU_{j^\prime}(\bm{x})\) with \(j^\prime \neq j\).
+\par % MONTE CARLO INTEGRATION
+Moreover, in the case that the experimental design is randomized, this perfectly corresponds to the MC estimate of the orthogonal projection.
+Even for finite experimental designs with \(K < \infty\), a relation between least squares minimization
+and numerical integration is thus established in the event that empirical orthogonality is fulfilled.
+In the more general case the two procedures yield different results.

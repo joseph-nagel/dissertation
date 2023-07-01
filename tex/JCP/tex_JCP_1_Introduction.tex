@@ -1,0 +1,92 @@
+% BAYESIAN INFERENCE
+In view of inverse modeling \cite{Inversion:Tarantola2005,Inversion:Kaipio2005} and uncertainty quantification \cite{Uncertainty:Smith2014,Uncertainty:Sullivan2015},
+Bayesian inference establishes a convenient framework for the data analysis of engineering systems \cite{Bayesian:Hadidi2008,Bayesian:Beck2010,Bayesian:Yuen2011}.
+It adopts probability theory in order to represent, propagate and update epistemic parameter uncertainties.
+The prior distribution captures the uncertainty of unknown model parameters before the data are analyzed.
+A posterior is then constructed as an updated distribution that captures the remaining uncertainty after the data have been processed.
+The computation of this posterior is the primary task in Bayesian inference.
+\par % MARKOV CHAIN MONTE CARLO
+Some simplified statistical models admit closed-form expressions of the posterior density.
+Beyond these so-called conjugate cases,
+computational approaches either aim at evaluating expectation values under the posterior or drawing samples from it \cite{Bayesian:Evans1995}.
+This is usually accomplished with stochastic methods such as Markov chain Monte Carlo \cite{MCMC:Gilks1996,MCMC:Brooks2011}.
+Nowadays this class of techniques constitutes the mainstay of Bayesian computations.
+The posterior is explored by realizing an appropriate Markov chain over the prior support that exhibits the posterior as its long-run distribution.
+In turn, the obtained sample is used to empirically approximate the statistical quantities of interest.
+These include the characteristics of the posterior and the predictive distribution.
+% MCMC DEFICIENCES
+This way of proceeding suffers from some inherent deficiencies.
+The presence of sample autocorrelation and the absence of a convergence criterion cause severe practical problems.
+Moreover, Markov chain Monte Carlo typically requires a large number of serial forward model runs.
+Since in engineering applications even a single model run can be computationally taxing, this may be prohibitive.
+% MCMC ACCELERATION
+In the recent past, numerous enhancements have been proposed in order to accelerate Markov chain Monte Carlo for Bayesian inverse problems.
+This includes the implementation of more efficient sampling algorithms,
+e.g.\ transitional Markov chain Monte Carlo \cite{MCMC:Beck2002,MCMC:Ching2007} or Hamiltonian Monte Carlo \cite{MCMC:Cheung2009,MCMC:Boulkaibet2015,Nagel:JRUES2016},
+and the substitution of the forward model with an inexpensive metamodel,
+e.g.\ based on Gaussian process models \cite{Kriging:Higdon2004,Kriging:Higdon2015} or polynomial chaos expansions \cite{PCE:Marzouk2007,PCE:Marzouk2009:a,PCE:Marzouk2009:b}.
+Although these approaches promise significant speedups, they still inherit all principle shortcomings of sample-based posterior representations.
+\par % VARIATIONAL INFERENCE
+Unfortunately there are only few fundamental alternatives to stochastic sampling.
+Variational Bayesian inference establishes such an alternative where the posterior is sought through deterministic optimization \cite{Bayesian:Ormerod2010,Bayesian:Fox2012,Bayesian:Sun2013}.
+In particular, a member from a simple parametric family of probability densities is selected such that some distance to the posterior is minimized.
+In this regard, the Kullback-Leibler divergence is often chosen as a relative measure of the dissimilarity of two probability densities.
+The procedure commonly rests upon some simplifying independence assumptions.
+Variational methods are regarded as less computing intensive than Markov chain Monte Carlo, yet they are only approximate.
+They are prominently used in machine learning and computer science \cite{Bayesian:Jordan1999,Bayesian:Jaakkola2000},
+and since recently such methods are applied to inverse problems \cite{Bayesian:Chappell2009,Bayesian:Jin2010}, too.
+% OPTIMAL TRANSPORTATION
+A particularly interesting implementation of variational Bayesian inference has been proposed in \cite{Mapping:ElMoselhy2012}.
+The posterior is parametrized as a transformation of the prior density and can be computed based on the corresponding back-transformation.
+More specifically, a random variable transformation is sought in polynomial form
+such that the Kullback-Leibler divergence between the prior density and the back-transformed posterior density is minimized.
+This formulation is supported by arguments from optimal transport theory which also allows for a practical regularization of the problem.
+Finally, samples from the posterior distribution are obtained by independently sampling from the prior and applying the polynomial map.
+% MONOMIAL TAYLOR EXPANSIONS
+Another approach to certain Bayesian inverse problems has been recently devised in \cite{Bayesian:Schwab2012,Bayesian:Schillings2013}.
+Based on monomial Taylor expansions of the forward model and of the posterior density, the computation of expectation values under the posterior is tackled by sparse numerical quadrature.
+\par % SPECTRAL LIKELIHOOD EXPANSIONS
+In this paper we propose a novel approach to surrogate the posterior probability density in itself.
+The main idea is to decompose the likelihood function into a series of polynomials that are orthogonal with respect to the prior density.
+It is shown that all statistical quantities of interest can then be easily extracted from this spectral likelihood expansion.
+Emulators of the joint posterior density and its marginals are derived as the product of the prior,
+that functions as the reference density, and a linear combination of polynomials, that acts as an adjustment.
+In doing so, the model evidence simply emerges as the coefficient of the constant term in the expansion.
+Moreover, closed-form expressions for the first posterior moments in terms of the low-order expansion coefficients are given.
+The propagation of the posterior uncertainty through physical models can be easily accomplished based on a further postprocessing of the expansion coefficients.
+In this sense, spectral Bayesian inference is semi-analytic.
+% BASELINE CHANGE
+While the corrections required for an expansion of the posterior with respect to the prior as the reference density may be large,
+they can be small for an expansion around a properly chosen auxiliary density.
+A change of the reference density is therefore suggested in order to increase the efficiency of computing a posterior surrogate.
+% REGRESSION METHODS
+The devised formulation entirely avoids Markov chain Monte Carlo.
+Instead it draws on the machinery of spectral methods \cite{Math:Boyd2001,Math:Kopriva2009,Math:Shen2011} and approximation theory \cite{Math:Christensen2004,Math:Trigub2004,Math:Trefethen2013}.
+It is proposed to compute the expansion coefficients via linear least squares \cite{Statistics:Lawson1995,Statistics:Bjorck1996}.
+This allows one to make use of the wealth of statistical learning methods \cite{Statistics:Vapnik2000,Statistics:Hastie2009} that are designed for this type of problems.
+The approach features a natural convergence criterion and it is amenable to parallel computing.
+\par % SCOPE OF APPLICABILITY
+The scope of applicability of the proposed approach covers problems from Bayesian inference for which the likelihood function can be evaluated
+and for which polynomials can be constructed that are orthogonal with respect to the prior, possibly after a carefully chosen variable transformation.
+This excludes statistical models that involve intractable likelihoods \cite{Bayesian:Marin2012,Bayesian:Sunnaker2013}, i.e.\ the likelihood cannot be exactly evaluated.
+It also excludes improper prior distributions \cite{Bayesian:Taraldsen2010,Bayesian:Kitanidis2012}, i.e.\ the prior does not integrate to one or any finite value,
+and models with pathologic priors such as the Cauchy distribution for which the moments are not defined \cite{Bayesian:Gelman2008,Bayesian:Fuquene2009}.
+% HIERACHCICAL MODELS
+Many hierarchical Bayesian models \cite{Nagel:JAIS2015,Nagel:PEM2016} are not covered by the devised problem formulation.
+They are either based on conditional priors, which does not allow for orthogonal polynomials, or on integrated likelihoods, which can only be evaluated subject to noise.
+\par % GOAL OF THE PAPER
+Spectral likelihood expansions complement the existing array of Bayesian methods with a way of surrogating the posterior density directly.
+They have the potential to remedy at least some of the shortcomings of Markov chain Monte Carlo.
+Yet, their practical implementation poses challenges.
+Hence, the goal of this paper is to discuss and investigate the possibilities and limitations of the approach.
+% NUMERICAL DEMONSTRATIONS
+The method of spectral likelihood expansions is therefore applied to well-known calibration problems from classical statistics and inverse heat conduction.
+We restrict the analysis to low-dimensional problems.
+The final results are compared with corresponding results from Markov chain Monte Carlo simulations.
+\par % OUTLINE
+The manuscript is structured as follows.
+The principles of Bayesian inference are summarized in \cref{sec:JCP:Bayesian}.
+Surrogate forward modeling with polynomial chaos expansions is reviewed in \cref{sec:JCP:PCE}.
+After that, spectral likelihood expansions are introduced as an alternative approach to Bayesian inference in \cref{sec:JCP:SLE}.
+Two well-known Gaussian fitting examples and the identification of thermal properties of a composite material serve as numerical demonstrations in \cref{sec:JCP:Examples}.
+Finally, it is summarized and concluded in \cref{sec:JCP:Conclusion}.

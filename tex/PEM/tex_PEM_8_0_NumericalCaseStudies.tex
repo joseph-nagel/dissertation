@@ -1,0 +1,42 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% NUMERICAL CASE STUDIES %
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+In order to illustrate the power and versatility of the devised framework we conduct a selection of computer experiments.
+This shall be seen as a proof of concept and benchmark of the proposed methodology in the context of engineering applications.
+% FORWARD PROBLEM: MULTIPLE BEAMS
+A system of identically designed structural components functions as the basis for probing a range of experimental scenarios.
+Specifically we deal with an ensemble of simply supported beams that are tested in a series of three-point bending experiments.
+% INVERSE PROBLEMS UNDER UNCERTAINTY
+By multilevel analysis of measured beam deflections we highlight how different inferential goals, e.g.\ probabilistic inversion, residual calibration or optimal combination of information,
+can be achieved in the presence of material variability and uncertainties in the experimental setup.
+% DETERMINISTIC MODELING
+Keeping deterministic modeling simple and intuitive will allow us to focus on uncertainty quantification aspects that are the essential subject matter of this research.
+% COMPUTATIONAL OBSTACLES
+Incidentally we learn about the computational obstacles that must be overcome when aiming at ``real-world'' applications.
+\par % SECTION OUTLINE
+The forward problem will be shortly introduced in \cref{sec:PEM:CaseStudies:Beams}.
+Around this submodel, that covers the deterministic features of the system, Bayesian multilevel models will be built to capture uncertainty and variability.
+Probabilistic inversion, i.e.\ deducing the material variability throughout an ensemble of similar specimens, will be tackled in \cref{sec:PEM:CaseStudies:ProbInv}.
+The subsequent \cref{sec:PEM:CaseStudies:ResCal} will deal with residual model calibration.
+In \cref{sec:PEM:CaseStudies:AddPres} the impact of prescribed uncertainties in the test conditions will be investigated.
+In \cref{sec:PEM:CaseStudies:CombInf} borrowing strength will be utilized in order to ideally estimate the material characteristics of a single specimen by using information obtained from the other specimens.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Mechanical model} \label{sec:PEM:CaseStudies:Beams}
+\input{tex/PEM/tex_PEM_8_1_MechanicalModel}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Probabilistic inversion} \label{sec:PEM:CaseStudies:ProbInv}
+\input{tex/PEM/tex_PEM_8_2_ProbabilisticInversion}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Residual calibration} \label{sec:PEM:CaseStudies:ResCal}
+\input{tex/PEM/tex_PEM_8_3_ResidualCalibration}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Uncertain conditions} \label{sec:PEM:CaseStudies:AddPres}
+\input{tex/PEM/tex_PEM_8_4_AdditionalNuisance}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Borrowing strength} \label{sec:PEM:CaseStudies:CombInf}
+\input{tex/PEM/tex_PEM_8_5_BorrowingStrength}

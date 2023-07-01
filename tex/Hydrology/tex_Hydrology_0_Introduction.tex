@@ -1,0 +1,28 @@
+% HYDROLIGICAL MODEL CALIBRATION
+This chapter deals with the Bayesian calibration of a dynamical urban drainage simulator.
+The process-based simulation of water systems is typically expensive and yet highly uncertain \cite{Physics:Beven2012}.
+That is why hydrological model calibration is an extremely important and difficult task.
+% EMPLOYED TECHNIQUES
+We use a combination of advanced methods in order to estimate the unknown model parameters and to quantify the measurement and prediction errors.
+Principal component analysis is used for purposes of dimension reduction of the model outputs that constitute a whole times series.
+The accordingly reduced outputs are then metamodeled as a function of the unknowns based on sparse polynomial chaos expansions.
+Eventually the posterior distribution of the unknown parameters of the hydrological and the error model is sampled via Markov chain Monte Carlo.
+\par % HYDROLIGICAL SIMULATOR
+The process-oriented hydrological simulator predicts the outflow from a catchment area that receives rainfall.
+It has been developed at the Swiss Federal Institute of Aquatic Science and Technology (Eawag), where it was used in the PhD dissertation of D.\ Machac \cite{Hydro:Machac2015:PhD}.
+% AVAILABLE INFORMATION
+By courtesy of Eawag we have access to the results of roughly two thousand training runs of the simulator for a single rainfall event.
+Moreover, about six hundred measurements of the time-varying runoff at a single outlet during the event were made available.
+% BLACK-BOX SITUATION
+This describes a realistic black-box situation where the abovementioned hybridization of techniques for compression, metamodeling and calibration permits a synthesis of the supplied information.
+\par % ERRORS AND UNCERTAINTIES
+Measurement uncertainties and modeling errors are explicitly considered in two different Bayesian models.
+Parametric uncertainties in the hydrological inputs are the main focus of both models.
+They differ, however, in the degree of sophistication of how the inevitable deviation of the model predictions from the measurement data is represented.
+The first simple model only acknowledges independent measurement noise, while the second model also accounts for random error correlation and systematic model discrepancy.
+\par % OUTLINE
+The present chapter is organized as follows.
+A more detailed overview of the problem setup and the available information is provided in \cref{sec:Hydrology:ProblemSetup}.
+The construction of the hydrological emulator is described in \cref{sec:Hydrology:Metamodeling}.
+Bayesian parameter estimation and predictive model correction are performed in \cref{sec:Hydrology:BayesianCalibration}.
+Finally it is summarized and concluded in \cref{sec:Hydrology:DiscussionConclusion}.

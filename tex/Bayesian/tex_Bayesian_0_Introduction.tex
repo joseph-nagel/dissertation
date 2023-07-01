@@ -1,0 +1,38 @@
+% MOTIVATION
+The preceding chapter covered the issue of how parameter uncertainties impact on the model predictions.
+We now answer the reverse question of how measured output data can inform about the model parameters and reduce their uncertainty.
+Bayesian inference establishes a probabilistic framework that allows one to coherently quantify uncertainties with due regard to all available information.
+It is based on the transition of a prior into a posterior probability distribution reflecting the learning process.
+The prior and the posterior represent the state of knowledge or level of epistemic uncertainty before and after incorporating the experimental data.
+\par % INTRODUCTIONS
+Bayesian probability encompasses a whole range of philosophical attitudes, mathematical developments and computational tools for statistical data analysis.
+Even nowadays it is instructive and occasionally entertaining to have a look into the classical literature \cite{Bayesian:Jeffreys1961,Bayesian:DeFinetti1974}.
+Refreshingly original perspectives are also formulated in \cite{Bayesian:Jaynes2003,Bayesian:MacKay2003}.
+More technical expositions of Bayesian experiments are found in the lesser known textbook \cite{Bayesian:Florens1990}
+or in more contemporary introductions to mathematical statistics \cite{Statistics:Shao2003,Statistics:Keener2010}
+and its measure-theoretical foundations \cite{Statistics:Shorack2000,Statistics:Athreya2006}.
+The monograph \cite{Probability:Rao2005} exclusively addresses conditional distributions that are of particular importance in Bayesian inference.
+Modern introductions strongly emphasize practical and computational aspects \cite{Bayesian:Gelman2014:3rd,Bayesian:McElreath2016}.
+\par % APPLICATIONS
+The popularity of the Bayesian approach is explained by its power to quantify and reduce uncertainties in complex problems.
+Parameter estimation \cite{Inversion:Aster2012,Inversion:Sun2015} and data assimilation \cite{Bayesian:Reich2015,Bayesian:Law2015} are a few prototypical tasks.
+They are important for applications in social \cite{Bayesian:Jackman2009,Bayesian:Gill2015}, physical \cite{Bayesian:Linden2014,Bayesian:Andreon2015}
+and engineering sciences \cite{Bayesian:Yuen2010:a,Bayesian:Nichols2016}.
+% COMPLEX PROBLEMS
+Complex problems, where uncertainty \cite{Multilevel:Wu2015,Multilevel:Behmanesh2016,Multilevel:Mullins2016} and physical modeling
+\cite{Bayesian:Sankararaman2015,Bayesian:Li2016} take place at multiple system levels, can be solved with Bayesian methods.
+Interesting examples can be found in \cref{sec:JAIS,sec:ICASP,sec:Hydrology} of the thesis.
+\par % PROBABILISTIC NUMERICS
+For the sake of completeness it is remarked that Bayesian probability is not limited to statistical problems only.
+Another trendy application is indeed probabilistic numerics \cite{Bayesian:Diaconis1988,BayesianOHagan1992}.
+Numerical algorithms can be endowed with a probabilistic interpretation in a way that allows one to quantify the confidence in the computed solutions \cite{Bayesian:Hennig2015:b}.
+In this regard, Bayesian quadrature \cite{Bayesian:OHagan1991,Bayesian:Kennedy1998} itself is applicable to Bayesian computations \cite{Bayesian:Osborne2012,Bayesian:Briol2015}.
+\par % OVERVIEW
+This introductory chapter on Bayesian inference is structured in the following way.
+The foundations of statistical modeling are introduced in \cref{sec:Bayesian:LikelihoodFunction,sec:Bayesian:PriorDistribution},
+where the likelihood function and the prior distribution are discussed.
+Inference based on the posterior is subsequently explained in \cref{sec:Bayesian:PosteriorDistribution}.
+The question of the model evidence and some of its ramifications are dealt with in \cref{sec:Bayesian:ModelEvidence}.
+Some practical issues related to the model parametrization are expounded in \cref{sec:Bayesian:ModelParametrization}.
+Bayesian inverse problems are addressed afterwards in \cref{sec:Bayesian:InverseProblems}.
+The numerical computation of the posterior distribution is dissected in \cref{sec:Bayesian:BayesianComputations}.

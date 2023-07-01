@@ -1,0 +1,32 @@
+% INTRODUCTION
+This chapter provides an introduction to and demonstration of Bayesian inference via transport maps.
+Bayesian updating is first recast as a random variable transformation and then solved as an optimization problem.
+The latter involves an information-theoretic optimality criterion.
+In particular, the relative entropy of the back-transformed posterior from the prior is minimized.
+After posing the problem that way, it becomes regularized in the framework of optimal transportation theory.
+\par % YOUSSEF MARZOUK
+The transport map--based formulation was originally introduced in \cite{Mapping:ElMoselhy2012}.
+A nice overview of the optimal transportation of probability measures for purposes of Bayesian inference is given in \cite{Mapping:Marzouk2016}.
+% SEBASTIAN REICH
+Similar ideas had also emerged in the context of sequential data assimilation, an overview of which can be found in \cite{Mapping:Reich2013:b,Bayesian:VanLeeuwen2015}.
+% BAYESIAN COMPUTING
+Transformation-based inference joins the ranks of the Bayesian methods reviewed in \cref{sec:Bayesian:BayesianComputations}.
+It can be seen as a special case of variational Bayesian inference in \cref{sec:Bayesian:BayesianComputations:Variational},
+where certain prior transformations constitute the parametric family of candidate distributions.
+Beyond that, it shares commonalities with spectral Bayesian inference as presented in \cref{sec:JCP}.
+\par % BAYESIAN IHCP
+A simple inverse heat conduction problem is used for demonstration purposes.
+Unknown thermal conductivities of a composite material are indirectly inferred from measurements of the temperature that are taken close to the boundary.
+The prior is transformed into the corresponding posterior distribution.
+Traditional Markov chain Monte Carlo sampling serves as the reference solution.
+% INTERNATIONAL SYMPOSIUM (SRES)
+Parts of this chapter were also presented at the International Symposium on Reliability of Engineering Systems
+that was held on October 15--17, 2015 in Hangzhou, China \cite{Nagel:SRES2015:Pres}.
+\par % OUTLOOK
+The tutorial on Bayesian inference as a random variable transformation is structured as follows.
+In \cref{sec:Transport:PriorTransformations} the optimal transportation from the prior to the posterior is investigated.
+In \cref{sec:Transport:VariationalFormulation} a variational problem is formulated that allows for a numerical computation of the posterior.
+Subsequently, \cref{sec:Transport:PracticalComputation} covers practical issues such as the parametrization of the map and the regularization of its computation.
+In \cref{sec:Transport:ComparisonToSLEs} the pros and cons of the approach are weighed and compared to spectral Bayesian inference that was devised previously.
+In \cref{sec:Transport:NumericalExperiment} an inverse heat conduction problem is solved as an illustrative example of transformation-based Bayesian inference.
+Finally, \cref{sec:Transport:SummaryConclusion} contains some concluding remarks.

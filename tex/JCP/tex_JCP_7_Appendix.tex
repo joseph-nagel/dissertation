@@ -1,0 +1,52 @@
+\section{Univariate polynomials} \label[subappsec]{sec:JCP:App:Polynomials}
+% UNIVARIATE POLYNOMIALS
+The main properties of two classical orthogonal families of polynomials were shortly summarized in \cref{tab:JCP:PCE:UnivariateFamilies},
+i.e.\ the domain of definition, the associated weight function and the norm.
+The first six members of these univariate Hermite polynomials \(\{H_\alpha\}_{\alpha \in \mathds{N}}\)
+and Legendre polynomials \(\{P_\alpha\}_{\alpha \in \mathds{N}}\) are listed in \cref{tab:JCP:App:Polynomials}.
+Higher order members can be defined via recursive or differential relations.
+These polynomials can be used for the construction of the multivariate polynomial basis \(\{\basis_\alpha\}_{\alpha \in \mathds{N}}\) in \cref{eq:JCP:PCE:MultivariatePolynomial}.
+Note that this orthonormal basis is normalized via \(\basis_\alpha = H_\alpha / \sqrt{\alpha !}\) or \(\basis_\alpha = P_\alpha / \sqrt{1/(2 \alpha + 1)}\).
+% TABLE: LOW-ORDER POLYNOMIALS
+\begin{table}[htbp]
+  \caption[Low-order polynomials]{Low-order polynomials.}
+  \label{tab:JCP:App:Polynomials}
+  \centering
+  \begin{tabular}{rll}
+    \toprule
+    \(\alpha\) & \(H_\alpha(x)\), \(x \in \mathds{R}\) & \(P_\alpha(x)\), \(x \in [-1,1]\) \\
+    \midrule
+    \(0\) & \(1\)                 & \(1\) \\
+    \(1\) & \(x\)                 & \(x\) \\
+    \(2\) & \(x^2 - 1\)           & \((3x^2 - 1) / 2\) \\
+    \(3\) & \(x^3 - 3x\)          & \((5x^3 - 3x) / 2\) \\
+    \(4\) & \(x^4 - 6x^2 + 3\)    & \((35x^4 - 30x^2 + 3) / 8\) \\
+    \(5\) & \(x^5 - 10x^3 + 15x\) & \((63x^5 - 70x^3 + 15x) / 8\) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Low-order QoIs} \label[subappsec]{sec:JCP:App:QoIs}
+% LOW-ORDER QoIs
+The representation of six low-order QoIs in terms of the normalized Hermite and Legendre polynomials is given in \cref{tab:JCP:App:QoI} below.
+Those expansions can be used in order to compute the first posterior moments, e.g.\ as shown in \cref{eq:JCP:SLE:PosteriorMargMean,eq:JCP:SLE:PosteriorMargVariance,eq:JCP:SLE:PosteriorCovariance}.
+Note that the representations in the orthonormal bases directly follow from a change of basis and the substitutions
+\(H_\alpha = \sqrt{\alpha !} \basis_\alpha\) and \(P_\alpha = \sqrt{1/(2 \alpha + 1)} \basis_\alpha\).
+% TABLE: QoI-REPRESENTATIONS
+\begin{table}[htbp]
+  \caption[Low-order QoIs]{Low-order QoIs.}
+  \label{tab:JCP:App:QoI}
+  \centering
+    \begin{tabular}{rll}
+      \toprule
+      QoI & Hermite expansion & Legendre expansion \\
+      \midrule
+      \(1\phantom{^{2}}\) & \(\basis_0\)                                               & \(\basis_0\) \\
+      \(x\phantom{^{2}}\) & \(\basis_1\)                                               & \(\basis_1 / \sqrt{3}\) \\
+      \(x^2\)             & \(\sqrt{2} \basis_2 + \basis_0\)                           & \((2\basis_2 / \sqrt{5} + \basis_0) / 3\) \\
+      \(x^3\)             & \(\sqrt{6} \basis_3 + 3\basis_1\)                          & \((2\basis_3 / \sqrt{7} + 3\basis_1 / \sqrt{3}) / 5\) \\
+      \(x^4\)             & \(2\sqrt{6} \basis_4 + 6\sqrt{2} \basis_2 + 3\basis_0\)    & \((8\basis_4 / 3 + 20\basis_2 / \sqrt{5} + 7\basis_0) / 35\) \\
+      \(x^5\)             & \(2\sqrt{30} \basis_5 + 10\sqrt{6} \basis_3 + 15\basis_1\) & \((8\basis_5 / \sqrt{11} + 28\basis_3 / \sqrt{7} + 27\basis_1 / \sqrt{3}) / 63\) \\
+      \bottomrule
+    \end{tabular}
+\end{table}

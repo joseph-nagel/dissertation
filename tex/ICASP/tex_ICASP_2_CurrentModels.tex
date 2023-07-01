@@ -1,0 +1,26 @@
+% EUROCODE
+In \cite{Standard:Eurocode6:1-1} it is tried to relate the compressive strength of masonry to the resistances of its brick and mortar components.
+The relationship is realized as a power function
+\begin{equation} \label{eq:ICASP:EmpiricalRelation}
+  f_w = k^\prime f_b^{\alpha^\prime} f_m^{\beta^\prime}.
+\end{equation} 
+On the one hand, the compressive strength of masonry is summarized by the characteristic value \(f_w\), i.e.\ a \(\unit[5]{\%}\)-quantile.
+On the other hand, \(f_b\) denotes the normalized mean compressive strength of the units and \(f_m\) denotes the mean compressive strength of the mortar. 
+Estimates of the constants \((k^\prime,\alpha^\prime,\beta^\prime)\) are given for different types of masonry.
+% JCSS
+In \cite{Standard:JCSSProbabilisticCode} the empirical relation \cref{eq:ICASP:EmpiricalRelation} is interpreted similarly.
+Here \(f_w\), \(f_b\) and \(f_m\) represent the mean values of the corresponding distributions.
+Different prior estimates of the coefficients \((k^\prime,\alpha^\prime,\beta^\prime)\) are provided.
+% ALPHA + BETA = 1
+The coefficients are often set so that they (approximately) satisfy \(\alpha^\prime + \beta^\prime = 1\).
+This choice can be justified for reasons of the physical dimension in \cref{eq:ICASP:EmpiricalRelation}.
+\par % EXTENSIONS
+Ensuing from these semi-probabilistic models, a variety of extensions have been proposed in the literature.
+% PROBABILISTIC EXTENSIONS
+There are probabilistic reinterpretations of \cref{eq:ICASP:EmpiricalRelation} based on lognormal distributions \cite{Masonry:Schueremans2006,Masonry:Sykora2010,Masonry:Sykora2014:a,Masonry:Sykora2014:b}.
+In other studies the model uncertainty of \cref{eq:ICASP:EmpiricalRelation} is quantified \cite{Masonry:Dymiotis2002,Masonry:Glowienka2006}.
+A conjugate Bayesian updating approach based on Gaussian distributions is presented in \cite{Masonry:Mojsilovic2009}.
+Another idea is to establish a connection between the compressive strengths of masonry and its components via artificial neural networks \cite{Masonry:GarzonRoca2013}.
+\par % CRITICISM
+These previous approaches suffer from the fact that they either do not clearly distinguish between epistemic and aleatory shares of uncertainty or they neglect material heterogeneity.
+Fitting the parameters of a probabilistic extension of \cref{eq:ICASP:EmpiricalRelation} is a problem that has hardly been satisfactorily solved as yet.

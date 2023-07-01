@@ -1,0 +1,365 @@
+%\RequirePackage[l2tabu,orthodox]{nag}                                                          % warns against incorrect usage
+\documentclass[a4paper,10pt,twoside]{book}                                                      % [draft]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GENERAL
+
+% GEOMETRY
+\usepackage{geometry}                                                                           % [showframe]
+\geometry{left=2cm,right=2cm,top=2.5cm,bottom=2.5cm}                                            % sets margins individually
+
+% LANGUAGE & ENCODING
+\usepackage[english]{babel}                                                                     % language
+\usepackage[utf8]{inputenc}                                                                     % input text encoding
+\usepackage[T1]{fontenc}                                                                        % output encoding
+
+% FONT
+\usepackage{lmodern}                                                                            % Latin Modern
+
+% LINE SPACING
+%\linespread{1.3}
+
+% AMSMATH
+\usepackage{amsmath}                                                                            % improved mathematical typesetting
+\usepackage{amstext}                                                                            % text in mathematics mode
+\usepackage{amsfonts}                                                                           % extended set of fonts
+\usepackage{amssymb}                                                                            % extended symbol collection
+\usepackage[fixamsmath]{mathtools}                                                              % extension to amsmath
+
+% MISCELLANEOUS
+\usepackage{bm}                                                                                 % \bm{} for bold math (greek) symbols, alternatives: \mathbf{}, \boldsymbol{}, \pmb{}
+\usepackage{dsfont}                                                                             % \mathds{N}, \mathds{R}, \mathds{1}
+\usepackage{units}                                                                              % \unit[1]{mm}, \unit[1]{ly}
+\usepackage{nicefrac}                                                                           % \nicefrac{nominator}{denominator}, also included in the package units
+\usepackage{nth}                                                                                % \nth{1}, \nth{2}
+
+% SYMBOLS
+\usepackage{textcomp}                                                                           % \textcopyright
+
+% FIGURES, TABLES & LISTS
+\usepackage{graphicx}                                                                           % graphics package
+\usepackage[svgnames]{xcolor}                                                                   % advanced version of colors
+\usepackage{enumitem}                                                                           % control layouts of itemize etc.
+\usepackage{booktabs}                                                                           % nice tables
+\usepackage{multirow}                                                                           % cells that span multiple rows
+\usepackage{tabularx}                                                                           % fixed tabular widths, e.g. full page width
+\usepackage{array}                                                                              % customizable column types
+\usepackage{calc}                                                                               % allows for simple calculation for lengths
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% SETTINGS
+
+% GRAPHICS PATH
+\graphicspath{{fig/}{fig/Uncertainty/}{fig/Bayesian/}{fig/Symbols/}{fig/PEM/}{fig/JRUES/}{fig/JAIS/}{fig/ICASP/}{fig/JCP/}{fig/Transport/}{fig/Hydrology/}}
+
+% MACROS
+\newcommand{\perfect}[1]{\tilde{#1}}                    % perfect data                          % Probabilistic Engineering Mechanics
+\newcommand{\distparam}[1][\:\!]{;{#1}}                 % distribution parameter
+\newcommand{\cond}[1][\:\!]{{#1}|{#1}}                  % conditioning
+\newcommand{\unitless}{\;\,}                            % [unitless] number
+\newcommand{\tuple}[1]{\langle{#1}\rangle}              % sequence/tuple
+\newcommand{\analyzed}{i_0}                             % QoI in borrowing strength
+\newcommand{\notanalyzed}{\neq i_0}                     % nuisance in borrowing strength
+\newcommand{\erroneous}[1]{{#1}^\approx}                % erroneous condition
+\newcommand{\further}[1]{{#1}^\prime}                   % future experiments
+\newcommand{\without}{\sim}                             % exclusion                             % Journal of Computational Physics
+\newcommand{\coeffM}{a}                                 % forward model
+\newcommand{\coeffL}{b}                                 % likelihood
+\newcommand{\coeffH}{c}                                 % general QoI
+\newcommand{\coeffMu}{d}                                % mean value term
+\newcommand{\coeffVar}{e}                               % (co)variance term
+\newcommand{\basis}{\Psi}                               % normalized basis
+\newcommand{\basisU}{\psi}                              % unnormalized basis
+\newcommand{\scale}{Z}                                  % model evidence
+\newcommand{\dimParam}{M}                               % dimension of the unknowns
+\newcommand{\dimData}{N}                                % dimension of the data
+\newcommand{\auxQuantity}{\mathcal{G}}                  % auxiliary quantity
+\newcommand{\newBase}{g}                                % auxiliary density (baseline)
+\newcommand{\coeffBaseL}{b^{g}}                         % likelihood coefficients (baseline)
+\newcommand{\coeffBaseH}{c^{g}}                         % general QoI coefficients (baseline)
+\newcommand{\basisBase}{\Psi^{g}}                       % normalized basis (baseline)
+\newcommand{\varapprox}{q}                              % posterior approximation               % variational inference
+\newcommand{\map}{T}                                    % transform map
+\newcommand{\dimControl}{D}                             % dimension of experimental conditions  % inverse modeling
+\newcommand{\PublishedAs}[1]{\vspace{-2.5ex}\noindent\textcolor{black}{Original publication\\[1ex]{#1}}\vspace{2.5ex}}
+
+% LENGTHS
+\newlength{\PEMdagHeight}       \setlength{\PEMdagHeight}{5.5cm}                                % Probabilistic Engineering Mechanics
+\newlength{\PEMdagWidth}        \setlength{\PEMdagWidth}{4.5cm}
+\newlength{\PEMfigHeight}       \setlength{\PEMfigHeight}{4.5cm}
+\newlength{\PEMfigWidth}        \setlength{\PEMfigWidth}{8cm}
+\newlength{\PEMbeamWidth}       \setlength{\PEMbeamWidth}{7cm}
+\newlength{\JRUESdagWidth}      \setlength{\JRUESdagWidth}{5cm}                                 % Journal of Risk and Uncertainty in Engineering Systems
+\newlength{\JRUESdagHeight}     \setlength{\JRUESdagHeight}{4cm}
+\newlength{\JRUESfigWidth}      \setlength{\JRUESfigWidth}{7.7cm}
+\newlength{\JRUESleapWidth}     \setlength{\JRUESleapWidth}{12cm}
+\newlength{\JRUESbeamWidth}     \setlength{\JRUESbeamWidth}{7.5cm}
+\newlength{\JAISdagHeight}      \setlength{\JAISdagHeight}{5.5cm}                               % Journal of Aerospace Information Systems
+\newlength{\JAISfigWidth}       \setlength{\JAISfigWidth}{\textwidth}
+\newlength{\ICASPdagWidth}      \setlength{\ICASPdagWidth}{6.1cm}                               % International Conference on Applications of Statistics and Probability in Civil Engineering
+\newlength{\ICASPfigWidth}      \setlength{\ICASPfigWidth}{9.4cm}
+\newlength{\ICASPphotoHeight}   \setlength{\ICASPphotoHeight}{7.6cm}
+\newlength{\JCPfigHeight}       \setlength{\JCPfigHeight}{5.2cm}                                % Journal of Computational Physics
+\newlength{\JCPfigWidth}        \setlength{\JCPfigWidth}{7.7cm}
+\newlength{\JCPfemWidth}        \setlength{\JCPfemWidth}{7.2cm}
+\newlength{\JCPsubWidth}        \setlength{\JCPsubWidth}{0.49\textwidth}
+\newlength{\MAPsubWidth}        \setlength{\MAPsubWidth}{0.49\textwidth}                        % Optimal transport maps
+\newlength{\MAPfigHeight}       \setlength{\MAPfigHeight}{5.2cm}
+\newlength{\MAPfemHeight}       \setlength{\MAPfemHeight}{6.5cm}
+\newlength{\HYDROsubWidth}      \setlength{\HYDROsubWidth}{0.49\textwidth}                      % Hydrological model calibration
+\newlength{\HYDROfigHeight}     \setlength{\HYDROfigHeight}{5.2cm}
+\newlength{\HYDROmapHeight}     \setlength{\HYDROmapHeight}{10.2cm}
+
+% COLORS
+\definecolor{ETH1}{RGB}{31,64,122}                      % blue                                  % headings
+\definecolor{ETH2}{RGB}{60,90,15}                       % green                                 % hyperlinks to references
+\definecolor{ETH3}{RGB}{0,105,180}                      % light blue
+\definecolor{ETH4}{RGB}{114,121,28}                     % light green
+\definecolor{ETH5}{RGB}{145,5,106}                      % magenta                               % online links
+\definecolor{ETH6}{RGB}{111,111,110}                    % gray                                  % header/footer
+\definecolor{ETH7}{RGB}{168,50,45}                      % red                                   % hyperlinks to equations
+\definecolor{ETH8}{RGB}{0,122,146}                      % cyan
+\definecolor{ETH9}{RGB}{149,96,19}                      % orange
+%\definecolor{themegray}{RGB}{77,77,77}                 % custom gray                           % beamer theme
+
+% ERRORS & WARNINGS
+% \allowbreak's in tex_PEM_2_BayesianMultilevelModeling.tex, tex_PEM_8_3_ResidualCalibration.tex and tex_JAIS_7_PartialDataAugmentation.tex
+\pdfsuppresswarningpagegroup=1                                                                  % suppress PDF page group warnings
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FORMATTING
+
+% MICROTYPE
+\usepackage{microtype}                                                                          % typographical refinements
+
+% INDENTFIRST
+\usepackage{indentfirst}                                                                        % indents first paragraph in new section
+
+% APPENDIX
+\usepackage{appendix}                                                                           % sub-appendices
+
+% TOCLOFT
+\usepackage[titles]{tocloft}                                                                    % table of contents, list of figures/tables
+\cftpagenumbersoff{part}                                                                        % do not show/link page numbers of parts
+\setlength{\cftchapnumwidth}{\cftchapnumwidth+0.35em}                                           % add space after the chapter numbers
+\setlength{\cftsecindent}{\cftsecindent+0.35em}                                                 % adjust indentation of section numbers
+%\setlength{\cftsecnumwidth}{\cftsecnumwidth+0.05em}                                            % add space after the section numbers
+%\renewcommand{\cftchapleader}{\cftsecleader}                                                   % dots for chapters
+%\renewcommand{\cftfigdotsep}{\cftnodots}                                                       % no dots for figures
+%\renewcommand{\cfttabdotsep}{\cftnodots}                                                       % no dots for tables
+
+% SECTSTY
+\setcounter{secnumdepth}{4}                                                                     % subsubsubsections (not belonging to sectsty)
+\usepackage{sectsty}                                                                            % control section headings (titlesec does not work well with biblatex)
+\allsectionsfont{\color{ETH1}}                                                                  % colored headings (prevents two underboxes on pages 93 and 138 for unknown reasons)
+
+% CAPTIONS
+\usepackage[font=small]{caption}                                                                % customized captions for floating environments
+\usepackage[labelformat=simple,subrefformat=simple,hypcap=true]{subcaption}                     % fix the reference to subfigures, does not work with subfigure
+\renewcommand\thesubfigure{(\alph{subfigure})}                                                  % add parenthesis around subfigure references
+
+% FANCYHDR
+\usepackage{fancyhdr}                                                                           % header/footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{\nouppercase{\leftmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}                                                 % no chapter number shown in header
+
+% PAGESTYLES
+\usepackage{emptypage}                                                                          % empty pages have no header
+\fancypagestyle{plain}{                                                                         % consistent plain page numbers (first page of part/chapter)
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+\fancypagestyle{empty}{                                                                         % consistent empty page numbers (intentionally blank page after chapter)
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+\fancypagestyle{allempty}{                                                                      % really empty pages without page numbers
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+% COLORED HEADER & FOOTER
+\usepackage{etoolbox}
+\makeatletter                                                                                   % colored headers/footers
+\patchcmd{\f@nch@head}{\rlap}{\color{ETH6}\rlap}{}{}
+\patchcmd{\headrule}{\hrule}{\color{ETH6}\hrule}{}{}
+\patchcmd{\f@nch@foot}{\rlap}{\color{ETH6}\rlap}{}{}
+\patchcmd{\footrule}{\hrule}{\color{ETH6}\hrule}{}{}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY
+
+% BIBLATEX
+\usepackage{csquotes}                                                                           % context sensitive quotations
+\usepackage{xpatch}                                                                             % recommended to use with biblatex
+\usepackage[
+backend = biber,                                                                                % biber / bibtex
+style = numeric-comp,                                                                           % numeric and compressed citations
+sorting = none,                                                                                 % do not sort, entries in citation order
+isbn = false,                                                                                   % do not print isbn and issn fields
+url = false,                                                                                    % do not print url field
+doi = true,                                                                                     % print doi field
+eprint = true,                                                                                  % print eprint information, e.g. arxiv
+backref = false,                                                                                % do not print back-references
+maxnames = 99,                                                                                  % maximum number of listed names
+giveninits = true,                                                                              % print only initials of author names
+defernumbers = true,                                                                            % related to numbering and sub-bibliographies
+dateabbrev = false,                                                                             % print full dates
+]{biblatex}                                                                                     % not compatible with titlesec
+\addbibresource{bib/bib_JournalFullnames.bib}           % full or abbreviated journal names
+\addbibresource{bib/bib_Bayesian.bib}                   % Bayesian inference
+\addbibresource{bib/bib_Computing.bib}                  % scientific computing
+\addbibresource{bib/bib_Inversion.bib}                  % inverse problems
+\addbibresource{bib/bib_Kriging.bib}                    % Gaussian process models
+\addbibresource{bib/bib_Mathematics.bib}                % mathematics
+\addbibresource{bib/bib_MCMC.bib}                       % Markov chain Monte Carlo sampling
+\addbibresource{bib/bib_ML.bib}                         % machine learning
+\addbibresource{bib/bib_Multilevel.bib}                 % multilevel and hierarchical models
+\addbibresource{bib/bib_Nagel.bib}                      % my own publications
+\addbibresource{bib/bib_Optimization.bib}               % mathematical optimization
+\addbibresource{bib/bib_PCE.bib}                        % polynomial chaos expansions
+\addbibresource{bib/bib_Physics.bib}                    % physics
+\addbibresource{bib/bib_Probability.bib}                % probability theory
+\addbibresource{bib/bib_Projects.bib}                   % PhD projects
+\addbibresource{bib/bib_Standards.bib}                  % standards
+\addbibresource{bib/bib_Statistics.bib}                 % statistics
+\addbibresource{bib/bib_Transport.bib}                  % optimal transportation theory
+\addbibresource{bib/bib_Uncertainty.bib}                % uncertainty quantification
+%\addbibresource{Bibliography.bib}                      % all cited references
+\defbibheading{subsubbibliography}[\refname]{\subsection{#1}}                                   % subsubbibliography
+
+% DOI LINKS
+\DeclareFieldFormat{doi}{%                                                                      % from /usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.def
+  \mkbibacro{DOI}\addcolon\space
+  \ifhyperref
+    {\href{https://doi.org/#1}{\nolinkurl{#1}}}                                                 % new Crossref DOI display guidelines
+    {\nolinkurl{#1}}}
+
+% FULLCITE
+%\DeclareCiteCommand{\fullcite}                                                                 % from /usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.def
+%  {\usebibmacro{prenote}}
+%  {\usedriver
+%     {\DeclareNameAlias{sortname}{default}}
+%     {\thefield{entrytype}}\finentrypunct}                                                     % add final period after DOI field for \fullcite
+%  {\multicitedelim}
+%  {\usebibmacro{postnote}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% REFERENCING
+
+% BOOMARK
+\usepackage{bookmark}                                                                           % bookmarks
+
+% HYPERREF
+\usepackage{hyperref}                                                                           % hyperlinks
+\hypersetup{
+pdftitle = {Bayesian techniques for inverse uncertainty quantification},                        % title
+pdfauthor = {Joseph Benjamin Nagel},                                                            % author(s)
+pdfsubject = {PhD dissertation},                                                                % subject
+pdfkeywords = {Bayesian inference, uncertainty quantification, inverse problems},               % keywords (hierarchical modeling, Markov chain Monte Carlo)
+colorlinks = true,                                                                              % false: boxed links, true: colored links
+%allcolors = gray,                                                                              % all links
+linkcolor = ETH7,                                                                               % internal links
+citecolor = ETH2,                                                                               % links to bibliography
+urlcolor = ETH5,                                                                                % external links
+filecolor = ETH8,                                                                               % links to files
+linktoc = page,                                                                                 % only pagenumber becomes link
+}
+
+% CLEVEREF
+\usepackage[capitalize]{cleveref}                                                               % Eq., Fig., Table, Section, has to be loaded after hyperref
+\creflabelformat{equation}{#2(#1)#3}                                                            % hyperlinks covers the parenthesis around equation
+\crefrangelabelformat{equation}{#3(#1)#4 to #5(#2)#6}                                           % multiple references
+\labelcrefformat{subequation}{#2(#1)#3}                                                         % the same for subequations
+\labelcrefrangeformat{subequation}{#3(#1)#4 to #5(#2)#6}                                        % mutiple references
+\crefname{subappsec}{Appendix}{Appendices}                                                      % references to sub-appendices
+
+% AUTONUM
+%\usepackage{autonum}                                                                           % only referenced equations are numbered, bibtex not biber, should be loaded after cleveref
+
+\begin{document}
+
+\frontmatter
+
+\input{tex/tex_00_0_Titlepage_Blue}                                                             % \par changes the linespacing of the preceding paragraph
+
+\null\thispagestyle{allempty}                                                                   % completely empty second page
+
+\chapter*{Abstract}
+%\addcontentsline{toc}{chapter}{Abstract}
+\input{tex/tex_00_1_Abstract}
+
+{\renewcommand{\cleardoublepage}{} \chapter*{Zusammenfassung}}                                  % {\let\cleardoublepage\relax \chapter*{Zusammenfassung}}
+\input{tex/tex_00_2_Zusammenfassung}
+
+\renewcommand{\contentsname}{Table of contents}
+\setcounter{tocdepth}{1}
+\tableofcontents
+
+%\renewcommand{\listfigurename}{List of figures}
+%\listoffigures
+%\addcontentsline{toc}{chapter}{\listfigurename}
+
+%\renewcommand{\listtablename}{List of tables}
+%\listoftables
+%\addcontentsline{toc}{chapter}{\listtablename}
+
+\mainmatter
+
+\chapter{Overview}
+\input{tex/tex_01_Overview}
+
+\part{Introduction} \label{sec:Introduction}
+
+\chapter{Uncertainty quantification} \label{sec:Uncertainty}
+\input{tex/tex_02_Uncertainty}
+
+\chapter{Bayesian inference} \label{sec:Bayesian}
+\input{tex/tex_03_Bayesian}
+
+\part{Published papers} \label{sec:Published}
+
+\chapter{Multilevel uncertainty quantification in Bayesian inverse problems} \label{sec:PEM}
+\PublishedAs{\fullcite{Nagel:PEM2016}}
+\input{tex/tex_04_PEM}
+
+\chapter{Hamiltonian Monte Carlo in hierarchical inverse problems} \label{sec:JRUES}
+\PublishedAs{\fullcite{Nagel:JRUES2016}}
+\input{tex/tex_05_JRUES}
+
+\chapter{Bayesian multilevel model calibration with perfect data} \label{sec:JAIS}
+\PublishedAs{\fullcite{Nagel:JAIS2015}}
+\input{tex/tex_06_JAIS}
+
+\chapter{Bayesian assessment of structural masonry} \label{sec:ICASP}
+\PublishedAs{\fullcite{Nagel:ICASP2015:Proc}}
+\input{tex/tex_07_ICASP}
+
+\chapter{Spectral likelihood expansions for Bayesian inference} \label{sec:JCP}
+\PublishedAs{\fullcite{Nagel:JCP2016}}
+\input{tex/tex_08_JCP}
+
+\part{Further work} \label{sec:Further}
+
+\chapter{Bayesian inference as a random variable transformation} \label{sec:Transport}
+\input{tex/tex_09_Transport}
+
+\chapter{Hydrological black-box model calibration} \label{sec:Hydrology}
+\input{tex/tex_10_Hydrology}
+
+\bookmarksetup{startatroot}                                                                     % start PDF bookmarks at the root level again
+\addtocontents{toc}{\vspace{\cftbeforepartskip}\vspace{-\cftbeforechapskip}}                    % add space in the table of contents
+\chapter{Conclusion}
+\input{tex/tex_11_Conclusion}
+
+%\appendix                                                                                      % appendices
+
+%\backmatter                                                                                    % bibliography, index
+
+%\clearpage\null\thispagestyle{allempty}                                                        % completely empty last page
+
+\end{document}

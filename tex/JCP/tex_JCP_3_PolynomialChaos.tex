@@ -1,0 +1,313 @@
+% METAMODELING
+In the analysis of engineering systems it has become a widespread practice to substitute expensive computer models with inexpensive \emph{metamodels} or \emph{surrogate models}.
+Those approximations mimic the functional relationship between the inputs and the outputs of the original model in \cref{eq:JCP:Bayesian:Inverse:ForwardModel}.
+Metamodeling promises significant gains in situations that require a large number of forward model runs, e.g.\ for optimization problems, uncertainty analysis and inverse modeling.
+% KRIGING AND PCE
+Important classes of metamodels are based on Gaussian process models or Kriging \cite{Kriging:OHagan1978,Kriging:Sacks1989} and polynomial chaos expansions \cite{PCE:Ghanem1991}.
+More recent introductions to these subjects can be found in \cite{Kriging:Santner2003,Kriging:Rasmussen2006} and \cite{PCE:LeMaitre2010,PCE:Xiu2010}, respectively.
+Nowadays the application of Kriging \cite{Kriging:Higdon2004,Kriging:Higdon2015} and polynomial chaos surrogates \cite{PCE:Marzouk2007,PCE:Marzouk2009:a,PCE:Marzouk2009:b}
+is commonplace in Bayesian inverse problems.
+\par % POLYNOMIAL CHAOS
+We focus on polynomial chaos metamodels next.
+The idea is to decompose the forward model response into polynomial terms that are orthogonal with respect to a weight function.
+In stochastic analysis this weight is often identified with a probability density in order to facilitate uncertainty propagation.
+In inverse analysis it is commonly equated with the prior in order to enhance MCMC posterior sampling.
+The formalism of polynomial chaos expansions is rooted in spectral methods and functional approximations with orthogonal polynomials.
+Hence, the function space point of view is emphasized in this section.
+We also concentrate on linear least squares for the practical computation of the expansions coefficients.
+
+\subsection{\(L_{\pi}^2\) function space}
+% INDEPENDENT PRIOR
+From here on it is assumed that the components of the uncertain parameter vector \(\bm{X} = (X_1,\ldots,X_\dimParam)^\top\) are independent random variables \(X_i\).
+Thus their joint density can be written as
+\begin{equation} \label{eq:JCP:PCE:Prior}
+  \pi(\bm{x}) = \prod\limits_{i=1}^\dimParam \pi_i(x_i).
+\end{equation}
+% SQUARE INTEGRABLE FUNCTIONS
+Let \(L_{\pi}^2(\mathcal{D}_{\bm{x}}) = \{u \colon \mathcal{D}_{\bm{x}} \rightarrow \mathds{R} \cond \int_{\mathcal{D}_{\bm{x}}} u^2(\bm{x}) \, \pi(\bm{x}) \, \mathrm{d} \bm{x} < \infty\}\)
+be the Hilbert space of functions that are square integrable with respect to the prior density in \cref{eq:JCP:PCE:Prior}.
+For \(u,v \in L_{\pi}^2(\mathcal{D}_{\bm{x}})\) a weighted inner product \(\langle \cdot,\cdot \rangle_{L_{\pi}^2}\) and its associated norm \(\lVert \cdot \rVert_{L_{\pi}^2}\) are defined as
+\begin{align}
+  \left\langle u,v \right\rangle_{L_{\pi}^2} &= \int\limits_{\mathcal{D}_{\bm{x}}} u(\bm{x}) v(\bm{x}) \, \pi(\bm{x}) \, \mathrm{d} \bm{x}, \label{eq:JCP:PCE:Product} \\
+  \left\lVert u \right\rVert_{L_{\pi}^2} &= \left\langle u,u \right\rangle_{L_{\pi}^2}^{1/2}. \label{eq:JCP:PCE:Norm}
+\end{align}
+% SECOND-ORDER RANDOM VARIABLES
+Given that \(u,v \in L_{\pi}^2(\mathcal{D}_{\bm{x}})\),
+the real-valued random variables \(u(\bm{X}),v(\bm{X}) \colon \Omega \rightarrow \mathds{R}\) on the probability space \((\Omega,\mathcal{F},\mathcal{P})\) have a finite variance.
+One can then write the inner product in \cref{eq:JCP:PCE:Product} as the expectation
+\begin{equation} \label{eq:JCP:PCE:KeyIdentity}
+  \left\langle u, v \right\rangle_{L_{\pi}^2} = \mathds{E}[u(\bm{X}) v(\bm{X})].
+\end{equation}
+In the further course of the presentation, the identity in \cref{eq:JCP:PCE:KeyIdentity} is frequently used
+in order to switch back and forth between expectation values under the prior distribution and weighted inner products.
+
+\subsection{Orthonormal polynomials}
+% ORTHOGONAL BASIS
+Now a basis of the space \(L_{\pi}^2(\mathcal{D}_{\bm{x}})\) is constructed with orthogonal polynomials \cite{Math:Stahl1992,Math:Gautschi2004,Math:Jackson2004}.
+% UNIVARIATE POLYNOMIALS
+Let \(\{\basis^{(i)}_{\alpha_i}\}_{\alpha_i \in \mathds{N}}\) be a family of univariate polynomials in the input variable \(x_i \in \mathcal{D}_{x_i}\).
+Each member is characterized by its polynomial degree \(\alpha_i \in \mathds{N}\).
+The polynomials are required to be orthonormal in the sense that
+\begin{equation} \label{eq:JCP:PCE:Orthonormality:Univariate}
+  \left\langle \basis^{(i)}_{\alpha_i}, \basis^{(i)}_{\beta_i} \right\rangle_{L_{\pi_i}^2} = \delta_{\alpha_i \beta_i}
+  = \begin{cases} 1 &\text{if} \;\, \alpha_i = \beta_i, \\
+                  0 &\text{if} \;\, \alpha_i \neq \beta_i.
+    \end{cases}
+\end{equation}
+These polynomials form a complete orthogonal system in \(L_{\pi_i}^2(\mathcal{D}_{x_i})\).
+% MULTIVARIATE POLYNOMIALS
+Next, a set of multivariate polynomials \(\{\basis_{\bm{\alpha}}\}_{\bm{\alpha} \in \mathds{N}^\dimParam}\)
+in the input variables \(\bm{x} \in \mathcal{D}_{\bm{x}}\) is constructed as the tensor product
+\begin{equation} \label{eq:JCP:PCE:MultivariatePolynomial}
+  \basis_{\bm{\alpha}}(\bm{x}) = \prod\limits_{i=1}^\dimParam \basis^{(i)}_{\alpha_i}(x_i).
+\end{equation}
+Here, \(\bm{\alpha} = (\alpha_1,\ldots,\alpha_\dimParam) \in \mathds{N}^\dimParam\) is a multi-index that characterizes the polynomials.
+By construction, namely due to \cref{eq:JCP:PCE:Prior,eq:JCP:PCE:Orthonormality:Univariate,eq:JCP:PCE:MultivariatePolynomial}, they are orthonormal in the sense that
+\begin{equation} \label{eq:JCP:PCE:Orthonormality:Multivariate}
+  \langle \basis_{\bm{\alpha}}, \basis_{\bm{\beta}} \rangle_{L_{\pi}^2} = \delta_{\bm{\alpha} \bm{\beta}}
+  = \begin{cases} 1 &\text{if} \;\, \bm{\alpha} = \bm{\beta}, \\
+                  0 &\text{if} \;\, \bm{\alpha} \neq \bm{\beta}.
+    \end{cases}
+\end{equation}
+These polynomials establish a complete orthogonal basis in \(L_{\pi}^2(\mathcal{D}_{\bm{x}})\).
+% CONSTANT TERMS
+Note that the constant term is always given as \(\basis^{(i)}_{0} = 1\) in the univariate case.
+This ensures the proper normalization \(\lVert \basis^{(i)}_{0} \rVert_{L_{\pi_i}^2} = 1\).
+In the multivariate case one similarly has \(\basis_{\bm{0}} = 1\) with \(\lVert \basis_{\bm{0}} \rVert_{L_{\pi}^2} = 1\).
+
+\subsection{Hermite and Legendre polynomials}
+% UNIVARIATE FAMILIES
+Two classical univariate families are the \emph{Hermite} and the \emph{Legendre polynomials} \(\{H_{\alpha_i}(x_i)\}_{\alpha_i \in \mathds{N}}\) for \(x_i \in \mathds{R}\)
+and \(\{P_{\alpha_i}(x_i)\}_{\alpha_i \in \mathds{N}}\) for \(x_i \in [-1,1]\), respectively.
+The former are orthogonal with respect to the weight function \(\mathcal{N}(x_i \cond 0,1) = (2 \pi)^{-1/2} \exp(-x_i^2/2) \),
+the latter with respect to \(\mathcal{U}(x_i \cond -1,1) = \mathrm{I}_{[-1,1]}(x_i) / 2\).
+Here, \(\mathrm{I}_{[-1,1]}\) denotes the indicator function of the interval \([-1,1]\).
+A short summary of these two univariate families is given in \cref{tab:JCP:PCE:UnivariateFamilies}.
+Over the respective domains, their first members are defined as given in \cref{sec:JCP:App:Polynomials}.
+% NORMALIZATION
+Classical orthogonal polynomials \(\{\basisU_{\alpha_i}^{(i)}(x_i)\}_{\alpha_i \in \mathds{N}}\) are typically not normalized, e.g.\ the aforementioned Hermite or Legendre families.
+An orthonormal family \(\{\basis^{(i)}_{\alpha_i}\}_{\alpha_i \in \mathds{N}}\) is then obtained
+through an appropriate normalization with \(\basis^{(i)}_{\alpha_i} = \basisU^{(i)}_{\alpha_i} / \lVert \basisU^{(i)}_{\alpha_i} \rVert_{L_{\pi_i}^2}\).
+\begin{table}[htb]
+  \caption[Two families of orthogonal polynomials]{Two families of orthogonal polynomials.}
+  \label{tab:JCP:PCE:UnivariateFamilies}
+  \centering
+    \begin{tabular}{llllll}
+      \toprule
+      Input type & Polynomials & \multicolumn{1}{l}{\(\mathcal{D}_{x_i}\)} & \multicolumn{1}{l}{\(\pi_i(x_i)\)}
+      & \multicolumn{1}{l}{\(\basisU^{(i)}_{\alpha_i}(x_i)\)} & \multicolumn{1}{l}{\(\lVert \basisU^{(i)}_{\alpha_i} \rVert_{L_{\pi_i}^2}\)} \\
+      \midrule
+      Gaussian & Hermite  & \(\mathds{R}\) & \(\mathcal{N}(x_i \cond 0,1)\)  & \(H_{\alpha_i}(x_i)\) & \(\sqrt{\alpha_i !}\)         \\
+      Uniform  & Legendre & \([-1,1]\)     & \(\mathcal{U}(x_i \cond -1,1)\) & \(P_{\alpha_i}(x_i)\) & \(\sqrt{1/(2 \alpha_i + 1)}\) \\
+      \bottomrule
+    \end{tabular}
+\end{table}
+\par % STANDARD VARIABLES
+In practice, the parameter space \(\mathcal{D}_{\bm{x}}\) and the input distribution \(\pi(\bm{x})\)
+are often not directly suitable for an expansion based on the two standardized families in \cref{tab:JCP:PCE:UnivariateFamilies}.
+One possibility is then to employ suitably chosen or constructed polynomials \cite{PCE:Xiu2002:b,PCE:Witteveen2007}.
+Another possibility is to use an invertible function \(\mathcal{T} \colon \mathds{R}^\dimParam \rightarrow \mathds{R}^\dimParam\), sufficiently well-behaved and as linear as possible,
+in order to transform the physical variables \(\bm{x}\) into \emph{standardized variables} \(\bm{\xi} = \mathcal{T}(\bm{x})\),
+i.e.\ the image \(\mathcal{D}_{\bm{\xi}} = \mathcal{T}(\mathcal{D}_{\bm{x}})\) and the transformed weight function
+\(\pi_{\mathcal{T}}(\bm{\xi}) = \pi(\mathcal{T}^{-1}(\bm{\xi})) \left\lvert \det J_{\mathcal{T}^{-1}}(\bm{\xi}) \right\rvert\) are of a standard form.
+Here, \(J_{\mathcal{T}^{-1}} = \mathrm{d} \mathcal{T}^{-1} / \mathrm{d} \bm{\xi}\) is the Jacobian matrix.
+If such a change of variables is needed, the considerations that are given below for \(\mathcal{M}\) and \(h\) in the variables \(\bm{x} \in \mathcal{D}_{\bm{x}}\)
+can be straightforwardly repeated for \(\mathcal{M} \circ \mathcal{T}^{-1}\) and \(h \circ \mathcal{T}^{-1}\) in the variables \(\bm{\xi} \in \mathcal{D}_{\bm{\xi}}\).
+% CHANGE OF VARIABLES
+In this case, the expectation in \cref{eq:JCP:Bayesian:QoI} follows the integration by substitution
+\begin{equation} \label{eq:JCP:PCE:IntegrationBySubstitution}
+  \mathds{E}[h(\bm{X}) \cond \bm{y}]
+  = \frac{1}{\scale} \int\limits_{\mathcal{D}_{\bm{\xi}}} h \left( \mathcal{T}^{-1}(\bm{\xi}) \right)
+  \mathcal{L} \left( \mathcal{T}^{-1}(\bm{\xi}) \right) \, \pi_{\mathcal{T}}(\bm{\xi}) \, \mathrm{d} \bm{\xi}.
+\end{equation}
+
+\subsection{Polynomial chaos expansions}
+% SPECTRAL EXPANSION
+For simplicity, herein the presentation is restricted to scalar-valued models \(\mathcal{M} \colon \mathcal{D}_{\bm{x}} \rightarrow \mathds{R}\).
+The extension to the multivariate case is straightforward.
+It is supposed that the forward model \(\mathcal{M} \in L_{\pi}^2(\mathcal{D}_{\bm{x}})\) is mean-square integrable.
+This is a reasonable assumption as seen from a physical perspective.
+In \(L_{\pi}^2(\mathcal{D}_{\bm{x}})\) the \emph{generalized Fourier expansion} of \(\mathcal{M}\)
+in terms of the orthogonal polynomials \(\{\basis_{\bm{\alpha}}\}_{\bm{\alpha} \in \mathds{N}^\dimParam}\) is then given as
+\begin{gather}
+  \mathcal{M} = \sum\limits_{\bm{\alpha} \in \mathds{N}^\dimParam} \coeffM_{\bm{\alpha}} \basis_{\bm{\alpha}}, \quad \text{with} \label{eq:JCP:PCE:PCE} \\
+  \coeffM_{\bm{\alpha}}
+  = \langle \mathcal{M}, \basis_{\bm{\alpha}} \rangle_{L_{\pi}^2}
+  = \int\limits_{\mathcal{D}_{\bm{x}}} \mathcal{M}(\bm{x}) \basis_{\bm{\alpha}}(\bm{x}) \, \pi(\bm{x}) \, \mathrm{d} \bm{x}. \label{eq:JCP:PCE:Projection}
+\end{gather}
+% SPECTRAL COEFFICIENTS
+The \emph{generalized Fourier coefficients} \(\{\coeffM_{\bm{\alpha}}\}_{\bm{\alpha} \in \mathds{N}^\dimParam}\) of the series expansion in \cref{eq:JCP:PCE:PCE}
+are defined as the orthogonal projection of \(\mathcal{M}\) onto the basis elements in \cref{eq:JCP:PCE:Projection}.
+% POLYNOMIAL CHAOS EXPANSION
+The corresponding Fourier series of the second-order random variable \(\perfect{Y} = \mathcal{M}(\bm{X})\) on \((\Omega,\mathcal{F},\mathcal{P})\) is a so-called
+\emph{polynomial chaos expansion} (PCE) \(\mathcal{M}(\bm{X}) = \sum_{\bm{\alpha} \in \mathds{N}^\dimParam} \coeffM_{\bm{\alpha}} \basis_{\bm{\alpha}}(\bm{X})\).
+\par % UNCERTAINTY PROPAGATION
+PCEs have been popularized in the context of uncertainty propagation where the goal is the quantification of the distribution of \(\perfect{Y} = \mathcal{M}(\bm{X})\).
+For this purpose it comes in handy that the mean and the variance of this random variable can be easily determined from its PCE coefficients.
+Indeed, with \cref{eq:JCP:PCE:Orthonormality:Multivariate} it is easy to verify that they are simply given as
+\begin{align}
+  \mathds{E}[\mathcal{M}(\bm{X})] = \left\langle \basis_{\bm{0}}, \sum\limits_{\bm{\alpha} \in \mathds{N}^\dimParam} \coeffM_{\bm{\alpha}} \basis_{\bm{\alpha}} \right\rangle_{L_{\pi}^2}
+  &= \coeffM_{\bm{0}}, \label{eq:JCP:PCE:Mean} \\
+  \mathrm{Var}[\mathcal{M}(\bm{X})]
+  = \left\lVert \sum\limits_{\bm{\alpha} \in \mathds{N}^\dimParam} \coeffM_{\bm{\alpha}} \basis_{\bm{\alpha}} - \coeffM_{\bm{0}} \basis_{\bm{0}} \right\rVert_{L_{\pi}^2}^2
+  &= \sum\limits_{\bm{\alpha} \in \mathds{N}^\dimParam  \setminus \{\bm{0}\}} \coeffM_{\bm{\alpha}}^2. \label{eq:JCP:PCE:Variance}
+\end{align}
+The simple identities in \cref{eq:JCP:PCE:Mean,eq:JCP:PCE:Variance} follow from the definitions of the inner product and the associated norm in \cref{eq:JCP:PCE:Product,eq:JCP:PCE:Norm}, respectively.
+
+\subsection{Truncated series}
+% TRUNCATION SCHEME
+For a practical computation one has to truncate the infinite series in \cref{eq:JCP:PCE:PCE}.
+Let the total degree of a multivariate polynomial \(\basis_{\bm{\alpha}}\) be defined as \(\lVert \bm{\alpha} \rVert_1 = \sum_{i=1}^\dimParam \lvert \alpha_i \rvert\).
+A \emph{standard truncation scheme} is then adopted by limiting the terms in \cref{eq:JCP:PCE:PCE} to the finite set of multi-indices
+\begin{equation} \label{eq:JCP:PCE:StandardTruncation}
+  \mathcal{A}_p = \left\{ \bm{\alpha} \in \mathds{N}^\dimParam \colon \lVert \bm{\alpha} \rVert_1 \leq p \right\}.
+\end{equation}
+This specifies a set of polynomials \(\{\basis_{\bm{\alpha}}\}_{\bm{\alpha} \in \mathcal{A}_p}\)
+such that their total degree \(\lVert \bm{\alpha} \rVert_1\) is smaller than or equal to a chosen \(p\).
+The total number of terms retained in the set \(\mathcal{A}_p\) is given as
+\begin{equation} \label{eq:JCP:PCE:Cardinality}
+  P = \begin{pmatrix}
+        \dimParam + p \\
+        p
+      \end{pmatrix} = \frac{(\dimParam + p)!}{\dimParam! \, p!}.
+\end{equation}
+% CURSE OF DIMENSIONALITY
+The dramatic increase of the total number of terms \(P\) with the input dimensionality \(\dimParam\) and the maximal polynomial degree \(p\),
+that is described by \cref{eq:JCP:PCE:Cardinality}, is commonly referred to as the \emph{curse of dimensionality}.
+% HYPERBOLIC TRUNCATION
+A simple idea to limit the number of regressors relies on hyperbolic truncation sets.
+For \(0 < q < 1\) a quasinorm is defined as \(\lVert \bm{\alpha} \rVert_q = (\sum_{i=1}^\dimParam \lvert \alpha_i^q \rvert)^{1/q}\).
+The corresponding \emph{hyperbolic truncation scheme} is then given as \(\mathcal{A}_p^q = \{\bm{\alpha} \in \mathds{N}^\dimParam \cond \lVert \bm{\alpha} \rVert_q \leq p\}\).
+% TRUNCATED EXPANSION
+Adopting the standard scheme in \cref{eq:JCP:PCE:StandardTruncation}, a finite version of \cref{eq:JCP:PCE:PCE} can be written as
+\begin{equation} \label{eq:JCP:PCE:TruncatedPCE}
+  \hat{\mathcal{M}}_p(\bm{x}) = \sum\limits_{\bm{\alpha} \in \mathcal{A}_p} \coeffM_{\bm{\alpha}} \basis_{\bm{\alpha}}(\bm{x}).
+\end{equation}
+\par % STRONG CONVERGENCE
+In engineering problems, one uses \(\hat{\mathcal{M}}_p(\bm{x})\) as a functional approximation of \(\mathcal{M}(\bm{x})\),
+i.e.\ as a \emph{polynomial response surface} \cite{Statistics:Box2007}.
+This is justified because the approximation converges in the mean-square sense
+\begin{equation} \label{eq:JCP:PCE:Convergence}
+  \left\lVert \mathcal{M}-\hat{\mathcal{M}}_p \right\rVert_{L_{\pi}^2}^2
+  = \mathds{E} \left[ \left( \mathcal{M}(\bm{X}) - \hat{\mathcal{M}}_p(\bm{X}) \right)^2 \right]
+  = \sum\limits_{\bm{\alpha} \in \mathds{N}^\dimParam  \setminus \mathcal{A}_p} \coeffM_{\bm{\alpha}}^2
+  \rightarrow 0, \quad \text{for} \;\, p \rightarrow \infty.
+\end{equation}
+The rate of the convergence in \cref{eq:JCP:PCE:Convergence} depends on the regularity of \(\mathcal{M}\).
+% OPTIMALITY
+On top of that, the response surface in \cref{eq:JCP:PCE:TruncatedPCE} is also optimal in the mean-square sense
+\begin{equation} \label{eq:JCP:PCE:Optimality}
+  \left\lVert \mathcal{M}-\hat{\mathcal{M}}_p \right\rVert_{L_{\pi}^2}^2
+  = \operatorname*{inf}_{\mathcal{M}^\star \in \mathds{P}_p} \left\lVert \mathcal{M}-\mathcal{M}^\star \right\rVert_{L_{\pi}^2}^2,
+  \quad \text{where} \;\, \mathds{P}_p = \mathrm{span} \left( \{\basis_{\bm{\alpha}}\}_{\bm{\alpha} \in \mathcal{A}_p} \right).
+\end{equation}
+According to \cref{eq:JCP:PCE:Optimality}, the response surface in \cref{eq:JCP:PCE:TruncatedPCE} minimizes the mean-square error over the space of polynomials
+\(\mathds{P}_p = \mathrm{span} (\{\basis_{\bm{\alpha}}\}_{\bm{\alpha} \in \mathcal{A}_p})\) having a total degree of at most \(p\).
+
+\subsection{Least squares}
+% PCE COMPUTATIONS
+In order to find a metamodel of the form \cref{eq:JCP:PCE:TruncatedPCE}, one computes approximations of the exact expansion coefficients in \cref{eq:JCP:PCE:Projection}.
+Broadly speaking, one distinguishes between \emph{intrusive} and \emph{non-intrusive} computations.
+While the former class of techniques is based on manipulations of the governing equations, the latter is exclusively build upon calls to the forward model at chosen input values.
+Stochastic Galerkin methods belong to the class of intrusive techniques \cite{PCE:Babuska2004,PCE:Xiu2009:b},
+whereas stochastic collocation \cite{PCE:Xiu2005,PCE:Xiu2007} and projection through numerical quadrature \cite{PCE:LeMaitre2001,PCE:LeMaitre2002} are non-intrusive approaches.
+% LEAST SQUARES
+Herein we focus on another non-intrusive formulation that is based on least squares regression analysis \cite{PCE:Berveiller2006,PCE:Blatman2008}.
+This formulation is based on linear least squares \cite{Statistics:Lawson1995,Statistics:Bjorck1996}
+and related ideas from statistical learning theory \cite{Statistics:Vapnik2000,Statistics:Hastie2009}.
+% SPARSITY
+Since this includes sparsity-promoting fitting techniques from high-dimensional statistics \cite{Statistics:Giraud2015,Statistics:Hastie2015},
+recently least squares projection methods receive considerable attention.
+This includes frequentist \cite{PCE:Blatman2011,PCE:Doostan2011,PCE:Yan2012,PCE:Mathelin2012}
+and Bayesian implementations \cite{PCE:Sargsyan2014,PCE:Ray2015,PCE:Karagiannis2014,PCE:Karagiannis2015} of shrinkage estimators.
+% CONVERGENCE
+Current results regarding the convergence behavior of such regression methods can be found in \cite{PCE:Cohen2013,PCE:Migliorati2014,PCE:Chkifa2015}.
+\par % LEAST SQUARES
+We introduce a simplifying vector notation such that \(\bm{\coeffM} = (\coeffM_1,\ldots,\coeffM_P)^\top\) and
+\(\bm{\basis} = (\basis_1,\ldots,\basis_P)^\top\) gather and order the coefficients and the polynomials for all \(\bm{\alpha} \in \mathcal{A}_p\).
+For the truncated expression in \cref{eq:JCP:PCE:TruncatedPCE} one thus has \(\hat{\mathcal{M}}_p = \bm{\coeffM}^\top \bm{\basis}\).
+% OPTIMALITY CONDITION
+The problem of finding \(\hat{\mathcal{M}}_p \in \mathds{P}_p\) that minimizes the mean-square error in \cref{eq:JCP:PCE:Optimality} may then be equivalently rephrased as
+\begin{equation} \label{eq:JCP:PCE:Minimization}
+  \bm{\coeffM} = \operatorname*{arg\,min}_{\bm{\coeffM}^\star \in \mathds{R}^P} \mathds{E} \left[ \left( \mathcal{M}(\bm{X}) - \bm{\coeffM}^{\star\top} \bm{\basis}(\bm{X}) \right)^2 \right].
+\end{equation}
+The stochastic optimization objective in \cref{eq:JCP:PCE:Minimization} establishes an alternative to the orthogonal projection in \cref{eq:JCP:PCE:Projection}.
+% LEAST SQUARES
+This formulation may be more amenable to a numerical computation.
+At the very least it allows one the draw on the machinery of linear least squares in order to compute an approximation \(\hat{\bm{\coeffM}}\) of the exact coefficients \(\bm{\coeffM}\).
+To that end one discretizes \cref{eq:JCP:PCE:Minimization} as
+\begin{equation} \label{eq:JCP:PCE:LeastSquares}
+  \hat{\bm{\coeffM}} = \operatorname*{arg\,min}_{\bm{\coeffM}^\star \in \mathds{R}^P}
+  \frac{1}{K} \sum\limits_{k=1}^K \left( \mathcal{M}(\bm{x}^{(k)}) - \bm{\coeffM}^{\star\top} \bm{\basis}(\bm{x}^{(k)}) \right)^2.
+\end{equation}
+% EXPERIMENTAL DESIGN
+Here, the \emph{experimental design} \(\mathcal{X} = (\bm{x}^{(1)},\ldots,\bm{x}^{(K)})\) is a representative sample of \(K\) forward model inputs,
+e.g.\ randomly drawn from the input distribution in \cref{eq:JCP:PCE:Prior}.
+It is then required to compute the corresponding model responses \(\mathcal{Y} = (\mathcal{M}(\bm{x}^{(1)}),\ldots,\mathcal{M}(\bm{x}^{(K)}))^\top\) in \(K\) training runs.
+\par % LINEAR/ORDINARY LEAST SQUARES
+Now let \(\bm{A} \in \mathds{R}^{K \times P}\) be the matrix with entries \(A_{k,l} = \basis_l(\bm{x}^{(k)})\) for \(k=1,\ldots,K\) and \(l=1,\ldots,P\).
+Moreover, let the system \(\mathcal{Y} = \bm{A} \hat{\bm{a}}\) be overdetermined with \(K \geq P\).
+The linear least squares problem in \cref{eq:JCP:PCE:LeastSquares} may then be written as
+\begin{equation} \label{eq:JCP:PCE:LeastSquaresMatrix}
+  \hat{\bm{\coeffM}} = \operatorname*{arg\,min}_{\bm{\coeffM}^\star \in \mathds{R}^P} \lVert \mathcal{Y} - \bm{A} \bm{\coeffM}^{\star} \rVert^2
+\end{equation}
+% NECESSARY CONDITION
+The \emph{normal equations} \((\bm{A}^\top \bm{A}) \hat{\bm{\coeffM}} = \bm{A}^\top \mathcal{Y}\) establish the first-order condition for \cref{eq:JCP:PCE:LeastSquaresMatrix} to apply.
+Given that the matrix \(\bm{A}^\top \bm{A}\) is non-singular, this linear system is solved by
+\begin{equation} \label{eq:JCP:PCE:LeastSquaresSolution}
+  \hat{\bm{\coeffM}} = (\bm{A}^\top \bm{A})^{-1} \bm{A}^\top \mathcal{Y}.
+\end{equation}
+% SUFFICIENT CONDITION
+The positive definiteness of \(\bm{A}^\top \bm{A}\), i.e.\ the columns of \(\bm{A}\) are linearly independent,
+is the second-order condition for \cref{eq:JCP:PCE:LeastSquaresSolution} to be the minimum of \cref{eq:JCP:PCE:LeastSquaresMatrix}.
+% COMPUTATIONS
+The \emph{ordinary least squares} (OLS) solution \cref{eq:JCP:PCE:LeastSquaresSolution} is commonly computed by means of linear algebra methods.
+An alternative to OLS is \emph{least angle regression} (LAR) \cite{Statistics:Efron2004:a,Statistics:Hesterberg2008}.
+LAR is well-suited for high-dimensional PCE regression problems \cite{PCE:Blatman2011} and can be even applied in the underdetermined case.
+It is based on selecting only the most dominant regressors from a possibly large candidate set.
+The resulting predictor is thus sparse as compared to the OLS solution.
+
+\subsection{Prediction errors}
+% PERFORMANCE ASSESSMENT
+After the computation of a metamodel, one typically wants to assess its prediction accuracy.
+Moreover, when a number of candidate surrogates is computed, one wants to compare their performances in order to eventually select the best.
+Hence, one needs to define an appropriate criterion that allows for an accurate and efficient quantification of the approximation errors.
+% GENERALIZATION ERROR
+The natural measure of the mismatch between the forward model \(\mathcal{M}\) and an approximation \(\hat{\mathcal{M}}_p\)
+is the \emph{generalization error} \(E_{\mathrm{Gen}} = \mathds{E}[(\mathcal{M}(\bm{X})-\hat{\mathcal{M}}_p(\bm{X}))^2]\).
+This is exactly the error the minimization of which is posed by \cref{eq:JCP:PCE:Minimization}.
+Since it remains unknown, it cannot be used as a performance measure.
+One could estimate \(E_{\mathrm{Gen}}\) based on MC simulation, though.
+However, this is not very efficient since it requires the execution of additional forward model runs.
+% EMPIRICAL ERROR
+In contrast, the \emph{empirical error} \(E_{\mathrm{Emp}} = K^{-1} \sum_{k=1}^K (\mathcal{M}(\bm{x}^{(k)})-\hat{\mathcal{M}}_p(\bm{x}^{(k)}))^2\)
+is the quantity that is practically minimized according to \cref{eq:JCP:PCE:LeastSquares}.
+This error indicator is obtained for free, however, it does not account for overfitting and thus tends to severely underestimate the real generalization error \(E_{\mathrm{Gen}}\).
+\par % LEAVE-ONE-OUT ERROR
+In order to construct an estimate of \(E_{\mathrm{Gen}}\) that is more efficient than the MC estimate and more accurate than \(E_{\mathrm{Emp}}\),
+one sometimes resorts to leave-one-out (LOO) cross validation \cite{Statistics:Arlot2010}.
+Let \(\hat{\mathcal{M}}_{\without k}\) be the surrogate model that is obtained from the reduced experimental design
+\(\mathcal{X}_{\without k} = (\bm{x}^{(1)},\ldots,\bm{x}^{(k-1)},\bm{x}^{(k+1)},\ldots,\bm{x}^{(K)})\), i.e.\ a single input \(\bm{x}^{(k)}\) has been dropped.
+The \emph{LOO error} is then defined as
+\begin{equation} \label{eq:JCP:PCE:ErrorLOO}
+  E_{\mathrm{LOO}} = \frac{1}{K} \sum_{k=1}^K \left( \mathcal{M}(\bm{x}^{(k)})-\hat{\mathcal{M}}_{\without k}(\bm{x}^{(k)}) \right)^2.
+\end{equation}
+Without the need for re-running the forward model, this error allows for a fair assessment of how well
+the performance of a metamodel \(\hat{\mathcal{M}}_p\) generalizes beyond the used experimental design.
+Yet, \cref{eq:JCP:PCE:ErrorLOO} calls for conducting \(K\) separate regressions for finding \(\hat{\mathcal{M}}_{\without k}\) with an experimental design of the size \(K-1\).
+% EFFICIENT EVALUATION
+A remarkably simple result from linear regression analysis states that \(E_{\mathrm{LOO}}\) can be also computed as
+\begin{equation} \label{eq:JCP:PCE:SimpleLOO}
+  E_{\mathrm{LOO}} = \frac{1}{K} \sum\limits_{k = 1}^K \left( \frac{\mathcal{M}(\bm{x}^{(k)}) - \hat{\mathcal{M}}_p(\bm{x}^{(k)})}{1 - h_k} \right)^2.
+\end{equation}
+Here, \(\hat{\mathcal{M}}_p\) is computed from the full experimental design \(\mathcal{X}\) and
+\(h_k\) denotes the \(k\)-th diagonal entry of the matrix \(\bm{A} (\bm{A}^\top \bm{A})^{-1} \bm{A}^\top\).
+This is more efficient since it does not require repeated fits.
+A derivation of the formula in \cref{eq:JCP:PCE:SimpleLOO} can be found in \cite{Statistics:Seber2003}.
+\par % RELATIVE ERRORS
+One may define \(\epsilon_{\mathrm{Emp}} = E_{\mathrm{Emp}} / \mathrm{Var}[\mathcal{Y}]\) and \(\epsilon_{\mathrm{LOO}} = E_{\mathrm{LOO}} / \mathrm{Var}[\mathcal{Y}]\)
+as normalized versions of the empirical and the LOO error, respectively.
+Here, \(\mathrm{Var}[\mathcal{Y}]\) is the empirical variance of the response sample \(\mathcal{Y}\).
+These normalized errors can be used in order to judge and compare the performance of metamodels.
+In turn, this enables a practical convergence analysis,
+e.g.\ by monitoring the errors over repeated metamodel computations for an increasing experimental design size \(K\) and expansion order \(p\).

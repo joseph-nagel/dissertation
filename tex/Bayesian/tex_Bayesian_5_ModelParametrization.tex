@@ -1,0 +1,109 @@
+% MODEL PARAMETRIZATION
+The parametrization of Bayesian models and their reparametrization are issues of high practical relevance.
+Sometimes a model features a more or less natural parametrization, which our notation actually suggests so far.
+In other cases it may be dictated by the goal of the analysis.
+Very often, however, there are various equivalent ways of parametrizing the problem and it may not be clear which one is favorable.
+In any case, it may be convenient to solve a problem not directly but after a suitably chosen transformation.
+This could either apply to the parameters \cite{Statistics:Box1962} or to the data \cite{Statistics:Box1964,Bayesian:Box1973}.
+Since such issues are often left aside, in this section we shortly discuss parameter transformations and some related invariance principles.
+\par % THESIS RELEVANCE
+We will come across a parametrization issue in \cref{sec:Bayesian:InverseProblems:LinearRegression},
+where the residual model could be either parametrized by the variance or a standard deviation.
+Moreover, parameter transformations will be important for \cref{sec:JCP} in the context of standardized prior distributions and their associated orthogonal polynomials.
+Some of the material will be also relevant for \cref{sec:Transport} in the context of finding a transformation between two given density functions.
+\par % PARAMETER TRANSFORMATION
+Consider a model reparametrization based on a sufficiently well-behaved one-to-one parameter transformation
+\(\mathcal{T} \colon \mathds{R}^\dimParam \rightarrow \mathds{R}^\dimParam\) with \(\tilde{\bm{x}} = \mathcal{T}(\bm{x})\) and \(\bm{x} = \mathcal{T}^{-1}(\tilde{\bm{x}})\).
+If \(\bm{X} \sim \pi(\bm{x})\) is distributed according to the prior,
+the density of the transformed random variable \(\tilde{\bm{X}} = \mathcal{T}(\bm{X}) \sim \pi_{\mathcal{T}}(\tilde{\bm{x}})\) can be written as the \emph{change of variables}
+\begin{equation} \label{eq:Bayesian:PriorTransformation}
+  \pi_{\mathcal{T}}(\tilde{\bm{x}}) = \pi(\mathcal{T}^{-1}(\tilde{\bm{x}})) \, \lvert \det \bm{J}_{\mathcal{T}^{-1}}(\tilde{\bm{x}}) \rvert.
+\end{equation}
+Here, the \emph{Jacobian matrix} is denoted as \(\bm{J}_{\mathcal{T}^{-1}} = \mathrm{d} \mathcal{T}^{-1} / \mathrm{d} \tilde{\bm{x}}\).
+The transformation of the prior density in \cref{eq:Bayesian:PriorTransformation} is defined such that
+one can write a general prior expectation \(\mathds{E}[h(\bm{X})]\) as the \emph{integration by substitution}
+\begin{equation} \label{eq:Bayesian:InvariantPriorExpectation}
+  \mathds{E}[h(\bm{X})]
+  = \int\limits_{\mathds{R}^\dimParam} h(\bm{x}) \, \pi(\bm{x}) \, \mathrm{d} \bm{x}
+  = \int\limits_{\mathds{R}^\dimParam} h(\mathcal{T}^{-1}(\tilde{\bm{x}})) \, \pi_{\mathcal{T}}(\tilde{\bm{x}}) \, \mathrm{d} \tilde{\bm{x}}.
+\end{equation}
+% POSTERIOR DISTRIBUTION
+The transformation of the posterior density can be obtained in a condition-then-transform or transform-then-condition fashion.
+Similar to \cref{eq:Bayesian:PriorTransformation}, one can write this density as
+\begin{equation} \label{eq:Bayesian:PosteriorTransformation}
+  \pi_{\mathcal{T}}(\tilde{\bm{x}} \cond \bm{y})
+  = \pi(\mathcal{T}^{-1}(\tilde{\bm{x}}) \cond \bm{y}) \, \lvert \det \bm{J}_{\mathcal{T}^{-1}}(\tilde{\bm{x}}) \rvert
+  = \frac{\mathcal{L}(\mathcal{T}^{-1}(\tilde{\bm{x}})) \pi(\mathcal{T}^{-1}(\tilde{\bm{x}}))}{\scale} \, \lvert \det \bm{J}_{\mathcal{T}^{-1}}(\tilde{\bm{x}}) \rvert
+  = \frac{\mathcal{L}(\mathcal{T}^{-1}(\tilde{\bm{x}})) \pi_{\mathcal{T}}(\tilde{\bm{x}})}{\scale}.
+\end{equation}
+Analogous to \cref{eq:Bayesian:InvariantPriorExpectation}, the transformation in \cref{eq:Bayesian:PosteriorTransformation} is such that
+one can write a general posterior expectation \(\mathds{E}[h(\bm{X}) \cond \bm{y}]\) as either of the integrals
+\begin{equation} \label{eq:Bayesian:InvariantPosteriorExpectation}
+  \mathds{E}[h(\bm{X}) \cond \bm{y}]
+  = \int\limits_{\mathds{R}^\dimParam} h(\bm{x}) \, \pi(\bm{x} \cond \bm{y}) \, \mathrm{d} \bm{x}
+  = \int\limits_{\mathds{R}^\dimParam} h(\mathcal{T}^{-1}(\tilde{\bm{x}})) \, \pi_{\mathcal{T}}(\tilde{\bm{x}} \cond \bm{y}) \, \mathrm{d} \tilde{\bm{x}}.
+\end{equation}
+\par % INVARIANCE
+The principles of Bayesian model reparametrization are now fully established.
+While \cref{eq:Bayesian:PriorTransformation,eq:Bayesian:PosteriorTransformation} represent the transformation of the instrumental densities,
+the invariance of the relevant expectations is warranted by \cref{eq:Bayesian:InvariantPriorExpectation,eq:Bayesian:InvariantPosteriorExpectation}.
+In practice, after performing the analysis for the transformed variables, one can back-transform accordingly.
+However, given certain rules of how to construct prior distributions or how to report point estimates,
+the results are not generally invariant under parameter transformations.
+
+\subsection{Invariant priors}
+% PARAMETRIZATION INVARIANCE
+Occasionally one may want to define an uninformative prior that reflects a general state of ignorance regarding the true parameter values,
+i.e.\ not any admissible value \(\bm{x}\) is favored over others.
+A typical example is a uniform prior distribution over a bounded support that only discriminates between values inside and outside of the bounds.
+If \(\pi(\bm{x})\) is such an uninformative prior, then it is interesting to note that after a transformation in \cref{eq:Bayesian:PriorTransformation}
+the prior \(\pi_{\mathcal{T}}(\tilde{\bm{x}})\) may be actually informative, i.e.\ it gives undue preference to certain values of \(\tilde{\bm{x}}\).
+In this sense, if the same recipe of constructing uninformative priors is applied to the parameters \(\bm{x}\) and \(\tilde{\bm{x}} = \mathcal{T}(\bm{x})\) separately,
+then one obtains genuinely different Bayesian models.
+The priors \(\pi(\bm{x})\) and \(\tilde{\pi}(\tilde{\bm{x}})\) chosen that way
+and the respective posteriors \(\pi(\bm{x} \cond \bm{y}) = \scale^{-1} \mathcal{L}(\bm{x}) \pi(\bm{x})\) and
+\(\tilde{\pi}(\tilde{\bm{x}} \cond \bm{y}) = \tilde{\scale}^{-1} \mathcal{L}(\mathcal{T}^{-1}(\tilde{\bm{x}})) \tilde{\pi}(\tilde{\bm{x}})\)
+are not just different versions of one another modulo the parameter transformation \(\mathcal{T}\).
+\par % INVARIANT PRIORS
+However, one may select priors based on certain invariance principles \cite{Bayesian:Harney2016}, e.g.\ \emph{Jeffreys prior} \cite{Bayesian:Jeffreys1946} is based on reparametrization invariance.
+The form of the prior remains unaltered under a change of variables.
+If \(\pi(\bm{x})\) and \(\tilde{\pi}(\tilde{\bm{x}})\) are independently chosen as this invariant prior,
+then one has \(\tilde{\pi}(\tilde{\bm{x}}) = \pi_{\mathcal{T}}(\tilde{\bm{x}}) = \pi(\mathcal{T}^{-1}(\tilde{\bm{x}})) \, \lvert \det \bm{J}_{\mathcal{T}^{-1}}(\tilde{\bm{x}})\rvert\)
+for the transformation \(\mathcal{T}\) in \cref{eq:Bayesian:PriorTransformation}.
+As a result of this, the posterior \(\pi(\bm{x} \cond \bm{y}) = \scale^{-1} \mathcal{L}(\bm{x}) \pi(\bm{x})\)
+is the same as \(\tilde{\pi}(\tilde{\bm{x}} \cond \bm{y}) = \scale^{-1} \mathcal{L}(\mathcal{T}^{-1}(\tilde{\bm{x}})) \pi_{\mathcal{T}}(\tilde{\bm{x}})\) up to the change of variables
+\(\tilde{\pi}(\tilde{\bm{x}} \cond \bm{y}) = \pi_{\mathcal{T}}(\tilde{\bm{x}} \cond \bm{y})\) in \cref{eq:Bayesian:PosteriorTransformation}.
+
+\subsection{Invariant estimators}
+One can investigate the behavior of point estimators under parameter transformations.
+If the same principle of estimating \(\bm{x}\) and \(\tilde{\bm{x}}\) is independently applied before and after the transformation,
+it is natural to ask for the relationship between \(\hat{\bm{x}}\) and \(\hat{\tilde{\bm{x}}}\).
+An estimation procedure is called \emph{reparametrization invariant} if one has that \(\hat{\bm{x}} = \mathcal{T}^{-1}(\hat{\tilde{\bm{x}}})\).
+% MAXIMUM LIKELIHOOD
+In a non-Bayesian context, this is a property of the maximum likelihood estimates
+\begin{equation} \label{eq:Bayesian:InvarianceMLE}
+  \hat{\bm{x}}_{\mathrm{MLE}} = \operatorname*{arg\,max}_{\bm{x} \in \mathds{R}^\dimParam} \mathcal{L}(\bm{x}), \quad
+  \hat{\tilde{\bm{x}}}_{\mathrm{MLE}} = \operatorname*{arg\,max}_{\tilde{\bm{x}} \in \mathds{R}^\dimParam} \mathcal{L}(\mathcal{T}^{-1}(\tilde{\bm{x}})).
+\end{equation}
+\par % POSTERIOR MODE
+In a Bayesian context, applying the same estimation principle to \(\pi(\bm{x} \cond \bm{y})\) and \(\pi_{\mathcal{T}}(\tilde{\bm{x}} \cond \bm{y})\)
+generally leads to different point estimates, even if the parameter transformation is accounted for.
+Due to the Jacobian determinant \(\det \bm{J}_{\mathcal{T}^{-1}}(\tilde{\bm{x}})\), unlike as in \cref{eq:Bayesian:InvarianceMLE}, the posterior mode is not transformation invariant.
+One has \(\hat{\bm{x}}_{\mathrm{MAP}} \neq \mathcal{T}^{-1}(\hat{\tilde{\bm{x}}}_{\mathrm{MAP}})\) for
+\begin{equation} \label{eq:Bayesian:InvarianceMAP}
+  \hat{\bm{x}}_{\mathrm{MAP}} = \operatorname*{arg\,max}_{\bm{x} \in \mathds{R}^\dimParam} \pi(\bm{x} \cond \bm{y}), \quad
+  \hat{\tilde{\bm{x}}}_{\mathrm{MAP}} = \operatorname*{arg\,max}_{\tilde{\bm{x}} \in \mathds{R}^\dimParam}
+  \pi(\mathcal{T}^{-1}(\tilde{\bm{x}}) \cond \bm{y}) \, \lvert \det \bm{J}_{\mathcal{T}^{-1}}(\tilde{\bm{x}}) \rvert.
+\end{equation}
+% POSTERIOR EXPECTATION
+Since the unconditional expectation operator as well as the conditional expectation do not commute with a nonlinear transformation
+\(\mathds{E}[\mathcal{T}(\bm{X}) \cond \bm{y}] \neq \mathcal{T}(\mathds{E}[\bm{X} \cond \bm{y}])\), neither the posterior mean establishes an invariant estimator.
+This means \(\hat{\bm{x}} \neq \mathcal{T}^{-1}(\hat{\tilde{\bm{x}}})\) with
+\begin{equation} \label{eq:Bayesian:InvarianceMean}
+  \hat{\bm{x}} = \mathds{E}[\bm{X} \cond \bm{y}], \quad
+  \hat{\tilde{\bm{x}}} = \mathds{E}[\tilde{\bm{X}} \cond \bm{y}] = \mathds{E}[\mathcal{T}(\bm{X}) \cond \bm{y}].
+\end{equation}
+\par % POINT ESTIMATES
+Note that these transformation behaviors are not properties of the posterior, but of the Bayesian point estimates in \cref{eq:Bayesian:InvarianceMAP,eq:Bayesian:InvarianceMean}.
+One could make analogous statements when applying these estimation principles, i.e.\ maximizing the density and taking the expected value,
+to the priors \(\pi(\bm{x})\) and \(\pi_{\mathcal{T}}(\tilde{\bm{x}})\) as well.

@@ -1,0 +1,42 @@
+% UNCERTAINTY QUANTIFICATION
+Bayesian inference establishes a flexible framework for solving inverse problems.
+Given measured responses of a forward model, it allows for reducing epistemic uncertainty of unknown parameters \cite{Bayesian:Hadidi2008,Bayesian:Beck2010} and,
+within the context of hierarchical modeling, for quantifying the aleatory uncertainty of unobservables \cite{Multilevel:Davidian2003,Multilevel:Banks2012}.
+% ALEATORY VARIABILITY
+The latter type of problem is often encountered in social science or biological statistics.
+Yet it is of great interest for engineering applications, too.
+It allows one to study the natural variability of physical parameters that cannot be directly measured.
+This involves the variability of material properties as a result of the unavoidable uncertainties in the manufacturing process
+or due to spatial and temporal changes in the environmental conditions \cite{Uncertainty:Faber2005,Uncertainty:Kiureghian2009}.
+\par % LITERATURE
+In the recent literature a number of approaches have been devised that aim at fitting the hyperparameters of the aleatory distribution of forward model inputs
+\cite{Multilevel:Rocquigny2009,Multilevel:Celeux2010,Multilevel:Barbillon2011}.
+These approaches build upon the marginalization of varying inputs at the level of the likelihood function. 
+This way of proceeding typically leads to low-dimensional estimation problems where the major difficulty lies in computing the integrated likelihood.
+The joint inference of the distributional hyperparameters and the experiment-specific realizations of the variables constitutes a higher-dimensional problem \cite{Multilevel:Fu2015,Multilevel:Behmanesh2015,Nagel:PEM2016}.
+Even though the marginalized and the joint problem variants are equivalent with regard to hyperparameter calibration,
+the former formulation does not allow for the estimation of realizations of the variable parameters.
+To this effect one has to rely on the joint problem formulation.
+\par % JOINT FORMULATION
+In this paper the joint parameter/hyperparameter inference is studied in view of reducing the uncertainty in the parameters.
+The goal is to demonstrate the advantages of this formulation and to overcome its computational difficulties.
+% BORROWING STRENGTH
+First, we investigate borrowing strength \cite{Multilevel:Draper1992} as a means of information aggregation in inverse problems.
+This statistical mechanism allows for an optimal estimation of individual material properties within a specimen ensemble.
+We prove that this is valuable in experimental situations where uncertainty is dominant and information is heterogeneous.
+Indeed these are characteristics of problems in civil engineering.
+% ENGINEERING PROBLEM
+Specifically the system under consideration is an ensemble of identically manufactured beams that are individually tested in a series of experiments.
+A situation is considered where evidence is unevenly distributed throughout the ensemble members,
+i.e.\ the properties of some members can be measured with high accuracy whereas others are poorly informed by the data.
+% HAMILTONIAN MONTE CARLO
+Second, in order to alleviate problems of Markov chain Monte Carlo (MCMC) \cite{MCMC:Robert2004,MCMC:Brooks2011} for posterior exploration in high-dimensional parameter spaces, we propose Hamiltonian Monte Carlo (HMC) \cite{MCMC:Duane1987}.
+The latter is an advanced MCMC technique that allows for gradient-assisted posterior computation with auxiliary variables.
+We show that HMC is ideally suited and extremely efficient for borrowing strength in inverse problems.
+\par % STRUCTURE
+The main part of the paper is structured in the following way.
+Stochastic inversion and multilevel modeling are reviewed first.
+On this basis, borrowing strength and information accumulation are investigated.
+An introduction to HMC sampling is provided after that.
+In order to study the proposed methods, a numerical experiment with simulated data is conducted.
+Concluding remarks are given in the end.

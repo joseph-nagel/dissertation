@@ -1,0 +1,66 @@
+% PROBLEM SOLUTION
+For obtaining a transform-based representation of the posterior distribution, we have to solve \cref{eq:Transport:PriorPosteriorTransformation} for an appropriate map
+or even crack the corresponding Monge problem in \cref{eq:Transport:MongeProblem}.
+Not to mention again the fact that the latter entails a completely pointless cost function, the two problems are extremely challenging.
+Unfortunately, as if traditional optimal transportation was not hard enough, the problem is aggravated by the usual intricacies of Bayesian inference,
+i.e.\ the target posterior distribution is only partially known through pointwise references to its unnormalized density.
+\par % VARIATIONAL FORMULATION
+In order to compute an approximate transport map despite all these difficulties, a variational formulation on the basis of \cref{sec:Bayesian:BayesianComputations:Variational} is devised.
+It relies on fundamental concepts in information theory \cite{Statistics:Soofi2010,Statistics:Ebrahimi2010}.
+% KULLBACK-LEIBLER DIVERGENCE
+Instead of finding a map that exactly establishes a deterministic coupling between the prior and the posterior,
+one can resort to a map that fits a certain information-theoretic optimality criterion.
+In this regard, the Kullback--Leibler (KL) divergence of the back-transformed posterior \(\pi_{\map^{-1}}(\cdot \cond \bm{y})\) from the prior \(\pi\) is considered
+\begin{equation} \label{eq:Transport:KullbackLeibler}
+  D_{\mathrm{KL}}(\pi \| \pi_{\map^{-1}}(\cdot \cond \bm{y}))
+  = \int\limits_{\mathds{R}^\dimParam} \log \left( \frac{\pi(\bm{x})}{\pi_{\map^{-1}}(\bm{x} \cond \bm{y})} \right) \pi(\bm{x}) \, \mathrm{d} \bm{x}
+  = \log \scale - \mathcal{G}(\map).
+\end{equation}
+This shows an intriguing resemblance to \cref{eq:Bayesian:KullbackLeibler}.
+% FREE ENERGY
+The divergence \(D_{\mathrm{KL}}(\pi \| \pi_{\map^{-1}}(\cdot \cond \bm{y}))\) is now the difference between the constant log-evidence \(\log \scale\) and
+\begin{equation} \label{eq:Transport:FreeEnergy}
+  \begin{aligned}
+    \mathcal{G}(\map)
+    &= \int\limits_{\mathds{R}^\dimParam}
+    \log \left( \frac{\mathcal{L}(\map(\bm{x})) \pi(\map(\bm{x})) \lvert \det J_\map(\bm{x}) \rvert}{\pi(\bm{x})} \right) \pi(\bm{x}) \, \mathrm{d} \bm{x} \\
+    &= \int\limits_{\mathds{R}^\dimParam}
+    (\log \mathcal{L}(\map(\bm{x})) + \log \pi(\map(\bm{x})) + \log \, \lvert \det J_\map(\bm{x}) \rvert - \log \pi(\bm{x})) \, \pi(\bm{x}) \, \mathrm{d} \bm{x}.
+  \end{aligned}
+\end{equation}
+\par % VARIATIONAL LOWER BOUND
+In the best case one would have \(\pi = \pi_{\map^{-1}}(\cdot \cond \bm{y})\) such that
+\(D_{\mathrm{KL}}(\pi \| \pi_{\map^{-1}}(\cdot \cond \bm{y})) = 0\) and \(\mathcal{G}(\map) = \log \scale\).
+More generally one has \(D_{\mathrm{KL}}(\pi \| \pi_{\map^{-1}}(\cdot \cond \bm{y})) \geq 0\),
+thus a variational lower bound of the evidence is established through \(\log \scale \geq \mathcal{G}(\map)\) instead of the free energy in \cref{eq:Bayesian:FreeEnergy}.
+% FREE ENERGY DECOMPOSITION
+Note that the differential Shannon entropy \(H_{\mathrm{S}}(\pi) = - \int_{\mathds{R}^\dimParam} \log(\pi(\bm{x})) \, \pi(\bm{x}) \, \mathrm{d} \bm{x}\)
+of the prior density emerges when one decomposes as
+\(\mathcal{G}(\map) = \int_{\mathds{R}^\dimParam} \log(\mathcal{L}(\map(\bm{x})) \pi(\map(\bm{x})) \lvert \det J_\map(\bm{x}) \rvert) \, \pi(\bm{x}) \, \mathrm{d} \bm{x} + H_{\mathrm{S}}(\pi)\).
+\par % OPTIMIZATION PROBLEM
+Let us consider a class of possible transformations \(\mathds{\map}\).
+Then one can find the member \(\map \in \mathds{\map}\) that, measured in terms of the relative entropy,
+best back-transforms the posterior into the prior \(\pi_{\map^{-1}}(\cdot \cond \bm{y})) \approx \pi\).
+Hence, the posterior is well approximated by the transformed prior \(\pi_{\map} \approx \pi(\cdot \cond \bm{y})\).
+Similar as in \cref{eq:Bayesian:MinimizeKullbackLeibler}, minimizing \(D_{\mathrm{KL}}(\pi \| \pi_{\map^{-1}}(\cdot \cond \bm{y}))\) is equivalent to maximizing \(\mathcal{G}(\map)\).
+Thus
+\begin{equation} \label{eq:Transport:MinimizeKullbackLeibler}
+  \map = \operatorname*{arg\,min}_{\map_\star \in \mathds{\map}} D_{\mathrm{KL}}(\pi \| \pi_{\map_\star^{-1}}(\cdot \cond \bm{y}))
+  \quad \Leftrightarrow \quad
+  \map = \operatorname*{arg\,max}_{\map_\star \in \mathds{\map}} \mathcal{G}(\map_\star).
+\end{equation}
+% INTERPRETATION
+Basically, this minimizes the information loss or entropy gain which comes along with replacing the prior with the back-transformed posterior.
+A stochastic program is posed in that a probabilistic expectation under the prior is extremized \cite{Optim:Prekopa1995,Optim:Shapiro2014}.
+\par % TRACTABILITY
+As opposed to \(D_{\mathrm{KL}}(\pi \| \pi_{\map^{-1}}(\cdot \cond \bm{y}))\) in \cref{eq:Transport:KullbackLeibler},
+the intractable model evidence has been eliminated from \(\mathcal{G}(\map)\) in \cref{eq:Transport:FreeEnergy}.
+Instead of minimizing \(D_{\mathrm{KL}}(\pi \| \pi_{\map^{-1}}(\cdot \cond \bm{y}))\),
+one might hit on the alternative idea of doing so for \(D_{\mathrm{KL}}(\pi_{\map^{-1}}(\cdot \cond \bm{y}) \| \pi)
+= \int_{\mathds{R}^\dimParam} \log(\pi_{\map^{-1}}(\bm{x} \cond \bm{y}) / \pi(\bm{x})) \, \pi_{\map^{-1}}(\bm{x} \cond \bm{y}) \, \mathrm{d} \bm{x}\).
+This would involve intractable expectations under the back-transformed posterior, however.
+Another idea is to minimize either of the distances \(D_{\mathrm{KL}}(\pi(\cdot \cond \bm{y}) \| \pi_{\map})\)
+or \(D_{\mathrm{KL}}(\pi_{\map} \| \pi(\cdot \cond \bm{y}))\) between the transformed prior and the posterior.
+In addition to the intractable expectation arising in the first objective,
+this is generally problematic because it would require to evaluate the inverse map \(\map^{-1}\) and its Jacobian determinant \(\det J_{\map^{-1}}\).
+On the whole, the minimization of \(D_{\mathrm{KL}}(\pi \| \pi_{\map^{-1}}(\cdot \cond \bm{y}))\) in \cref{eq:Transport:MinimizeKullbackLeibler} is the only viable option.

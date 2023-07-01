@@ -1,0 +1,109 @@
+%%%%%%%%%%%%%%%%%%%%
+% ``PERFECT'' DATA %
+%%%%%%%%%%%%%%%%%%%%
+In \cref{sec:PEM:Multilevel:Residual} the residual model was introduced as a representation of the discrepancy between model predictions and measurements.
+This conditional model had equipped the data space \(\mathcal{D}_{\perfect{\bm{y}}}\) with a probability measure.
+As a consequence, in \cref{eq:PEM:Multilevel:Model:Data} observations were regarded as \(\bm{y}_i = \perfect{\bm{y}}_i + \bm{\varepsilon}_i\) with a random outcome \(\bm{\varepsilon}_i\).
+% PERFECT DATA
+However, experimental situations may occur where direct access to
+\begin{equation} \label{eq:PEM:Multilevel:PerfectData:StatisticalDataModel}
+  \perfect{\bm{y}}_i = \mathcal{M}(\bm{m},\bm{x}_i,\bm{\zeta}_i,\bm{d}_i), \;\, \text{for} \;\, i=1,\ldots,n
+\end{equation}
+is granted, e.g.\ due to noise-free measurements and a ``sufficiently accurate'' forward model \cite{NASA:Crespo2014:Proc}.
+The data \(\tuple{\perfect{\bm{y}}_i}\) is then only explained by uncertainty of the forward model inputs as described in \cref{sec:PEM:Multilevel:Uncertainty}, without being subject to prediction errors.
+Hereafter we will refer this scenario as to involve ``perfect'' data \cite{Nagel:SciTech2014:Proc,Nagel:JAIS2015}.
+% BAYESIAN MODEL
+A statistical model that is appropriate for ``perfect'' data can be formulated as
+\begin{subequations} \label{eq:PEM:Multilevel:PerfectData:Model}
+  \begin{align}
+    (\perfect{\bm{Y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}}) &\sim f (\perfect{\bm{y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}}), \;\, \text{for} \;\, i=1,\ldots,n, \label{eq:PEM:Multilevel:PerfectData:Data}\\
+    (\bm{M},\bm{\Theta}_{\bm{X}}) &\sim \pi(\bm{m},\bm{\theta}_{\bm{X}}) = \pi_{\bm{M}} (\bm{m}) \, \pi_{\bm{\Theta}_{\bm{X}}}(\bm{\theta}_{\bm{X}}). \label{eq:PEM:Multilevel:PerfectData:Prior}
+  \end{align}
+\end{subequations}
+% PRIOR
+As before, \cref{eq:PEM:Multilevel:PerfectData:Prior} embodies the available prior knowledge about the unknowns \((\bm{m},\bm{\theta}_{\bm{X}})\).
+% FORWARD PROPAGATION
+Conditional random variables in \cref{eq:PEM:Multilevel:PerfectData:Data} are constructed by forward uncertainty propagation as follows.
+The independent input uncertainties \((\bm{X}_i \cond \bm{\theta}_{\bm{X}}) \sim f_{\bm{X} \cond \bm{\Theta}_{\bm{X}}} (\bm{x}_i \cond \bm{\theta}_{\bm{X}})\) and \(\bm{Z}_i \sim f_{\bm{Z}}(\bm{\zeta}_i \distparam \bm{\theta}_{\bm{Z}_i})\),
+that are defined for given \((\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}_i})\), are propagated through the forward model \(\mathcal{M}\), while the inputs \((\bm{m},\bm{d}_i)\) are fixed.
+% DENSITY
+The density of the resulting random variables \((\perfect{\bm{Y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}}) = \mathcal{M} \big( \bm{m},(\bm{X}_i \cond \bm{\theta}_{\bm{X}}),\bm{Z}_i,\bm{d}_i \big)\)
+at \(\perfect{\bm{y}}_i \in \mathcal{D}_{\bm{\perfect{y}}}\) is found as
+\begin{equation} \label{eq:PEM:Multilevel:PerfectData:PushForwardDensity}
+  f (\perfect{\bm{y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}})
+  = \int\limits_{\mathcal{D}_{\bm{x}}} \int\limits_{\mathcal{D}_{\bm{\zeta}}} \delta \big( \perfect{\bm{y}}_i - \mathcal{M}({\bm{m},\bm{x}_i,\bm{\zeta}_i,\bm{d}_i}) \big)
+  \, f_{\bm{X} \cond \bm{\Theta}_{\bm{X}}} (\bm{x}_i \cond \bm{\theta}_{\bm{X}}) \, f_{\bm{Z}}(\bm{\zeta}_i \distparam \bm{\theta}_{\bm{Z}_i})
+  \, \mathrm{d} \bm{x}_i \, \mathrm{d} \bm{\zeta}_i,
+\end{equation}
+where \(\delta\) denotes the Dirac delta distribution.
+This endows the response space \(\mathcal{D}_{\perfect{\bm{y}}}\) with a proper probability model.
+% SIMILARITY TO IMPERFECT DATA
+Inspecting \cref{eq:PEM:Multilevel:PerfectData:PushForwardDensity,eq:PEM:Multilevel:Marginal:Marginalization} reveals that the marginal model \cref{eq:PEM:Multilevel:Marginal:Model}
+approaches the ``perfect'' data model \cref{eq:PEM:Multilevel:PerfectData:Model} in the zero-noise limit \(\lVert \bm{\Sigma}_i \rVert \rightarrow 0\).
+% LIKELIHOOD
+With the distributions \(f (\perfect{\bm{y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}})\), that are conditioned on \((\bm{m},\bm{\theta}_{\bm{X}})\) and dependent on experiment-specific knowns \((\bm{d}_i,\bm{\theta}_{\bm{Z}_i})\),
+one can formulate the corresponding likelihood function as
+\begin{equation} \label{eq:PEM:Multilevel:PerfectData:Likelihood}
+  \mathcal{L} \big( \bm{m},\bm{\theta}_{\bm{X}} \distparam \tuple{\perfect{\bm{y}}_i} \big)
+  = f \big( \tuple{\perfect{\bm{y}}_i} \cond \bm{m},\bm{\theta}_{\bm{X}} \big)
+  = \prod\limits_{i=1}^n f (\perfect{\bm{y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}}).
+\end{equation}
+For given data \(\tuple{\perfect{\bm{y}}_i}\) it is viewed as a function of the unknowns \((\bm{m},\bm{\theta}_{\bm{X}})\) that also depends on \((\tuple{\bm{\theta}_{\bm{Z}_i}},\tuple{\bm{d}_i})\).
+% POSTERIOR
+As usual Bayesian data analysis proceeds by conditioning on the data \(\tuple{\perfect{\bm{y}}_i}\).
+With the prior \cref{eq:PEM:Multilevel:PerfectData:Prior} and the likelihood \cref{eq:PEM:Multilevel:PerfectData:Likelihood} the posterior follows through Bayes' rule
+\begin{equation} \label{eq:PEM:Multilevel:PerfectData:Posterior}
+  \pi \big( \bm{m},\bm{\theta}_{\bm{X}} \cond \tuple{\perfect{\bm{y}}_i} \big)
+  = \frac{1}{\perfect{C}} \, \mathcal{L} \big( \bm{m},\bm{\theta}_{\bm{X}} \distparam \tuple{\perfect{\bm{y}}_i} \big) \, \pi(\bm{m},\bm{\theta}_{\bm{X}}).
+\end{equation}
+% SCALE FACTOR
+The factor of proportionality \(\perfect{C}\) in the posterior density \cref{eq:PEM:Multilevel:PerfectData:Posterior} is given as the marginal probability density of the effectively acquired data \(\tuple{\perfect{\bm{y}}_i}\).
+It thus writes \(\perfect{C} = \iint \mathcal{L}(\bm{m},\bm{\theta}_{\bm{X}} \distparam \tuple{\perfect{\bm{y}}_i}) \, \pi(\bm{m},\bm{\theta}_{\bm{X}}) \, \mathrm{d} \bm{m} \, \mathrm{d} \bm{\bm{\theta}_{\bm{X}}}\).
+
+\subsection{Kernel density estimation} \label{sec:PEM:PerfectData:KDE}
+% LIKELIHOOD FUNCTION
+The likelihood function \(\mathcal{L} (\bm{m},\bm{\theta}_{\bm{X}} \distparam \tuple{\perfect{\bm{y}}_i})\) in \cref{eq:PEM:Multilevel:PerfectData:Likelihood}
+is grounded on probability densities \(f (\perfect{\bm{y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}})\).
+% FORWARD UNCERTAINTY PROPAGATION
+Likelihood evaluations therefore require forward uncertainty propagation \cref{eq:PEM:Multilevel:PerfectData:PushForwardDensity}.
+% COMPUTATIONAL APPROACH
+In the majority of cases this complicated problem can only be approximately solved.
+A possible approach is to use MC uncertainty propagation in combination with kernel density estimation (KDE) \cite{PCE:Sudret2008:a:Proc}.
+\par % KERNEL DENSITY ESTIMATION
+Let \(\mathcal{K}_{\bm{H}}(\perfect{\bm{y}}) = \lvert \bm{H} \rvert^{-1/2} \, \mathcal{K} (\bm{H}^{-1/2} \perfect{\bm{y}})\) be the scaled kernel that is defined by a kernel function \(\mathcal{K}\)
+and the symmetric and positive-definite bandwidth matrix \(\bm{H}\).
+% TARGET DENSITY
+% with known \((\bm{\theta}_{\bm{Z}_i},\bm{d}_i,\bm{\Sigma}_i)\),
+A KDE of the density \(f (\perfect{\bm{y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}})\) in \cref{eq:PEM:Multilevel:PerfectData:PushForwardDensity} 
+as a function of \(\perfect{\bm{y}}_i\) and for fixed values of \((\bm{m},\bm{\theta}_{\bm{X}})\) is given as
+\begin{equation} \label{eq:PEM:Multilevel:PerfectData:DensityEstimator}
+  \hat{f} (\perfect{\bm{y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}})
+  = \frac{1}{K} \sum\limits_{k=1}^{K} \mathcal{K}_{\bm{H}} \left( \perfect{\bm{y}}_i-\perfect{\bm{\upsilon}}_i^{(k)} \right),
+  \;\, \text{with} \;\, \left\{
+  \begin{aligned}
+    \bm{x}_i^{(k)} &\sim f_{\bm{X} \cond \bm{\Theta}_{\bm{X}}}(\bm{x}_i^{(k)} \cond \bm{\theta}_{\bm{X}}),\\
+    \bm{\zeta}_i^{(k)} &\sim f_{\bm{Z}}(\bm{\zeta}_i^{(k)} \distparam \bm{\theta}_{\bm{Z}_i}),\\
+    \perfect{\bm{\upsilon}}_i^{(k)} &= \mathcal{M}(\bm{m},\bm{x}_i^{(k)},\bm{\zeta}_i^{(k)},\bm{d}_i)
+  \end{aligned}
+  \right\} \;\, \text{for} \;\, k=1,\ldots,K.
+\end{equation}
+% MONTE CARLO SAMPLING
+Analogously to \cref{eq:PEM:Multilevel:Marginal:DensityEstimator}, for \(k=1,\ldots,K\) forward model inputs \(\bm{x}_i^{(k)}\) and \(\bm{\zeta}_i^{(k)}\) are randomly drawn from their parent distributions
+\(f_{\bm{X} \cond \bm{\Theta}_{\bm{X}}}(\bm{x}_i^{(k)} \cond \bm{\theta}_{\bm{X}})\) and \(f_{\bm{Z}}(\bm{\zeta}_i^{(k)} \distparam \bm{\theta}_{\bm{Z}_i})\)
+% FORWARD MODEL RESPONSES
+and responses \(\perfect{\bm{\upsilon}}_i^{(k)} = \mathcal{M}(\bm{m},\bm{x}_i^{(k)},\bm{\zeta}_i^{(k)},\bm{d}_i)\) are computed.
+Subsequently the sample \((\perfect{\bm{\upsilon}}_i^{(1)},\ldots,\perfect{\bm{\upsilon}}_i^{(K)})\) serves as a proxy for the distribution \(f (\perfect{\bm{y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}})\).
+% TRANSFORMED LIKELIHOOD
+Estimating \(\mathcal{L} (\bm{m},\bm{\theta}_{\bm{X}} \distparam \tuple{\perfect{\bm{y}}_i})\) is based on evaluating the KDE in \cref{eq:PEM:Multilevel:PerfectData:DensityEstimator}
+for arguments \((\bm{m},\bm{\theta}_{\bm{X}})\) and for the observations \(\perfect{\bm{y}}_i\) corresponding to experiments \(i=1,\ldots,n\).
+% LIKELIHOOD ESTIMATOR
+On these grounds, the likelihood function \(\mathcal{L} (\bm{m},\bm{\theta}_{\bm{X}} \distparam \tuple{\perfect{\bm{y}}_i})\) is approximated as
+\begin{equation} \label{eq:PEM:Multilevel:PerfectData:LikelihoodEstimator}
+  \hat{\mathcal{L}} \big( \bm{m},\bm{\theta}_{\bm{X}} \distparam \tuple{\perfect{\bm{y}}_i} \big)
+  = \prod\limits_{i=1}^n \hat{f} (\perfect{\bm{y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}}).
+\end{equation}
+\par % COMPUTATIONAL EXPENSE
+Similarly to \cref{eq:PEM:Multilevel:Marginal:LikelihoodEstimator} this is an expensive statistical estimation program
+that involves forward uncertainty quantification and tends to require a high number \(K\) of calls to the forward code.
+% STATISTICAL ESTIMATION & MCMC
+Further challenges intrinsically related to computing the posterior \cref{eq:PEM:Multilevel:PerfectData:Posterior} of the ``perfect'' data model will be discussed in \cref{sec:PEM:Computations}.

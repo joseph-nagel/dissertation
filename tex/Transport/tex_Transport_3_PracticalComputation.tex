@@ -1,0 +1,178 @@
+% PARAMETRIZATION/REGULARIZATION
+After having reformulated Bayesian inference as a stochastic program, a few more ingredients are still necessary in order to render its practical solution feasible.
+This involves means to parametrize the map, regularize its computation and evaluate stochastic averages in the optimization routine.
+Herein we restrict the search for a transformation to a convenient and reasonably rich function space and deploy a Monte Carlo approximation of the optimization objective.
+
+\subsection{Map parametrization}
+% TRIANGULAR MAP
+We consider maps with a triangular structure.
+This form is motivated by the discussion about optimal transport where it emerges as a consequence of certain considerations regarding the transportation cost.
+For \(i=1,\ldots,\dimParam\) each component \(T_i(x_1,\ldots,x_i)\) is a function of the first \(i\) variables only.
+Overall, such a triangular-like map is written as
+\begin{equation} \label{eq:Transport:TriangularMap}
+  \map^\vartriangle(\bm{x})
+  = \left(
+    \begin{aligned}
+      & \map_1(x_1) \\
+      & \map_2(x_1,x_2) \\
+      & \vdots \\
+      & \map_\dimParam(x_1,x_2,\ldots,x_\dimParam)
+    \end{aligned}
+    \right).
+\end{equation}
+An apparent characteristic of this formulation is that it depends on the ordering of the variables involved.
+% JACOBIAN MATRIX
+The Jacobian matrix of the vector function in \cref{eq:Transport:TriangularMap} has the lower triangular structure
+\begin{equation} \label{eq:Transport:TriangularJacobianMatrix}
+  J_{\map^\vartriangle} = \frac{\mathrm{d} \map^\vartriangle}{\mathrm{d} \bm{x}}
+  = \begin{pmatrix}
+      \frac{\partial \map_1}{\partial x_1} & 0 & \ldots & 0 \\
+      \frac{\partial \map_2}{\partial x_1} & \frac{\partial \map_2}{\partial x_2} & \ldots & 0 \\
+      \vdots & \vdots & \ddots & \vdots \\
+      \frac{\partial \map_\dimParam}{\partial x_1} & \frac{\partial \map_\dimParam}{\partial x_2} & \ldots & \frac{\partial \map_\dimParam}{\partial x_\dimParam} \\
+    \end{pmatrix}.
+\end{equation}
+% JACOBIAN DETERMINANT
+As a direct consequence thereof, the determinant of the lower triangular matrix in \cref{eq:Transport:TriangularJacobianMatrix} is simply the product of its diagonal terms
+\begin{equation} \label{eq:Transport:TriangularJacobianDeterminant}
+  \det J_{\map^\vartriangle} = \prod\limits_{i=1}^\dimParam \frac{\partial \map_i}{\partial x_i}.
+\end{equation}
+That the Jacobian determinant can be easily determined through \cref{eq:Transport:TriangularJacobianDeterminant} is of great help.
+It simplifies the evaluation of objective function in \cref{eq:Transport:FreeEnergy} for the optimization problem in \cref{eq:Transport:MinimizeKullbackLeibler}.
+\par % POLYNOMIAL COMPONENTS
+After specifying the structure of the random variable transformation, we have to represent its individual components in some way.
+Multivariate polynomials up to a certain degree are envisaged for that purpose.
+They provide a convenient basis for representing smooth functions which is both flexible and interpretable.
+Given that we have a candidate set of polynomials \(\{\basis_{\bm{\alpha}_i}(x_1,\ldots,x_i)\}_{\bm{\alpha}_i \in \mathcal{A}_{i,p_i}}\) for all \(i=1,\ldots,\dimParam\),
+the components of the map in \cref{eq:Transport:TriangularMap} can be represented as a superposition
+\begin{equation} \label{eq:Transport:PolynomialRepresentation}
+  T_i(x_1,\ldots,x_i) = \sum\limits_{\bm{\alpha}_i \in \mathcal{A}_{i,p_i}} \coeffM_{\bm{\alpha}_i} \basis_{\bm{\alpha}_i}(x_1,\ldots,x_i).
+\end{equation}
+% MULTI-INDICES
+As usual, multi-indices \(\bm{\alpha}_i = (\alpha_{i,1},\ldots,\alpha_{i,i}) \in \mathds{N}^i\) are introduced
+in order to bookkeep and restrict the number of terms in \cref{eq:Transport:PolynomialRepresentation}.
+The total polynomial degrees \(\lVert \bm{\alpha}_i \rVert_1 = \sum_{j=1}^i \lvert \alpha_{i,j} \rvert \leq p_i\) are limited to \(i\)-dependent maxima \(p_i \in \mathds{N}\).
+Only terms whose multi-index satisfies \(\bm{\alpha}_i \in \mathcal{A}_{i,p_i} = \left\{ \bm{\beta}_i \in \mathds{N}^i \colon \lVert \bm{\beta}_i \rVert_1 \leq p_i \right\}\) are then kept.
+Let us now fix the polynomial degrees \(p_i = p\) to an identical upper limit \(p \in \mathds{N}\) for all components of the map.
+Moreover, letting \(\bm{\coeffM} \in \mathds{R}^P\) with \(P \in \mathds{N}_{>0}\) denote the totality of the coefficients for all expansions, one can write
+\begin{equation} \label{eq:Transport:PolynomialMap}
+  \map_{\bm{\coeffM}}^\vartriangle(\bm{x})
+  = \left(
+    \begin{aligned}
+      &\sum\limits_{\bm{\alpha}_1 \in \mathcal{A}_{1,p}} \coeffM_{\bm{\alpha}_1} \basis_{\bm{\alpha}_1}(x_1) \\
+      &\sum\limits_{\bm{\alpha}_2 \in \mathcal{A}_{2,p}} \coeffM_{\bm{\alpha}_2} \basis_{\bm{\alpha}_2}(x_1,x_2) \\
+      &\vdots \\
+      &\sum\limits_{\bm{\alpha}_\dimParam \in \mathcal{A}_{\dimParam,p}} \coeffM_{\bm{\alpha}_\dimParam} \basis_{\bm{\alpha}_\dimParam}(x_1,x_2,\ldots,x_\dimParam)
+    \end{aligned}
+    \right).
+\end{equation}
+% TOTAL NUMBER OF TERMS
+The number of terms in \cref{eq:Transport:PolynomialMap} grows fast with increasing dimensionality \(\dimParam\) and expansion order \(p\).
+Based on \cref{eq:PCE:Cardinality} the total number of terms \(P\) is given as
+\begin{equation} \label{eq:Transport:Cardinality}
+  P = \sum\limits_{i=1}^\dimParam \begin{pmatrix}
+                                    i + p \\
+                                    p \\
+                                  \end{pmatrix}
+  = \sum\limits_{i=1}^\dimParam \frac{(i + p)!}{i! \, p!}.
+\end{equation}
+% PRACTICAL IMPLEMENTATION
+The triangular formulation of the map with polynomial components gives rise to one free algorithmic parameter that has to be set, namely the maximal polynomial degree \(p\).
+\par % ORTHOGONAL POLYNOMIALS
+While there is no stringent necessity for choosing a family of polynomials that is orthogonal with respect to the prior weight function, it certainly is appealing to do so.
+This may require a transformation to standardized variables, which is tantamount to the introduction of a secondary measure that transforms into both the prior and the posterior.
+The random vector in \cref{eq:Transport:PosteriorRV} can then be seen as a triangular type of polynomial chaos expansion \(\tilde{\bm{X}} = \map_{\bm{\coeffM}}^\vartriangle(\bm{X})\)
+in terms of the random variables \(\bm{X} \sim \pi(\bm{x})\) that are distributed according to the prior.
+Notwithstanding that this facilitates the interpretation of the coefficients of the parametrized map,
+we do not aim at leveraging the Hilbert space theory from \cref{sec:Uncertainty:SurrogateModeling} per se.
+Rather we just need any class of transformations that is sufficiently flexible, i.e.\ in order to contain such members that well couple the prior and the posterior,
+and reasonably restrictive at the same time, i.e.\ so as to facilitate the process of finding a good transform.
+\par % ANALYTICAL MOMENTS
+Analogous to \cref{eq:PCE:OutputMeanVariance}, given that the prior is a product measure with a density \(\pi(\bm{x}) = \pi_1(x_1) \ldots \pi_\dimParam(x_\dimParam)\)
+and that the basis functions in \cref{eq:Transport:PolynomialRepresentation} are normalized,
+one can write the means and variances of the random variables \(T_i(X_1,\ldots,X_i)\) for \(i = 1,\ldots,\dimParam\) as
+\begin{equation} \label{eq:Transport:OutputMeanVariance}
+  \mathds{E}[T_i(X_1,\ldots,X_i)] = \coeffM_{\bm{0}_i}, \quad
+  \mathrm{Var}[T_i(X_1,\ldots,X_i)] = \sum_{\bm{\alpha}_i \in \mathcal{A}_{i,p} \setminus \{\bm{0}_i\}} \coeffM_{\bm{\alpha}_i}^2.
+\end{equation}
+The zero vector of \(\mathds{R}^i\) is here denoted as \(\bm{0}_i\).
+For \(i,j = 1,\ldots,\dimParam\) with \(j > i\) one can similarly write the covariance between any two different random variables \(T_i(X_1,\ldots,X_i)\) and \(T_j(X_1,\ldots,X_j)\) as
+\begin{equation} \label{eq:Transport:OutputCovariance}
+  \mathrm{Cov}[T_i(X_1,\ldots,X_i),T_j(X_1,\ldots,X_j)] = \sum_{\bm{\alpha}_i \in \mathcal{A}_{i,p} \setminus \{\bm{0}_i\}} \coeffM_{\bm{\alpha}_i} \coeffM_{(\bm{\alpha}_i,\bm{0}_{j-i})}.
+\end{equation}
+Here, \((\bm{\alpha}_i,\bm{0}_{j-i}) = (\alpha_{i,1},\ldots,\alpha_{i,i},0,\ldots,0) \in \mathcal{A}_{j,p}\) denotes the concatenation
+of the multi-index \(\bm{\alpha}_i \in \mathds{R}^i\) and the zero element \(\bm{0}_{j-i} = (0,\ldots,0) \in \mathds{R}^{j-i}\).
+\par % COEFFICIENT POSTPROCESSING
+Provided that an inferential map perfectly couples the prior and the posterior, \cref{eq:Transport:OutputMeanVariance,eq:Transport:OutputCovariance} immediately provide the first posterior moments.
+Conditional on the data, the posterior means and covariances are simply given as \(\mathds{E}[X_i \cond \bm{y}] = \mathds{E}[T_i(X_1,\ldots,X_i)]\)
+and \(\mathrm{Cov}[X_i,X_j \cond \bm{y}] = \mathrm{Cov}[T_i(X_1,\ldots,X_i),T_j(X_1,\ldots,X_j)]\), respectively.
+In case a transport map only establishes an imperfect coupling, these relations may still serve as posterior approximations.
+
+\subsection{Sample average approximation}
+% MONTE CARLO SIMULATION
+For evaluating the objective function, we avail ourselves of Monte Carlo (MC) simulation.
+In principle one can imagine two different modalities of random sampling--based stochastic optimization,
+i.e.\ one can either use a fixed sample or resample for every computation of the objective function.
+% SAMPLE AVERAGE APPROXIMATION
+The former approach is known as the \emph{sample average approximation} (SAA) in stochastic programming \cite{Optim:Kleywegt2002,Optim:Nemirovski2009}.
+After the selection of the initial sample, the objective function is deterministic in that it always returns the same output value for the same values of the optimization parameters.
+The SAA can be readily implemented with any appropriate deterministic or stochastic optimizer.
+Its results are similarly straightforward to interpret.
+The latter approach features a stochastic approximation of the objective function in that it attains randomly varying outputs for the same inputs.
+While it can be implemented as easily as the SAA, its results are more problematic to interpret.
+For example, the algorithm could randomly but prematurely terminate due to obeying a stopping rule.
+\par % SAMPLE AVERAGE FUNCTION
+For these reasons, we use the SAA from now on.
+Let \((\bm{x}^{(1)},\ldots,\bm{x}^{(K)})\) be a representative sample from the prior distribution of size \(K \in \mathds{N}_{>0}\), e.g.\ randomly and independently sampled.
+An MC approximation of the utility function in \cref{eq:Transport:FreeEnergy} is then given as
+\begin{equation} \label{eq:Transport:SampleAverageFunction}
+  \hat{\mathcal{G}}(\bm{\coeffM}) = \frac{1}{K} \sum\limits_{k=1}^K \left(
+  \log \mathcal{L}(\map_{\bm{\coeffM}}^\vartriangle(\bm{x}^{(k)})) + \log \pi(\map_{\bm{\coeffM}}^\vartriangle(\bm{x}^{(k)}))
+  + \log \, \lvert \det J_{\map_{\bm{\coeffM}}^\vartriangle}(\bm{x}^{(k)}) \rvert - \log \pi(\bm{x}^{(k)}) \right).
+\end{equation}
+The sample remains fixed once it has been selected.
+% FINAL PROBLEM
+Given the \emph{sample average function} in \cref{eq:Transport:SampleAverageFunction} and the parametrized transformation in \cref{eq:Transport:PolynomialMap},
+the maximization in \cref{eq:Transport:MinimizeKullbackLeibler} can be approximately stated as
+\begin{equation} \label{eq:Transport:OptimizationSAA}
+  \hat{\bm{\coeffM}} = \operatorname*{arg\,max}_{\bm{\coeffM}^\star \in \mathds{R}^P} \hat{\mathcal{G}}(\bm{\coeffM}^\star).
+\end{equation}
+% PRACTICAL IMPLEMENTATION
+Two remaining choices have to be made for a practical implementation of the SAA method.
+A convenient optimizer has to be decided on and the MC sample size \(K\) has to be fixed.
+
+\subsection{Assessing convergence}
+% CONVERGENCE CRITERION
+Finally, an independent convergence criterion is desired.
+This refers to the iterations of the optimization algorithm, where the maximum achievable utility is unknown, but also to an additional outer loop that iterates over the maximal polynomial degree.
+% LOGARITHMIC BACK-TRANSFORMATION
+Taking the logarithm of the back-transform in \cref{eq:Transport:PosteriorBacktransformation} subject to \cref{eq:Transport:PriorPosteriorTransformation}
+and solving for the log-evidence leads to
+\begin{equation} \label{eq:Transport:LogarithmicBacktransformation}
+  \log \scale = \log \mathcal{L}(\map(\bm{x})) + \log \pi(\map(\bm{x})) + \log \, \lvert \det J_\map(\bm{x}) \rvert - \log \pi(\bm{x}).
+\end{equation}
+This characterizes the perfect coupling.
+% APPROXIMATE MAP
+However, the exact equality may not be achieved once the triangular map with polynomial components in \cref{eq:Transport:PolynomialMap} is used.
+In this case one can still utilize the right hand side of \cref{eq:Transport:LogarithmicBacktransformation} in defining
+\begin{equation} \label{eq:Transport:Lambda}
+  \Lambda_{\bm{\coeffM}}(\bm{x}) = \log \mathcal{L}(\map_{\bm{\coeffM}}^\vartriangle(\bm{x}))
+  + \log \pi(\map_{\bm{\coeffM}}^\vartriangle(\bm{x})) + \log \, \lvert \det J_{\map_{\bm{\coeffM}}^\vartriangle}(\bm{x}) \rvert - \log \pi(\bm{x}).
+\end{equation}
+\par % RELATION TO KL DIVERGENCE
+Note that the prior expectation of \cref{eq:Transport:Lambda} is related to \cref{eq:Transport:FreeEnergy}
+by \(\mathds{E}[\Lambda_{\bm{\coeffM}}(\bm{X})] = \mathcal{G}(\map_{\bm{\coeffM}}^\vartriangle)\).
+% VARIANCE OF LAMBDA
+In case that \(\map_{\bm{\coeffM}}^\vartriangle\) would establish a perfect coupling, one would have \(\Lambda_{\bm{\coeffM}}(\bm{x}) = \log \scale\) for all \(\bm{x} \in \mathds{R}^\dimParam\).
+This implies that \(\mathds{E}[\Lambda_{\bm{\coeffM}}(\bm{X})] = \log \scale\) and \(\mathrm{Var}[\Lambda_{\bm{\coeffM}}(\bm{X})] = 0\).
+% ALTERNATIVE OPTIMIZATION PROBLEM
+The following alternative to the optimization problem in \cref{eq:Transport:MinimizeKullbackLeibler} and its discretization in \cref{eq:Transport:OptimizationSAA} is thus suggested
+\begin{equation} \label{eq:Transport:OptimizationLambda}
+  \hat{\bm{\coeffM}} = \operatorname*{arg\,min}_{\bm{\coeffM}^\star \in \mathds{R}^P} \mathrm{Var}[\Lambda_{\bm{\coeffM}^\star}(\bm{X})].
+\end{equation}
+% CONVERGENCE INDICATOR
+Since \cref{eq:Transport:OptimizationLambda} does not admit a straightforward interpretation,
+e.g.\ with regard to the minimization of a divergence measure, we do not solve that problem directly.
+Nevertheless, we can monitor \(\mathrm{Var}[\Lambda_{\hat{\bm{\coeffM}}}(\bm{X})] \rightarrow 0\) or its MC sample approximation
+as a convergence indicator during the solution of \cref{eq:Transport:OptimizationSAA}.
+The selection of the maximal polynomial degree can be finally based on this criterion.

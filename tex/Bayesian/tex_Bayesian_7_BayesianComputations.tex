@@ -1,0 +1,336 @@
+% POSTERIOR EXPRESSIONS
+Posterior densities of very simple problems can sometimes be derived analytically.
+In the linear-Gaussian examples in \cref{sec:Bayesian:InverseProblems:LinearRegression}
+the posterior densities had the explicit expressions in \cref{eq:Linear:PosteriorDensity,eq:Linear:UnknownSigmaPosterior}.
+This is a rare exception rather than a rule.
+Most often, the posterior density in \cref{eq:Bayesian:PosteriorDensity} does not have such a closed-form solution.
+One therefore contents oneself with computational approximations of a few hand-picked characteristics of the full posterior.
+These typically take the form of the integrals in \cref{eq:Bayesian:ModelEvidence,eq:Bayesian:ConditionalExpectation} \cite{MCMC:Evans2000,MCMC:Chen2000}.
+\par % COMPUTATIONAL BAYESIAN INFERENCE
+Despite the restriction to posterior summaries only, computational Bayesian inference is still a challenging problem.
+Roughly speaking, any convenient algorithm oughts to master the difficulty that one only has limited access to the full posterior.
+For one thing, the posterior density cannot be evaluated directly, one can only compute the likelihood function for certain parameter values individually.
+Even if the densities of the prior or some auxiliary distribution can be calculated and sampled, this is a major constraint that all attempts have to cope with.
+For another thing, the computational budget may limit the number of calls to the likelihood which, in turn, necessitates to select the corresponding parameter values wisely.
+This is especially important in inverse problems where the forward model needs to be run once for each likelihood evaluation.
+\par % CLASSICAL TECHNIQUES
+Before presenting the most widespread approaches to computational Bayesian inference, i.e.\ random sampling and mathematical programming,
+it is remarked that researchers have recently devised a whole battery of new and creative alternatives.
+% RECENT DEVELOPMENTS
+Among others, this includes hybrid schemes combining sampling and optimization \cite{Bayesian:Bardsley2014,Bayesian:Bardsley2015},
+importance sampling--based methods based on implicit transformations and Jacobian weights \cite{Bayesian:Chorin2009,Bayesian:Morzfeld2010,Bayesian:Chorin2012,Bayesian:Morzfeld2015},
+rejection sampling--related techniques inspired by subset simulation for rare event estimation in structural reliability \cite{Bayesian:Betz2014,Bayesian:Straub2015,Bayesian:DiazDelaO2017}
+and conditional expectation--focused polynomial chaos expansion filters \cite{Bayesian:Rosic2012,Bayesian:Rosic2013:a,Bayesian:Matthies2016:a,Bayesian:Matthies2016:b}.
+% THESIS CONNECTION
+In addition, a linear least squares technique for computing the actual posterior density along with the model evidence and the conditional expectations is presented in \cref{sec:JCP}.
+Yet another novel approach based on random variable transformations is investigated in \cref{sec:Transport}.
+
+\subsection{Markov chain Monte Carlo} \label{sec:Bayesian:BayesianComputations:MCMC}
+% MARKOV CHAIN MONTE CARLO
+An important class of algorithms for Bayesian inference rests on \emph{Markov chain Monte Carlo} (MCMC) sampling \cite{MCMC:Gamerman2006}.
+The basic idea here is to construct a Markov chain that is suitable for sampling from the posterior distribution and for estimating conditional expectations accordingly.
+This only needs pointwise evaluations of the unnormalized posterior density and thus dispenses from computing the marginal likelihood.
+MCMC algorithms are therefore sufficient for single-model parameter estimation, though,
+for multi-model inference one has to search for more suitable methods \cite{Bayesian:Friel2012,Bayesian:Schoniger2014,Bayesian:Knuth2015}.
+\par % METROPOLIS-HASTINGS
+Most MCMC techniques are based on the original \emph{Metropolis--Hastings} (MH) \emph{algorithm} \cite{MCMC:Metropolis1953,MCMC:Hastings1970}.
+Since more detailed introductions are also found in most chapters of \cref{sec:Published}, only a short summary of the algorithm is given.
+An ergodic Markov chain \((\bm{X}^{(1)},\bm{X}^{(2)},\ldots)\) over the prior support whose invariant distribution equals the posterior is realized as follows.
+The chain is initialized at a certain point \(\bm{x}^{(1)} \in \mathds{R}^\dimParam\), e.g.\ the prior expected value or a random draw from the prior.
+Given the current state of the Markov chain \(\bm{x}^{(t)}\), one samples a candidate state \(\bm{x}^{(\star)}\) from an auxiliary proposal distribution \(p(\bm{x}^{(\star)} \cond \bm{x}^{(t)})\).
+This may depend on the current state.
+The proposed state is then accepted as the new state \(\bm{x}^{(t+1)} = \bm{x}^{(\star)}\) with the probability
+\begin{equation} \label{eq:Bayesian:MHAcceptance}
+  \alpha(\bm{x}^{(t)}, \bm{x}^{(\star)}) = \operatorname{min}
+  \left( 1, \frac{\pi(\bm{x}^{(\star)} \cond \bm{y}) \, p(\bm{x}^{(t)} \cond \bm{x}^{(\star)})}
+  {\pi(\bm{x}^{(t)} \cond \bm{y}) \, p(\bm{x}^{(\star)} \cond \bm{x}^{(t)})} \right).
+\end{equation}
+Otherwise the proposal is rejected and the chain remains in its state \(\bm{x}^{(t+1)} = \bm{x}^{(t)}\).
+It is worth pointing out that the MH acceptance in \cref{eq:Bayesian:MHAcceptance} calls for posterior ratios, hence, only unnormalized densities have to be known.
+The acceptance step is tantamount to a correction required for sampling the posterior by drawing only from the proposal.
+% ERGODIC THEOREM
+After a total number of iterations \(T \in \mathds{N}_{>0}\) deemed sufficiently high, the conditional expectation in \cref{eq:Bayesian:ConditionalExpectation} can be approximated as
+\begin{equation} \label{eq:Bayesian:ErgodicTheorem}
+  \mathds{E}[h(\bm{X}) \cond \bm{y}] \approx \frac{1}{T} \sum\limits_{t=1}^T h(\bm{x}^{(t)}).
+\end{equation}
+\par % TRANSITION KERNEL
+The MH updating scheme specified above defines an appropriate Markov chain transition kernel.
+One can write the general probability of acceptance of a newly proposed state given \(\bm{x}^{(t)}\) as
+\begin{equation} \label{eq:Bayesian:ProbabilityOfAcceptance}
+  \alpha(\bm{x}^{(t)}) = \int\limits_{\mathds{R}^\dimParam} \alpha(\bm{x}^{(t)}, \bm{x}^{(\star)}) \, p(\bm{x}^{(\star)} \cond \bm{x}^{(t)}) \, \mathrm{d} \bm{x}^{(\star)}.
+\end{equation}
+The probability of rejection is consequently given as \(1 - \alpha(\bm{x}^{(t)})\).
+Let \(\delta_{\bm{x}^{(t)}}\) denote the Dirac point mass at the current state.
+With \cref{eq:Bayesian:MHAcceptance,eq:Bayesian:ProbabilityOfAcceptance} the MH transition density from \(\bm{x}^{(t)}\) to \(\bm{x}^{(t+1)}\) can be written as
+\begin{equation} \label{eq:Bayesian:TransitionKernel}
+  \mathcal{K}(\bm{x}^{(t)},\bm{x}^{(t+1)})
+  = \alpha(\bm{x}^{(t)}, \bm{x}^{(t+1)}) \, p(\bm{x}^{(t+1)} \cond \bm{x}^{(t)}) + (1 - \alpha(\bm{x}^{(t)})) \, \delta_{\bm{x}^{(t)}}(\bm{x}^{(t+1)}).
+\end{equation}
+It is easy to show that transition kernels of the form as in \cref{eq:Bayesian:TransitionKernel} satisfy microscopic time reversibility
+\(\pi(\bm{x}^{(t)} \cond \bm{y}) \, \mathcal{K}(\bm{x}^{(t)},\bm{x}^{(t+1)}) = \pi(\bm{x}^{(t+1)} \cond \bm{y}) \, \mathcal{K}(\bm{x}^{(t+1)},\bm{x}^{(t)})\).
+Macroscopic reversibility then automatically follows
+\begin{equation} \label{eq:Bayesian:InvariantDistribution}
+  \pi(\bm{x}^{(t+1)} \cond \bm{y}) = \int\limits_{\mathds{R}^\dimParam} \pi(\bm{x}^{(t)} \cond \bm{y}) \, \mathcal{K}(\bm{x}^{(t)},\bm{x}^{(t+1)}) \, \mathrm{d} \bm{x}^{(t)}.
+\end{equation}
+Hence, the target posterior is the invariant distribution of the Markov chain.
+Together with the ergodicity of the Markov chain, \cref{eq:Bayesian:InvariantDistribution} lays the foundation for the approximation in \cref{eq:Bayesian:ErgodicTheorem}.
+\par % SHORTCOMINGS
+Because the MH algorithm provides a basis for sampling arbitrary probability distributions, it has played a pivotal historical role for computational Bayesian inference.
+Notwithstanding the above, it also suffers from some major problems.
+These involve the serial correlation of the obtained posterior sample as well as the associated decrease in efficiency when compared to an independent sampling.
+The tuning of the proposal distribution is a tedious task that often requires trial and error.
+It should be added that it is not possible to unequivocally diagnose the convergence of the simulation and to stop it accordingly.
+Heuristic checks can be performed at the most, e.g.\ restarting the algorithm with various initializations and comparing the obtained results.
+Regardless of the convergence rate that is dimension-independent in theory, the abovementioned issues cause severe problems in practice.
+Successfully checking, tuning and executing the algorithm is quite an art.
+That a high number of likelihood evaluations are needed during these procedures makes matters even worse.
+\par % METAMODEL ACCELERATION
+In the context of inverse modeling, where a call to the likelihood function triggers a run of the forward simulator,
+a straightforward way to accelerate Bayesian inversion via MCMC is the deployment of cheap surrogates.
+This includes metamodels based on polynomial chaoses \cite{PCE:Tagade2014,PCE:Sraj2016}, Gaussian processes \cite{MCMC:Angelikopoulos2015,Kriging:Wan2016}
+or neural networks \cite{ML:Balaji2010,ML:Hauser2012}.
+This possibility was already mentioned in \cref{sec:Uncertainty:SurrogateModeling}.
+% ADVANCED MCMC
+More generally, one can use a vast array of advanced MCMC samplers,
+e.g.\ adaptive variants \cite{MCMC:Haario2001,MCMC:Andrieu2008} or particle-based annealing/tempering schemes \cite{MCMC:Ching2007,MCMC:Betz2016}.
+A highly efficient gradient-driven MCMC sampler that performs updates in an augmented variable space is implemented in \cref{sec:JRUES}.
+
+\subsection{Variational inference} \label{sec:Bayesian:BayesianComputations:Variational}
+% VARIATIONAL INFERENCE
+In this section we briefly discuss the basics of \emph{variational Bayesian} (VB) \emph{inference} \cite{Bayesian:Smidl2006}.
+Traditionally VB techniques were developed in probabilistic machine learning \cite{Bayesian:Wainwright2008},
+but they can be also used for inverse problems \cite{Bayesian:Jin2012,Bayesian:Guha2015,Bayesian:Franck2016,Bayesian:Franck2017}.
+VB inference establishes a deterministic alternative to stochastic MCMC sampling, where the posterior is computed in an optimization procedure.
+In particular, a member from a parametric family of distributions is chosen such that its resemblance to the target posterior is maximized.
+\par % KULLBACK-LEIBLER DIVERGENCE
+In order to assess the closeness or distinctness of distributions, one has to decide on a formal means to compare them.
+The KL divergence that was already encountered in \cref{eq:Bayesian:RelativeEntropy} is often chosen to that end.
+In the present context, it is thought of as a non-negative measure of the difference between two probability distributions that attains zero in the case of perfect coincidence.
+Since the KL divergence is non-symmetric, it is not a distance metric in the strict sense, though.
+The KL divergence \(D_{\mathrm{KL}}(\varapprox \| \pi(\cdot \cond \bm{y}))\) of the target \(\pi(\cdot \cond \bm{y})\) from a candidate density \(\varapprox\) is
+\begin{equation} \label{eq:Bayesian:KullbackLeibler}
+  D_{\mathrm{KL}}(\varapprox \| \pi(\cdot \cond \bm{y}))
+  = \int\limits_{\mathds{R}^\dimParam} \log \left( \frac{\varapprox(\bm{x})}{\pi(\bm{x} \cond \bm{y})} \right) \varapprox(\bm{x}) \, \mathrm{d} \bm{x}
+  = \log \scale - \mathcal{F}(\varapprox).
+\end{equation}
+% FREE ENERGY
+As one can easily see, the divergence in \cref{eq:Bayesian:KullbackLeibler} is the difference between the constant log-evidence \(\log \scale\) and the so-called \emph{free energy}
+\begin{equation} \label{eq:Bayesian:FreeEnergy}
+  \mathcal{F}(\varapprox)
+  = \int\limits_{\mathds{R}^\dimParam} \log \left( \frac{\mathcal{L}(\bm{x}) \pi(\bm{x})}{\varapprox(\bm{x})} \right) \varapprox(\bm{x}) \, \mathrm{d} \bm{x}.
+\end{equation}
+\par % VARIATIONAL LOWER BOUND
+If \(\varapprox = \pi(\cdot \cond \bm{y})\) would exactly equal the posterior,
+one would have \(D_{\mathrm{KL}}(\varapprox \| \pi(\cdot \cond \bm{y})) = 0\) and \(\mathcal{F}(\varapprox) = \log \scale\).
+More generally one has \(D_{\mathrm{KL}}(\varapprox \| \pi(\cdot \cond \bm{y})) \geq 0\)
+and the free energy establishes a lower bound of the model evidence through \(\log \scale \geq \mathcal{F}(\varapprox)\).
+% FREE ENERGY DECOMPOSITIONS
+It is instructive to further decompose the free energy in the two ways
+\begin{equation} \label{eq:Bayesian:FreeEnergyDecompositions}
+  \mathcal{F}(\varapprox)
+  = \int\limits_{\mathds{R}^\dimParam} \log(\mathcal{L}(\bm{x}) \pi(\bm{x})) \, \varapprox(\bm{x}) \, \mathrm{d} \bm{x} + H_{\mathrm{S}}(\varapprox)
+  = \int\limits_{\mathds{R}^\dimParam} \log(\mathcal{L}(\bm{x})) \, \varapprox(\bm{x}) \, \mathrm{d} \bm{x} - D_{\mathrm{KL}}(\varapprox \| \pi).
+\end{equation}
+The first part of \cref{eq:Bayesian:FreeEnergyDecompositions} happens to contain the Shannon entropy
+\(H_{\mathrm{S}}(\varapprox) = - \int_{\mathds{R}^\dimParam} \log(\varapprox(\bm{x})) \, \varapprox(\bm{x}) \, \mathrm{d} \bm{x}\),
+which we came across in \cref{eq:Bayesian:InformationEntropy} once before.
+The second equation is the variational variant of \cref{eq:Bayesian:LogModelEvidence} according to which the Bayesian update
+can be interpreted as a compromise between the goodness of the fit to the data and the closeness to the prior,
+as measured by \(\int_{\mathds{R}^\dimParam} \log(\mathcal{L}(\bm{x})) \, \varapprox(\bm{x}) \, \mathrm{d} \bm{x}\) and
+\(D_{\mathrm{KL}}(\varapprox \| \pi) = \int_{\mathds{R}^\dimParam} \log(\varapprox(\bm{x}) / \pi(\bm{x})) \, \varapprox(\bm{x}) \, \mathrm{d} \bm{x}\), respectively.
+\par % OPTIMIZATION PROBLEM
+Given a parametric family \(\mathcal{Q}\) of probability densities, one can try to find the density \(\varapprox \in \mathcal{Q}\)
+that best approximates the posterior \(\varapprox \approx \pi(\cdot \cond \bm{y})\) in the KL sense.
+In the light of \cref{eq:Bayesian:KullbackLeibler}, minimizing the relative entropy \(D_{\mathrm{KL}}(\varapprox \| \pi(\cdot \cond \bm{y}))\)
+is equivalent to maximizing the free energy \(\mathcal{F}(\varapprox)\).
+This means
+\begin{equation} \label{eq:Bayesian:MinimizeKullbackLeibler}
+  \varapprox = \operatorname*{arg\,min}_{\varapprox^{\star} \in \mathcal{Q}} D_{\mathrm{KL}}(\varapprox^{\star} \| \pi(\cdot \cond \bm{y}))
+  \quad \Leftrightarrow \quad
+  \varapprox = \operatorname*{arg\,max}_{\varapprox^{\star} \in \mathcal{Q}} \mathcal{F}(\varapprox^{\star}).
+\end{equation}
+% INTERPRETATION
+That criterion minimizes the entropy gain or information loss that is incurred by using a parametric approximation of the posterior.
+All in all, a stochastic optimization problem has to be solved, in the sense that the extremum of an expectation under the candidate distribution is sought.
+\par % TRACTABILITY
+Notice that, as opposed to \(D_{\mathrm{KL}}(\varapprox \| \pi(\cdot \cond \bm{y}))\) in \cref{eq:Bayesian:KullbackLeibler},
+the free energy \(\mathcal{F}(\varapprox)\) in \cref{eq:Bayesian:FreeEnergy} does not depend on the model evidence \(\scale\).
+Thus it can be evaluated and maximized without the need of computing the evidence.
+Also note that the asymmetry of the KL divergence motivates the choice of minimizing
+\(D_{\mathrm{KL}}(\varapprox \| \pi(\cdot \cond \bm{y}))\) rather than \(D_{\mathrm{KL}}(\pi(\cdot \cond \bm{y})\| \varapprox)
+= \int_{\mathds{R}^\dimParam} \log(\pi(\bm{x} \cond \bm{y}) / \varapprox(\bm{x})) \, \pi(\bm{x} \cond \bm{y}) \, \mathrm{d} \bm{x}\)
+which involves intractable posterior expectations.
+The reverse choice indeed leads to yet another algorithm \cite{Bayesian:Minka2001}.
+\par % CANDIDATE DISTRIBUTIONS
+Classically, in VB inference one considers factorized candidate distributions based on the mean field approximation \cite{Bayesian:Opper2001}.
+This formulation can be enriched through copulas for representing multivariate dependencies \cite{Bayesian:Tran2015,Bayesian:Han2016}.
+One may also contemplate the use of Gaussian mixture distributions \cite{Bayesian:Zobay2014,Bayesian:Tsilifis2016}.
+% POSTERIOR EXPECTATIONS
+No matter what family of distributions is considered, the conditional expectation in \cref{eq:Bayesian:ConditionalExpectation} is,
+after the minimization in \cref{eq:Bayesian:MinimizeKullbackLeibler}, evaluated as the correspondent average over the best posterior approximation
+\begin{equation} \label{eq:Bayesian:ExpectationApproximation}
+  \mathds{E}[h(\bm{X}) \cond \bm{y}] \approx \int\limits_{\mathds{R}^\dimParam} h(\bm{x}) \, \varapprox(\bm{x}) \, \mathrm{d} \bm{x}.
+\end{equation}
+One may obtain corresponding results analytically for some simple QoIs.
+More frequently, the approximation in \cref{eq:Bayesian:ExpectationApproximation} has to be computed in a sampling-based procedure.
+
+\subsection{Laplace approximations} \label{sec:Bayesian:BayesianComputations:Laplace}
+% NORMAL APPROXIMATIONS
+By running the algorithm longer and longer and drawing more and more samples, MCMC allows one to compute all relevant posterior summaries exactly in principle, i.e.\ it is asymptotically exact.
+In contrast, VB inference is an approximate method in that the achievable accuracy is limited by the used class of candidate distributions.
+If the actual posterior is similar to a Gaussian density, e.g.\ roughly unimodal, smooth and symmetric, it makes sense to approximate it accordingly.
+This could happen within the variational inference framework or, alternatively, by using Laplace approximations.
+The approach only requires the computation of the global maximum of the log--posterior density and the local second-order partial derivatives.
+\par % BAYESIAN ASYMPTOTICS
+The normal approximation is sometimes motivated by results in asymptotic theory.
+Especially for well-specified data models it is sensible to study the asymptotic behavior of the posterior distribution in the large data sample limit from a frequentist point of view.
+Under suitable regularity conditions one can show asymptotic consistency of point estimators and asymptotic normality of the posterior distribution,
+see \cite{Bayesian:Hartigan1983,Bayesian:Bernardo2000,Bayesian:Ghosh2006} for instance.
+Such results are sometimes referred to as the ``Bayesian law of large numbers'' and the ``Bayesian central limit theorem''.
+They provide theoretical insights and suggest Laplace approximations of the posterior.
+% ASYMPTOTIC ANALYSIS
+These approximations are based on the asymptotic analysis of integrals \cite{Math:Bleistein1986,Math:Wong1989,Math:Paulsen2014,Math:Temme2015}
+and can be applied to the probability integrals of Bayesian inference \cite{Bayesian:Tierney1986,Bayesian:Tierney1989:a,Bayesian:Tierney1989:b}
+as well as uncertainty and reliability analysis \cite{Bayesian:Papadimitriou1997,Bayesian:Au1999,Bayesian:Polidori1999}.
+\par % TAYLOR EXPANSIONS
+Let us define \(T(\bm{x}) = \log(\mathcal{L}(\bm{x}) \pi(\bm{x})) = \log \mathcal{L}(\bm{x}) + \log \pi(\bm{x})\) as the logarithm of the unnormalized posterior density.
+We assume that this function is at least twice continuously differentiable at a point \(\bm{x}_0 \in \mathds{R}^\dimParam\) and then consider its second-order Taylor approximation about that point.
+This approximation is given as \(T(\bm{x}) \approx T(\bm{x}_0) + \bm{J}(\bm{x}_0)(\bm{x} - \bm{x}_0) + \frac{1}{2} (\bm{x} - \bm{x}_0)^\top \bm{H}(\bm{x}_0) (\bm{x} - \bm{x}_0)\).
+Here, \(\bm{J}(\bm{x}_0) = \partial T(\bm{x}) / \partial \bm{x}^\top \vert_{\bm{x}_0} = (\partial T / \partial x_1(\bm{x}_0),\ldots,\partial T / \partial x_\dimParam(\bm{x}_0))\)
+is the gradient row-vector and \(\bm{H}(\bm{x}_0) = \partial^2 T(\bm{x}) / \partial \bm{x} \partial \bm{x}^\top \vert_{\bm{x}_0}\) with entries
+\(H_{i,j}(\bm{x}_0) = \partial^2 T / \partial x_i \partial x_j(\bm{x}_0)\) for \(i,j=1,\ldots,\dimParam\) is the Hessian matrix of second-order partial derivatives.
+The corresponding Taylor series approximation around the posterior mode \(\bm{x}_0 = \hat{\bm{x}}_{\mathrm{MAP}} = \operatorname*{arg\,max}_{\bm{x} \in \mathds{R}^M} T(\bm{x})\),
+which is assumed to be the unique global maximum with a vanishing gradient \(\bm{J}(\hat{\bm{x}}_{\mathrm{MAP}}) = \bm{0}\)
+and a generalized observed Fisher information matrix \(-\bm{H}(\hat{\bm{x}}_{\mathrm{MAP}})\) that is positive definite, is then given as
+\begin{equation} \label{eq:Bayesian:LaplaceTaylorExpansion}
+  T(\bm{x}) \approx T(\hat{\bm{x}}_{\mathrm{MAP}}) + \frac{1}{2} (\bm{x} - \hat{\bm{x}}_{\mathrm{MAP}})^\top \bm{H}(\hat{\bm{x}}_{\mathrm{MAP}}) (\bm{x} - \hat{\bm{x}}_{\mathrm{MAP}}).
+\end{equation}
+\par % LAPLACE APPROXIMATIONS
+Based on \cref{eq:Bayesian:LaplaceTaylorExpansion} one can calculate approximations of the posterior density \(\pi(\bm{x} \cond \bm{y})\) in \cref{eq:Bayesian:PosteriorDensity},
+the model evidence \(\scale\) in \cref{eq:Bayesian:ModelEvidence} and certain conditional expectation values \(\mathds{E}[h(\bm{X}) \cond \bm{y}]\)
+of the form as in \cref{eq:Bayesian:ConditionalExpectation}.
+% POSTERIOR DENSITY
+First of all, the so-called \emph{Laplace approximation} of the posterior density \(\pi(\bm{x} \cond \bm{y}) = \scale^{-1} \exp(T(\bm{x}))\) is
+\begin{equation} \label{eq:Bayesian:LaplacePosteriorDensity}
+  \pi(\bm{x} \cond \bm{y})
+  \approx \frac{\exp( T(\hat{\bm{x}}_{\mathrm{MAP}}))}{\hat{\scale}}
+  \exp \left( \frac{1}{2} (\bm{x} - \hat{\bm{x}}_{\mathrm{MAP}})^\top \bm{H}(\hat{\bm{x}}_{\mathrm{MAP}}) (\bm{x} - \hat{\bm{x}}_{\mathrm{MAP}}) \right)
+  = \mathcal{N}(\bm{x} \cond \hat{\bm{x}}_{\mathrm{MAP}}, -\bm{H}^{-1}(\hat{\bm{x}}_{\mathrm{MAP}})).
+\end{equation}
+That is a multivariate Gaussian density \(\pi(\bm{x} \cond \bm{y}) \approx \mathcal{N}(\bm{x} \cond \bm{\mu},\bm{\Sigma})
+= \exp(-\frac{1}{2} (\bm{x} - \bm{\mu})^\top \bm{\Sigma}^{-1} (\bm{x} - \bm{\mu})) / \sqrt{(2\pi)^\dimParam \det(\bm{\Sigma})}\)
+with mean \(\bm{\mu} = \hat{\bm{x}}_{\mathrm{MAP}}\) and covariance matrix \(\bm{\Sigma} = -\bm{H}^{-1}(\hat{\bm{x}}_{\mathrm{MAP}})\).
+% MODEL EVIDENCE
+Based on \emph{Laplace's method} for integrals, the approximation of the model evidence \(\scale = \int_{\mathds{R}^\dimParam} \exp(T(\bm{x})) \, \mathrm{d} \bm{x}\) is given as the Gaussian integral
+\begin{equation} \label{eq:Bayesian:LaplaceModelEvidence}
+  \begin{aligned}
+    \scale &\approx \exp(T(\hat{\bm{x}}_{\mathrm{MAP}}))
+    \int\limits_{\mathds{R}^\dimParam}
+    \exp \left( \frac{1}{2} (\bm{x} - \hat{\bm{x}}_{\mathrm{MAP}})^\top \bm{H}(\hat{\bm{x}}_{\mathrm{MAP}}) (\bm{x} - \hat{\bm{x}}_{\mathrm{MAP}}) \right) \mathrm{d} \bm{x} \\
+    &= \exp(T(\hat{\bm{x}}_{\mathrm{MAP}})) \sqrt{(2\pi)^\dimParam \det(-\bm{H}^{-1}(\hat{\bm{x}}_{\mathrm{MAP}}))} = \hat{\scale}.
+  \end{aligned}
+\end{equation}
+This is the factor \(\hat{\scale}\) needed for the normalization of the distribution kernel in \cref{eq:Bayesian:LaplacePosteriorDensity}.
+The approximation in \cref{eq:Bayesian:LaplaceModelEvidence} is accurate if the posterior is strongly concentrated around its mode,
+such that the integral value is virtually dominated by the integrand at that point and its immediate vicinity.
+\par % GENERAL POSTERIOR EXPECTATIONS
+The posterior expectation \(\mathds{E}[h(\bm{X}) \cond \bm{y}] = \int_{\mathds{R}^\dimParam} h(\bm{x}) \mathcal{L}(\bm{x}) \, \pi(\bm{x}) \, \mathrm{d} \bm{x}
+/ \int_{\mathds{R}^\dimParam} \mathcal{L}(\bm{x}) \, \pi(\bm{x}) \, \mathrm{d} \bm{x}\) of a strictly positive and twice differentiable QoI
+\(h \colon \mathds{R}^\dimParam \rightarrow \mathds{R}^{+}\) can be approximated by using Laplace's method separately for the numerator and denominator.
+To that end, we define \(\check{T}(\bm{x}) = \log(h(\bm{x}) \mathcal{L}(\bm{x}) \pi(\bm{x})) = \log h(\bm{x}) + \log \mathcal{L}(\bm{x}) + \log \pi(\bm{x})\)
+and assume that this function has a unique maximum at \(\hat{\bm{x}}_{\mathrm{max}} = \operatorname*{arg\,max}_{\bm{x} \in \mathds{R}^\dimParam} \check{T}(\bm{x})\).
+With a second-order Taylor expansion \(\check{T}(\bm{x}) \approx \check{T}(\hat{\bm{x}}_{\mathrm{max}})+ \frac{1}{2} (\bm{x} - \hat{\bm{x}}_{\mathrm{max}})^\top
+\check{\bm{H}}(\hat{\bm{x}}_{\mathrm{max}}) (\bm{x} - \hat{\bm{x}}_{\mathrm{max}})\) around the point \(\hat{\bm{x}}_{\mathrm{max}}\),
+where \(\check{\bm{H}}(\hat{\bm{x}}_{\mathrm{max}}) = \partial^2 \check{T}(\bm{x}) / \partial \bm{x} \partial \bm{x}^\top \vert_{\hat{\bm{x}}_{\mathrm{max}}}\) denotes the Hessian,
+we obtain the \emph{fully exponential approximation}
+\begin{equation} \label{eq:Bayesian:LaplaceGeneralExpectation}
+  \mathds{E}[h(\bm{X}) \cond \bm{y}]
+  = \frac{\int_{\mathds{R}^\dimParam} \exp(\check{T}(\bm{x})) \, \mathrm{d} \bm{x}}{\int_{\mathds{R}^\dimParam} \exp(T(\bm{x})) \, \mathrm{d} \bm{x}}
+  \approx \frac{\exp(\check{T}(\hat{\bm{x}}_{\mathrm{max}}))}{\exp(T(\hat{\bm{x}}_{\mathrm{MAP}}))}
+  \sqrt{\frac{\det(-\check{\bm{H}}^{-1}(\hat{\bm{x}}_{\mathrm{max}}))}{\det(-\bm{H}^{-1}(\hat{\bm{x}}_{\mathrm{MAP}}))}}.
+\end{equation}
+% POSITIVITY
+Note that the strict positivity of \(h(\bm{x})\) is required for the logarithm.
+Sometimes, one can add a large constant \(c > 0\) to the function, such that \(q(\bm{x}) = h(\bm{x}) + c\) is positive.
+The posterior expectation in \cref{eq:Bayesian:LaplaceGeneralExpectation} is then obtained
+from the approximation of \(\mathds{E}[q(\bm{X}) \cond \bm{y}]\) by subtraction \(\mathds{E}[h(\bm{X}) \cond \bm{y}] = \mathds{E}[q(\bm{X}) \cond \bm{y}] - c\).
+\par % PRACTICAL COMPUTATION
+Practically speaking, Laplace approximations merely call for locating the posterior mode and for computing the Hessian matrix of the unnormalized log-density at the mode.
+The mean of the normal approximation is then simply given by the posterior mode and the covariance matrix is the negative inverse Hessian.
+Numerical optimization and differentiation replace the original Bayesian integration problem.
+This is only slightly more difficult than simple MLE or MAP estimation and one can choose between a variety of standard optimizers,
+some of which approximate the Hessian anyhow, e.g.\ the Newton--Raphson method for optimization.
+\par % DISCUSSION
+The procedure yields good approximations to posterior distributions that are roughly bell-shaped, i.e.\ unimodal and symmetric or at least strongly peaked and dominated by such a mode.
+Multimodal, highly skewed or heavy-tailed distributions cannot be captured well in general, though.
+Note that for a finite sample size the validity of the discussed normal approximation depends on the chosen parametrization.
+As opposed to variational inference where a global divergence measure is minimized,
+the Laplace approximation solely rests on local information such as the posterior mode and the curvature of the unnormalized log--posterior density.
+The Laplace approximation is thus generally easier to obtain.
+However, it can produce misleading results even in cases where variational inference with Gaussian candidates would still provide reasonable approximations,
+e.g.\ think of a double-peaked posterior with a dominating flat mode that accumulates most of the total probability mass and a peaked one that contains negligible mass but maximizes the density.
+\par % EXTENSIONS
+There are ways to widen the scope of applicability Laplace's method, that seems to be restricted to certain simple distributions only.
+These include Gaussian mixture approximations of multimodal distributions where modes, covariances and relative weights are computed for each mode \cite{Bayesian:He2016:b},
+and iterative strategies for handling non-Gaussian mode shapes \cite{Bayesian:Bornkamp2011}.
+% REFINEMENTS
+Beyond that, one can also use Laplace's method for obtaining a first crude posterior approximation in quick way.
+Once this approximation is at one's disposal, it can be refined at one's discretion.
+This could happen via importance sampling or a Metropolis--Hastings algorithm initialized at the posterior mode and driven by independent proposals sampled from the obtained approximation.
+
+\subsection{Log-likelihood function} \label{sec:Bayesian:BayesianComputations:LogLikelihood}
+% LOG-LIKELIHOOD
+A quite practical issue in Bayesian inference concerns the \emph{log-likelihood function} \(\log \mathcal{L}(\bm{x})\), i.e.\ the natural logarithm of the likelihood \(\mathcal{L}(\bm{x})\).
+For both analytical and numerical approaches to statistical inference, it may be more convenient to work with the log-likelihood instead of the likelihood directly.
+This is due to the properties of the logarithm, i.e.\ strictly monotonic and smooth, and the typical structure of the likelihood, e.g.\ products with many factors.
+For instance, the likelihood and its logarithm may take the form
+\begin{equation} \label{eq:Bayesian:LogLikelihood}
+  \mathcal{L}(\bm{x}) = \prod\limits_{i=1}^{\dimData} \pi(y_i \cond \bm{x}), \quad
+  \log \mathcal{L}(\bm{x}) = \sum\limits_{i=1}^{\dimData} \log \pi(y_i \cond \bm{x}).
+\end{equation}
+Note that individual likelihood terms \(\pi(y_i \cond \bm{x})\) often contain exponentials anyway, e.g.\ as in the case of a Gaussian distribution.
+Beyond that, this happens whenever a member of the exponential family is used.
+\par % DIFFERENTIATION
+In frequentist inference one often tries to maximize the likelihood as in \cref{eq:Bayesian:MLE}.
+Since the logarithm is monotonically increasing, this is equivalent to maximizing the logarithm,
+i.e.\ \(\hat{\bm{x}} = \operatorname*{arg\,max}_{\bm{x} \in \mathds{R}^\dimParam} \mathcal{L}(\bm{x}) = \operatorname*{arg\,max}_{\bm{x} \in \mathds{R}^\dimParam} \log \mathcal{L}(\bm{x})\).
+For finding the extrema one would have to zero the derivative of \cref{eq:Bayesian:LogLikelihood} with respect to the unknowns.
+Now, the explicit differentiation of a sum is easier than of a product, which is why the log-likelihood is preferable in an analytical analysis.
+\par % MH ACCEPTANCE
+From a numerical perspective, taking the logarithm in intermediate steps of the computations may prevent from over- and underflow.
+If data are numerous and the likelihood in \cref{eq:Bayesian:LogLikelihood} contains many terms,
+the calculation in finite-precision floating-point arithmetic may easily suffer from that problem.
+A remedy is to use a common scaling factor.
+The problem can also be mitigated by performing the necessary manipulations as long as possible on the log-scale while hoping that problematic terms neutralize each other.
+In MCMC-based Bayesian inference one can defer the final exponentiation until the MH acceptance in \cref{eq:Bayesian:MHAcceptance} by
+\begin{equation}
+  \alpha(\bm{x}^{(t)}, \bm{x}^{(\star)}) = \operatorname{min} \left\{ 1, \exp \left( \log \pi(\bm{x}^{(\star)} \cond \bm{y}) + \log p(\bm{x}^{(t)} \cond \bm{x}^{(\star)})
+  - \log \pi(\bm{x}^{(t)} \cond \bm{y}) - \log p(\bm{x}^{(\star)} \cond \bm{x}^{(t)}) \right) \right\}.
+\end{equation}
+\par % COVARIANCE MATRIX
+When the likelihood is based on Gaussian distribution as in \cref{eq:Inversion:LikelihoodFunction} with known covariance matrix \(\bm{\Sigma}\),
+the normalization factor \(((2\pi)^{\dimData} \det(\bm{\Sigma}))^{-1/2}\) could be omitted from the MH acceptance probability.
+Otherwise, in case the covariance matrix and its determining parameters are arguments of the likelihood function,
+the log-determinant of the covariance matrix is usually calculated using a Cholesky factorization \(\bm{\Sigma} = \bm{\bm{L} \bm{L}^\top}\)
+as \(\log \det (\bm{\Sigma}) = \log \det (\bm{\bm{L} \bm{L}^\top}) = 2 \sum_{i=1}^{\dimParam} \log L_{ii}\).
+Here, \(\bm{L}\) is a lower triangular matrix.
+This avoids the aforementioned numerical issues.
+\par % BAYES FACTOR
+For the computation of the Bayes factor in \cref{eq:Bayesian:BayesFactor} one typically deploys a reasonable scaling factor.
+Let \(\mathcal{L}_{\mathcal{H}_1}(\bm{x}_{\mathcal{H}_1}) = \pi(\bm{y} \cond \bm{x}_{\mathcal{H}_1},\mathcal{H}_1)\)
+and \(\mathcal{L}_{\mathcal{H}_2}(\bm{x}_{\mathcal{H}_2}) = \pi(\bm{y} \cond \bm{x}_{\mathcal{H}_2},\mathcal{H}_2)\)
+denote the likelihood functions of two competing models.
+One only needs a vague idea about the maximal values of the log-likelihoods
+\(\varUpsilon_{\mathcal{H}_1} \approx \operatorname{max}_{\bm{x}_{\mathcal{H}_1}}(\log \mathcal{L}_{\mathcal{H}_1}(\bm{x}_{\mathcal{H}_1}))\)
+and \(\varUpsilon_{\mathcal{H}_2} \approx \operatorname{max}_{\bm{x}_{\mathcal{H}_2}}(\log \mathcal{L}_{\mathcal{H}_2}(\bm{x}_{\mathcal{H}_2}))\)
+in order to calculate the Bayes factor as
+\begin{equation}
+  B_{1,2} = \frac{\scale_{\mathcal{H}_1}}{\scale_{\mathcal{H}_2}}
+  = \exp \left( \varUpsilon_{\mathcal{H}_1} - \varUpsilon_{\mathcal{H}_2} \right)
+  \frac{\int_{\mathds{R}^{\dimParam_{\mathcal{H}_1}}} \exp(\log(\mathcal{L}_{\mathcal{H}_1}(\bm{x}_{\mathcal{H}_1})) - \varUpsilon_{\mathcal{H}_1})
+  \, \pi(\bm{x}_{\mathcal{H}_1} \cond \mathcal{H}_1) \, \mathrm{d} \bm{x}_{\mathcal{H}_1}}
+  {\int_{\mathds{R}^{\dimParam_{\mathcal{H}_2}}} \exp(\log( \mathcal{L}_{\mathcal{H}_1}(\bm{x}_{\mathcal{H}_2})) - \varUpsilon_{\mathcal{H}_2})
+  \, \pi(\bm{x}_{\mathcal{H}_2} \cond \mathcal{H}_2) \, \mathrm{d} \bm{x}_{\mathcal{H}_2}}.
+\end{equation}
+Of course, this normalization/renormalization procedure is not limited to Bayes factors.
+It can facilitate the numerical computation of other likelihood-based integrals, too.

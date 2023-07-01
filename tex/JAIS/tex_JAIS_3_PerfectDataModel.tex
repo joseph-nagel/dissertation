@@ -1,0 +1,142 @@
+% IMPERFECT DATA
+In \cref{sec:JAIS:Multilevel:Overall} the residual model was introduced as a representation of the ``imperfection'' of the forward solver and measurement device.
+As a consequence, in \cref{eq:JAIS:Multilevel:Model:Data} observations were regarded as realizations \(\bm{y}_i = \perfect{\bm{y}}_i + \bm{\varepsilon}_i\)
+of random variables \((\bm{Y}_i \cond \bm{m},\bm{x}_i,\bm{\zeta}_i)\) conditioned on direct forward model inputs.
+% PROBABILITY IN DATA SPACE
+The residual assumptions that led to \cref{eq:JAIS:Multilevel:Model:Data} had equipped the data space \(\mathcal{D}_{\perfect{\bm{y}}}\) with a probability model.
+We introduce the term ``imperfect'' for this statistical data model in order to distinguish it from the following.
+\par % PERFECT DATA
+In this paper we are interested in the experimental situation where \(\perfect{\bm{y}}_i = \mathcal{M}(\bm{m},\bm{x}_i,\bm{\zeta}_i,\bm{d}_i)\) can be directly observed,
+e.g.\ due to noise-free measurements and a ``sufficiently accurate'' forward simulator.
+Hereinafter we will refer to this limiting case as to involve ``perfect'' data.
+Not being premised on a residual model, the data are viewed as realizations \(\perfect{\bm{y}}_i\) of random variables
+\((\perfect{\bm{Y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}})\) conditioned on the ``highest-level'' quantities.
+Provided an appropriate probability model \(f(\perfect{\bm{y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}})\) of those random variables,
+a Bayesian multilevel model for ``perfect'' data can be written as
+\begin{subequations} \label{eq:JAIS:PerfectData:Model}
+  \begin{align}
+    (\perfect{\bm{Y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}}) &\sim f(\perfect{\bm{y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}}), \label{eq:JAIS:PerfectData:Model1} \\
+    (\bm{M},\bm{\Theta}_{\bm{X}}) &\sim \pi(\bm{m},\bm{\theta}_{\bm{X}}) = \pi_{\bm{M}} (\bm{m}) \, \pi_{\bm{\Theta}_{\bm{X}}} (\bm{\theta}_{\bm{X}}). \label{eq:JAIS:PerfectData:Model2}
+  \end{align}
+\end{subequations}
+As before prior knowledge about the unknowns \((\bm{m},\bm{\theta}_{\bm{X}})\) is embodied in \cref{eq:JAIS:PerfectData:Model2}.
+As a function of the unknowns \((\bm{m},\bm{\theta}_{\bm{X}})\), with the density \cref{eq:JAIS:PerfectData:Model1} one can formulate a residual-free version of the likelihood
+\begin{equation} \label{eq:JAIS:PerfectData:Likelihood}
+  \mathcal{L} \big( \tuple{\perfect{\bm{y}}_i} \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}} \big)
+  = \prod\limits_{i=1}^n f(\perfect{\bm{y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}}).
+\end{equation}
+For reasons that will be discussed below, we call \cref{eq:JAIS:PerfectData:Likelihood} the \textit{transformed likelihood}.
+As usual Bayesian analysis proceeds by conditioning the prior on the acquired data \(\tuple{\perfect{\bm{y}}_i}\).
+The posterior follows as
+\begin{equation} \label{eq:JAIS:PerfectData:Posterior}
+  \pi \big( \bm{m},\bm{\theta}_{\bm{X}} \cond \tuple{\perfect{\bm{y}}_i},\bm{\theta}_{\bm{Z}} \big)
+  \propto \mathcal{L} \big( \tuple{\perfect{\bm{y}}_i} \cond \bm{m},\bm{\theta}_{\bm{X}}, \bm{\theta}_{\bm{Z}} \big) \, \pi(\bm{m},\bm{\theta}_{\bm{X}}).
+\end{equation}
+Note that the notation of \cref{eq:JAIS:PerfectData:Posterior} is reminiscent of classical Bayesian inversion.
+Indeed the multilevel character of the problem manifests in the likelihood function \cref{eq:JAIS:PerfectData:Likelihood} that we will now specify in greater detail.
+
+\subsection{Forward uncertainty propagation}
+% MATHEMATICAL SETUP
+Let \(\bm{X}_i \sim f_{\bm{X} \cond \bm{\Theta}_{\bm{X}}} (\bm{x}_i \cond \bm{\theta}_{\bm{X}})\)
+and \(\bm{Z}_i \sim f_{\bm{Z} \cond \bm{\Theta}_{\bm{Z}}} (\bm{\zeta}_i \cond \bm{\theta}_{\bm{Z}})\)
+be the aleatory variables in \cref{eq:JAIS:Multilevel:Model:PopulationZ,eq:JAIS:Multilevel:Model:PopulationX}
+that have independent marginal densities for given hyperparameters \((\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}})\).
+Now consider the map \(\mathcal{M}_{\bm{m},\bm{d}_i} \colon (\bm{x}_i,\bm{\zeta}_i) \mapsto \perfect{\bm{y}}_i = \mathcal{M}(\bm{m},\bm{x}_i,\bm{\zeta}_i,\bm{d}_i)\)
+that the forward model defines for fixed inputs \((\bm{m},\bm{d}_i)\).
+% FORWARD UNCERTAINTY QUANTIFICATION
+For given \((\bm{m},\bm{d}_i,\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}})\) the random variables in \cref{eq:JAIS:PerfectData:Model1} are constructed by forward propagation of the aleatory input uncertainties
+through the function \(\mathcal{M}_{\bm{m},\bm{d}_i}(\bm{x}_i,\bm{\zeta}_i)\) into an output uncertainty.
+% TRANSFORMED DENSITY
+Provided the existence of a corresponding density, the transformed random variables \((\perfect{\bm{Y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}}) = \mathcal{M}_{\bm{m},\bm{d}_i}(\bm{X}_i,\bm{Z}_i)\) follow
+\begin{equation} \label{eq:JAIS:PerfectData:PushForwardDensity}
+  f (\perfect{\bm{y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}})
+  = \int\limits_{\mathcal{D}_{\bm{x}}} \int\limits_{\mathcal{D}_{\bm{\zeta}}} \delta \big( \perfect{\bm{y}}_i - \mathcal{M}_{\bm{m},\bm{d}_i} (\bm{x}_i,\bm{\zeta}_i) \big)
+  \, f_{\bm{X} \cond \bm{\Theta}_{\bm{X}}} (\bm{x}_i \cond \bm{\theta}_{\bm{X}}) \, f_{\bm{Z} \cond \bm{\Theta}_{\bm{Z}}} (\bm{\zeta}_i \cond \bm{\theta}_{\bm{Z}})
+  \, \mathrm{d} \bm{x}_i \, \mathrm{d} \bm{\zeta}_i.
+\end{equation}
+Here \(\delta\) denotes the Dirac delta distribution.
+% EPISTEMIC UNCERTAINTY
+At this point it is to be noted that epistemic uncertainties are not propagated through the forward model.
+% PROBABILITY IN DATA SPACE & LIKELIHOOD
+The transformed density \cref{eq:JAIS:PerfectData:PushForwardDensity} establishes the proper probability model in the space of data \(\mathcal{D}_{\perfect{\bm{y}}}\)
+and thereby defines the transformed likelihood function \cref{eq:JAIS:PerfectData:Likelihood}.
+% PUSH-FORWARD
+More formally one can derive \cref{eq:JAIS:PerfectData:PushForwardDensity} as the density function of a push-forward measure \cite{Nagel:SciTech2014:Proc}.
+
+\subsection{Relation between ``imperfect'' and ``perfect'' data}
+% \par % RELATION BETWEEN PERFECT AND IMPERFECT DATA
+It is interesting to examine the relation between the ``perfect'' and the ``imperfect'' data model.
+% MATHEMATICAL MECHANISM
+The full multilevel model \cref{eq:JAIS:Multilevel:Model} was defined by a cascade of random variables that were conditioned on one another.
+Constructing the marginal model \((\bm{Y}_i \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}})\) in \cref{eq:JAIS:Multilevel:Marginal:Marginalization} was then based on the marginalization of aleatory variables,
+whereas the mechanism to formulate the ``perfect'' data model \((\perfect{\bm{Y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}})\) in \cref{eq:JAIS:PerfectData:PushForwardDensity} was their propagation.
+% SUM OF INDEPENDENT RVs
+Those two operations are related by writing \((\bm{Y}_i \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}}) = (\perfect{\bm{Y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}}) + \bm{E}_i\)
+as the sum of independent random variables.
+% CONVOLUTION INTEGRAL
+The convolution integral
+\begin{equation} \label{eq:JAIS:PerfectData:Convolution}
+  f (\bm{y}_i \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}}) 
+  = \int\limits_{\mathcal{D}_{\perfect{\bm{y}}}} f (\perfect{\bm{y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}}) \, f_{\bm{E}_i} (\bm{y}_i - \perfect{\bm{y}}_i) \, \mathrm{d} \perfect{\bm{y}}_i
+\end{equation}
+then establishes the relation between the distributions \(f(\bm{y}_i \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}})\)
+and \(f (\perfect{\bm{y}}_i \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}})\) of ``imperfect'' and ``perfect'' data, respectively.
+Of course, when plugging \cref{eq:JAIS:PerfectData:PushForwardDensity} in \cref{eq:JAIS:PerfectData:Convolution} one easily re-derives \cref{eq:JAIS:Multilevel:Marginal:Marginalization}.
+\par % RESIDUAL MODEL % ZERO-NOISE LIMIT
+For finite measurement uncertainty \(\lVert \bm{\Sigma}_i \rVert > 0\) the two models involving ``imperfect'' and ``perfect'' data describe distinct experimental situations.
+% (NON)EQUIVALENCE: ANALYTICAL
+However, in the limiting case \(\lVert \bm{\Sigma}_i \rVert \rightarrow 0\) with \(\mathds{E}[((\bm{Y}_i \cond \bm{m},\bm{x}_i,\bm{\zeta}_i) -\perfect{\bm{y}}_i)^2] \rightarrow 0\) and \(f_{\bm{E}_i} \rightarrow \delta\)
+the marginalized likelihood approaches the transformed likelihood.
+Naturally this meets one's expectations.
+% POSTERIOR SHRINKAGE/CONSISTENCY
+In classical Bayesian inversion the small-noise limit implies that the posterior of the unobservables shrinks to exact solutions of the inverse problem,
+i.e.\ posterior consistency \cite{Bayesian:Diaconis1986,Bayesian:Vollmer2013}.
+In multilevel inversion, however, the zero-noise limit leads to convergence of the posterior \cref{eq:JAIS:Multilevel:Marginal:Factorization} to \cref{eq:JAIS:PerfectData:Posterior}.
+
+\subsection{Kernel density estimation}
+% COMPUTATIONAL APPROACH
+Since the transformed likelihood \cref{eq:JAIS:PerfectData:Likelihood} will be rarely available in analytical form, one has commonly to rely on numerical approximations.
+A possible approach is to simulate the response density \cref{eq:JAIS:PerfectData:PushForwardDensity} by Monte Carlo (MC) sampling and kernel density estimation (KDE) \cite{Statistics:Silverman1986,Statistics:Wand1994}
+and evaluate the likelihood accordingly \cite{PCE:Sudret2007,PCE:Sudret2008:a:Proc}.
+\par % KERNEL DENSITY ESTIMATION
+In the \(d\)-variate case, given a sample \((\perfect{\bm{y}}^{(1)},\ldots,\perfect{\bm{y}}^{(K)})\) from some distribution with an unknown density \(f(\perfect{\bm{y}})\),
+a kernel smoothing (KS) estimate of this density is given as \(\hat{f}(\perfect{\bm{y}}) = K^{-1} \sum_{k=1}^K \mathcal{K}_{\bm{H}} (\perfect{\bm{y}}-\perfect{\bm{y}}^{(k)})\).
+The scaled kernel \(\mathcal{K}_{\bm{H}}(\perfect{\bm{y}}) = \lvert \bm{H} \rvert^{-1/2} \, \mathcal{K} (\bm{H}^{-1/2} \perfect{\bm{y}})\)
+is defined by a kernel function \(\mathcal{K}\) and a symmetric and positive-definite bandwidth matrix \(\bm{H}\).
+Common types of bandwidth matrices are multiples of the identity matrix \(\bm{H} = h^2 \bm{1}_d\) for \(h>0\) or diagonal matrices \(\bm{H} = \mathrm{diag}(h_1^2,\ldots,h_d^2)\) with \(h_1,\ldots,h_d>0\). 
+% (AUTOMATIC) BANDWIDTH SELECTION
+According to certain criteria and assumptions, ``optimal'' bandwidths are commonly selected to prevent over- and undersmoothing.
+This amounts to a classical trade-off between the bias and the variance of the estimation.
+% MEAN SQUARE ERROR
+The mean squared error (MSE) of a KDE \(\hat{f}(\perfect{\bm{y}})\) at a point \(\perfect{\bm{y}}\) can be decomposed into its variance and the square of its bias
+\begin{equation} \label{eq:JAIS:PerfectData:MSE}
+  \mathrm{MSE} \Big[ \hat{f}(\perfect{\bm{y}}) \Big] = \mathds{E} \Big[ \big( \hat{f}(\perfect{\bm{y}}) - f(\perfect{\bm{y}}) \big)^2 \Big]
+  = \mathrm{Var} \Big[ \hat{f}(\perfect{\bm{y}}) \Big] + \mathrm{Bias}^2 \Big[ \hat{f}(\perfect{\bm{y}}) \Big].
+\end{equation}
+An optimal bandwidth normally strives to minimize the mean integrated squared error, i.e.\ when \cref{eq:JAIS:PerfectData:MSE} is integrated over \(\perfect{\bm{y}}\), by balancing the variance against the bias.
+% SILVERMAN REFERENCE RULE
+The KDE of a univariate density similar to a Gaussian with kernels of the same type, can be based on Silverman's normal reference rule \cite{Statistics:Silverman1986}, i.e.\ \(h = (\nicefrac{4}{3K})^{1/5} \, \hat{\sigma}\).
+Here \(\hat{\sigma}\) is the standard deviation of the sample \((\perfect{y}^{(1)},\ldots,\perfect{y}^{(K)})\).
+\par % TRANSFORMED LIKELIHOOD
+Based on MC and KDE techniques one can estimate the target density \cref{eq:JAIS:PerfectData:PushForwardDensity}.
+On top of that we propose to estimate the transformed likelihood \cref{eq:JAIS:PerfectData:Likelihood} through
+\begin{equation} \label{eq:JAIS:PerfectData:KernelSmoothedLikelihood}
+  \hat{\mathcal{L}}_{\mathrm{KS}} \big( \tuple{\perfect{\bm{y}}_i} \cond \bm{m},\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}} \big)
+  = \prod\limits_{i=1}^n \left( \frac{1}{K} \sum\limits_{k=1}^{K} \mathcal{K}_{\bm{H}} \left( \perfect{\bm{y}}_i-\perfect{\bm{y}}_i^{(k)} \right) \right),
+  \;\, \text{with} \;\, \left\{
+  \begin{aligned}
+    \bm{x}^{(k)}     &\sim f_{\bm{X} \cond \bm{\Theta}_{\bm{X}}}(\bm{x}^{(k)} \cond \bm{\theta}_{\bm{X}}), \\
+    \bm{\zeta}^{(k)} &\sim f_{\bm{Z} \cond \bm{\Theta}_{\bm{Z}}}(\bm{\zeta}^{(k)} \cond \bm{\theta}_{\bm{Z}}), \\
+    \perfect{\bm{y}}_i^{(k)} &= \mathcal{M}(\bm{m},\bm{x}^{(k)},\bm{\zeta}^{(k)},\bm{d}_i).
+  \end{aligned}
+  \right.
+\end{equation}
+For \(k=1,\ldots,K\) forward model responses \(\perfect{\bm{y}}_i^{(k)} = \mathcal{M}(\bm{m},\bm{x}^{(k)},\bm{\zeta}^{(k)},\bm{d}_i)\)
+are computed for given arguments \((\bm{m},\bm{d}_i)\) and for further inputs \(\bm{x}^{(k)}\) and \(\bm{\zeta}^{(k)}\) that are randomly sampled from their parent distributions.
+These distributions \(f_{\bm{X} \cond \bm{\Theta}_{\bm{X}}}(\bm{x}^{(k)} \cond \bm{\theta}_{\bm{X}})\) and \(f_{\bm{Z} \cond \bm{\Theta}_{\bm{Z}}}(\bm{\zeta}^{(k)} \cond \bm{\theta}_{\bm{Z}})\)
+are defined by values of the hyperparameters \((\bm{\theta}_{\bm{X}},\bm{\theta}_{\bm{Z}})\), respectively.
+\par % STATISTICAL LIKELIHOOD ESTIMATION
+With \cref{eq:JAIS:PerfectData:KernelSmoothedLikelihood} we have a nonparametric statistical estimator of the likelihood \cref{eq:JAIS:PerfectData:Likelihood} at hand.
+However, this estimator is accompanied by additional free parameters, i.e.\ the type of kernel function \(\mathcal{K}\), the number of samples \(K\) and the bandwidth \(\bm{H}\).
+As it will be discussed in the following, the application of classical criteria, that usually assist in adjusting free parameters,
+is questionable in the context of posterior computation via Markov chain Monte Carlo.

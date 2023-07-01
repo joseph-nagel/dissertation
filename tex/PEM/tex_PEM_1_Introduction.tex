@@ -1,0 +1,139 @@
+%%%%%%%%%%%%%%%%
+% INTRODUCTION %
+%%%%%%%%%%%%%%%%
+Main characteristics and challenges of inverse problems in engineering sciences subsume the following issues.
+% FORWARD MODELING
+Firstly, the ever-growing complexity of physical modeling increases the computational expense of deterministic forward simulations.
+% UNCERTAINTY MODELING
+Secondly, uncertainty is omnipresent and calls for an adequate mathematical formalism of representation and management.
+% SCARCE DATA
+Thirdly, since data are commonly scarce or prohibitively expensive to acquire, the available information has to be carefully handled.
+% GENERIC PROBLEM
+An abstract inverse problem statement thus reads as follows.
+By analyzing a limited amount of data the endeavor is to optimally learn about unknown forward model inputs that are subject to epistemic uncertainty and aleatory variability.
+% (HYPER)PARAMETERS
+This includes deducing fixed albeit unknown forward model parameters as well as hyperparameters that determine the distribution of variable model inputs.
+% NO PREVIOUS SOLUTION
+Such a universal formulation describes a class of inverse problems that has hardly been satisfactorily solved yet.
+% MOTIVATION
+Our goal is therefore to develop a rigorous and extensive framework for formulating and solving such inverse problems in support of data analysis for engineering systems.
+% RESEARCH FOCUS
+The focus of this research is on experimental situations as they are typically encountered in this field.
+We emphasize aspects of uncertainty quantification and information accumulation.
+% FRAMEWORK
+In order to establish a sound conceptional and computational basis for solving those problems one has to complement ideas and techniques that have been developed in different academic disciplines and scientific communities so far.
+% SOURCES
+This involves inverse modeling, Bayesian statistics and uncertainty quantification.
+In the following we will shortly survey relevant theories and practices.
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\par % INVERSE PROBLEMS %
+%%%%%%%%%%%%%%%%%%%%%%%%%
+In the first place we rely on the Bayesian approach to \textit{classical inverse problems} \cite{Bayesian:Stuart2010,Bayesian:Allmaras2013}.
+% PROBLEM CHARACTERISTICS
+When a physical theory or a computational solver relates physical parameters to measurable quantities, i.e.\ the \textit{forward model},
+classical inversion is the process of reasoning or inferring unknown yet physically fixed model parameters from recorded data \cite{Inversion:Tarantola2005,Inversion:Kaipio2005}.
+% BAYESIAN INFERENCE
+Bayesian inference establishes a convenient probabilistic framework to accomplish this conventional type of parameter estimation and data assimilation.
+% ENGINEERING APPLICATIONS
+At least since the advent of the personal computer it is nowadays widely used in engineering applications \cite{Bayesian:Hadidi2008,Bayesian:Beck2010}.
+% HIERARCHICAL INVERSION
+The stochastic paradigm provides a natural mechanism for the regularization of ill-posed problems, however, it requires the specification of a prior and a noise model.
+\textit{Hierarchical inversion} is an extension of the classical framework that allows to set parameters of the prior and the noise model in a data-informed manner \cite{Multilevel:Malinverno2004,Inversion:Wang2005:b}.
+% CHARACTERISTICS & DEFICIENCIES
+While epistemic uncertainty is naturally incorporated, a shortcoming of these types of parameter estimation is that they do not account for aleatory variability.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\par % HIERARCHICAL MODELS %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In the second place \textit{hierarchical statistical models} serve as the main tool for the analysis of complex systems.
+Those are systems that are hierarchically organized at multiple nested layers.
+% RANDOM EFFECTS
+Prominent instances include \textit{random} and \textit{mixed effects models} \cite{Multilevel:Wu2010}.
+% HISTORICALLY SPEAKING
+Historically those models were developed in social and biological sciences e.g.\ for purposes of educational research
+\cite{Multilevel:Raudenbusch1988,Multilevel:Seltzer1996} and pharmacokinetics/dynamics \cite{Multilevel:Wakefield1996,Multilevel:Banks2004}.
+% RECENT REVIEWS
+Some recent reviews about the methods that were developed in these fields can be found in \cite{Multilevel:Davidian2003,Multilevel:Banks2012}.
+% FREQUENTISM VS. BAYESIANISM
+Hierarchical modeling can be viewed from a more frequentist \cite{Multilevel:Davidian1995,Multilevel:Banks2014} or a more Bayesian perspective \cite{Multilevel:Gelman2006:a,Bayesian:Congdon2010}.
+% NOWADAYS IMPORTANCE
+At the present day it is mature area of research that establishes sort of an overarching theme in modern multidisciplinary statistics.
+Dedicated chapters can be found in numerous standard references for Bayesian modeling and inference \cite{Bayesian:Jackman2009,Bayesian:Gelman2014:3rd}.
+% CHARACTERISTICS & DEFICIENCIES
+A general observation is that hierarchical models may be complex in their probabilistic architecture whereas only little forward modeling takes place.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\par % UNCERTAINTY MODELING %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In the third place we respect the uncertainty taxonomy that is prevalent in risk assessment and decision making.
+According to this classification one distinguishes between epistemic and aleatory uncertainty \cite{Uncertainty:Faber2005,Uncertainty:Kiureghian2009}.
+% EPISTEMIC UNCERTAINTY
+On one side, \textit{epistemic uncertainty} refers to the ignorance or lack of knowledge of the observer and analyst.
+By taking further evidence this type of uncertainty is reducible in principle.
+% ALEATORY VARIABILITY
+On the contrary, \textit{aleatory uncertainty} or \textit{variability} refers to a trait of the system under consideration.
+It is a structural randomness of irreducible character.
+% UNCERTAINTY REPRESENTATION
+Uncertainties can be accounted for in distinct mathematical frameworks and especially the representation of ignorance is the subject matter of ongoing debates \cite{Uncertainty:Helton2004,Uncertainty:Helton2011}.
+% BAYESIAN NETWORKS (BPN)
+Graphical statistical models such as \textit{Bayesian probability networks} establish a powerful and widespread tool of uncertainty characterization \cite{Bayesian:Koski2009,Bayesian:Kjaerulff2013}.
+In risk-based decision making Bayesian belief networks have been adopted for their strength and flexibility in uncertainty modeling \cite{Bayesian:Bayraktarli2011:a,Bayesian:Deublein2013}
+and their elegant mechanisms of information aggregation \cite{Bayesian:Kelly2009,Bayesian:Urbina2012}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\par % PROBABILISTIC INVERSION %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In the fourth place \textit{probabilistic inverse problems} constitute a challenging class of inverse problems that is of theoretical and practical relevance alike.
+% INFERENCE OF VARIABILITY
+While classical inversion is concerned with estimating uncertain yet physically fixed parameters in a series of experiments, i.e.\ identifying an epistemically uncertain quantity,
+probabilistic inversion deals with inferring the distribution of such forward model inputs that vary throughout the experiments, i.e.\ quantifying their aleatory variability.
+% LITERATURE REVIEW
+Previously established approaches to this interesting type of problems with \textit{latent/hidden variable} structure subsume various approximate solutions.
+% LIKELIHOOD MARGINALIZATION
+A frequentist technique that is premised on the simulation of an explicitly marginalized likelihood is proposed in \cite{Multilevel:Rocquigny2009}.
+% EXPECTATION-MAXIMIZATION (EM)
+There are also attempts to compute approximate solutions based on variants of the expectation-maximization algorithm
+within a linearized Gaussian frame \cite{Multilevel:Celeux2010} or with the aid of Kriging surrogates \cite{Multilevel:Barbillon2011}.
+% OVERVIEW
+A methodological review of this school of probabilistic inversion is found in \cite{Uncertainty:Rocquigny2012}.
+% CHARACTERISTICS & DEFICIENCIES
+These methods are only partly Bayesian and suffer from the deficiency of providing mere point estimates.
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\par % BRIDGING THE GAP %
+%%%%%%%%%%%%%%%%%%%%%%%%%
+The potential of hierarchical models as instruments of statistical modeling and uncertainty quantification have barely been acknowledged for the purposes of inversion in a classical sense.
+% HIERARCHICAL & PROBABILISTIC INVERSION
+Hierarchical and probabilistic inversion are first steps towards preparing the Bayesian framework for the treatment of more realistic experimental scenarios.
+These approaches do not fully exhaust the inferential machinery of hierarchical models and the probability logic of Bayesian networks, though.
+% OUR CONTRIBUTION
+In this contribution we thus aim at bridging that gap by developing a coherent Bayesian framework for managing uncertainties in such undertakings.
+% MULTILEVEL FRAMEWORK
+By drawing on the statistical theory of hierarchical models, we cast inversion under parameter uncertainty and variability as \textit{Bayesian multilevel calibration}.
+% JOINT VS. MARGINAL & NUMERICAL SOLUTIONS 
+This embeds a joint and a marginal problem formulation of Bayesian inference under uncertainty, both of which can be numerically solved with plain vanilla or specialized Markov chain Monte Carlo methods.
+\par % ENGINEERING APPLICATIONS
+This new formulation of \textit{multilevel inversion} is especially well-adapted to the challenges that engineers are frequently faced with.
+% UNCERTAINTY MODELING
+It naturally allows for sophisticated uncertainty modeling which comprises both epistemic and aleatory uncertainty.
+The inclusion of the former is straightforward whereas the introduction of the latter is an extension to classical parameter estimation.
+% BLACKBOX POV
+It also promotes a pervasive ``blackbox'' point of view on the forward model.
+While this is inevitable in many complex applications, it is not readily compliant with traditional hierarchical models.
+% SPECIAL CASES & EXTENSIONS
+Previously established strategies of enhanced uncertainty quantification, e.g.\ hierarchical and probabilistic inversion, emerge as special cases of the proposed general problem formulation.
+% FULLY BAYESIAN PROBABILISTIC INVERSION
+This also offers the opportunity to cope with probabilistic inversion within a fully Bayesian setting.
+% NEW IDEAS
+Beyond these extensions some fundamentally new possibilities are suggested.
+% ``PERFECT'' DATA
+Based on the probabilistic calculus of multilevel models, we develop a novel formulation of multilevel inversion in the zero-noise and ``perfect'' data limit.
+% BORROWING STRENGTH
+The statistical effect of ``borrowing strength'' or ``optimal combination of information'' is transferred and applied to inverse problems.
+%%%%%%%%%%%%%%%%
+\par % OUTLINE %
+%%%%%%%%%%%%%%%%
+The article is organized as follows.
+In \cref{sec:PEM:Multilevel} we will elaborate a general Bayesian framework for the treatment of uncertainty and variability in inverse problems.
+This is followed by a discussion about Bayesian inference in the context of multilevel inversion in \cref{sec:PEM:Inference}.
+Thereafter \cref{sec:PEM:PerfectData} will provide an extension of the framework that will allow for handling ``perfect'' data.
+Probabilistic inversion and borrowing strength will be placed in context in \cref{sec:PEM:ProbInv,sec:PEM:CombInf}, respectively.
+Dedicated Bayesian computations based on Markov chain Monte Carlo are reviewed in \cref{sec:PEM:Computations}.
+Lastly in \cref{sec:PEM:CaseStudies} we will conduct a selection of numerical case studies, where by considering various experimental situations and uncertainty setups
+the very potential and the computational challenges of the devised modeling paradigm will become transparent.

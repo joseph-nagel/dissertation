@@ -1,0 +1,39 @@
+% SPECTRAL BAYESIAN INFERENCE
+A spectral approach to Bayesian inference that focuses on the surrogate modeling of the posterior density was devised.
+The likelihood was expanded in terms of polynomials that are orthogonal with respect to the prior weight.
+Ensuing from this spectral likelihood expansion (SLE), the joint posterior density was expressed
+as the prior that acts the reference density times a polynomial correction term.
+The normalization factor of the posterior emerged as the zeroth SLE coefficient and
+the posterior marginals were shown to be easily accessible through sub-expansions of the SLE.
+Closed-form expressions for the first posterior moments in terms of the low-order spectral coefficients were given.
+Posterior uncertainty propagation through general quantities of interest was established via a postprocessing of the higher-order coefficients.
+The semi-analytic reformulation of Bayesian inference was founded on the theory and practice of metamodeling based on polynomial chaos expansions.
+This allows one to compute the SLE coefficients by solving a linear least squares problem.
+An analysis of the advantages and disadvantages of the proposed method eventually motivated a change of the reference density.
+While the expansion of the posterior in terms of the prior may require substantial modifications,
+its representation with respect to an auxiliary density many only require minor tweaks.
+\par % NUMERICAL EXPERIMENTS
+The possibilities and difficulties that arise from the problem formulation were exhaustively discussed and numerically demonstrated.
+Fitting a parametric distribution to random data and identifying the thermal properties of a composite material served as benchmark problems.
+These numerical experiments proved that spectral Bayesian inference works in principle and they provided insight into the mechanisms involved.
+The convergence behavior of the SLE was studied based on the leave-one-out error.
+It was found that high-degree SLEs are necessary in order to accurately represent the likelihood function and the joint posterior density,
+whereas lower-order SLEs are sufficient in order to extract the low-level quantities of interest.
+A change of the reference density allowed for reducing the order of the corrections required in order to represent the posterior with respect to the prior.
+This helped in alleviating the curse of dimensionality to some extent.
+\par % OPEN QUESTIONS
+In turn, a number of follow-up questions were given rise to.
+While the leave-one-out error performs well in quantifying the prediction errors of the SLE,
+it turned out to be of limited use with regard to the errors of the corresponding posterior surrogate and its marginals.
+A critical question thus relates to a means to assess the errors of these quantities and to diagnose their convergence.
+This would assist in choosing experimental designs of a sufficient size.
+Also, it would be desirable to quantify the estimation errors of individual expansion coefficients.
+This would support the assessment of the efficiency and scalability of the approach
+and the fair comparison with Monte Carlo, importance and Markov chain Monte Carlo sampling.
+Another question is whether a constrained optimization problem can be formulated that naturally respects all prior restrictions.
+This would remedy the potential problem of illegitimate values of the posterior moments.
+In order to handle a broader spectrum of statistical problems, SLEs would have to be extended to dependent prior distributions and noisy likelihood functions.
+For increasing the computational efficiency beyond the change of the reference density, it is conceivable to deploy advanced techniques from metamodeling and machine learning.
+This includes piecewise polynomial models, expansions in a favorable basis and the use of sparsity-promoting regression techniques.
+Yet another important issue concerns the practical applicability of the presented framework to problems with higher-dimensional parameter spaces.
+In future research efforts we will try to address the abovementioned issues and to answer this principal question.

@@ -1,0 +1,47 @@
+% UQ CHALLENGE
+The NASA Langley multidisciplinary uncertainty quantification challenge has raised contemporary open questions to uncertainty quantification (UQ) \cite{NASA:Crespo2014:Proc,NASA:Crespo2013:FAQ:URL}.
+Altogether it consists of five subproblems that deal with uncertainty characterization, sensitivity analysis, uncertainty propagation, extreme case analysis and robust design.
+These problems originate from a specific aerospace application which is part of greater efforts to reduce the rate of fatal loss-of-control accidents \cite{NASA:Foster2005:Proc,NASA:Jordan2008:Proc,NASA:Crespo2012}.
+An abstract and widely discipline-independent problem formulation prompts researchers and practitioners from various fields in academia and industry to devise generic solutions to the problems.
+% SOME BACKGROUND
+A dynamically scaled, free-flight model of a remotely piloted, twin-turbine powered transport aircraft is the physical system under consideration.
+It serves as a prototyping and experimentation testbed for flight control in adverse situations, e.g.\ under structural damage or component failure.
+Parameter uncertainties of this subscaled model reflect the uncertainties in aerodynamic conditions and losses in control effectiveness.
+\par % SUBPROBLEM A
+In this contribution we address the uncertainty characterization subproblem of the challenge posed.
+With given responses of a computational model the challenge is to learn about the unknown inputs that parametrize the flying conditions.
+Throughout the experiments data are collected while model inputs are subject to epistemic uncertainty and aleatory variability \cite{Uncertainty:Faber2005,Uncertainty:Kiureghian2009}.
+% (HYPER)PARAMETERS
+Inference therefore focuses on physically fixed model parameters as well as on so-called hyperparameters.
+The latter determine the distribution of such model inputs that are variable during experimentation.
+% BAYESIAN PARADIGM
+We approach the problem from a Bayesian perspective to statistical inversion and uncertainty quantification \cite{Bayesian:Hadidi2008,Bayesian:Beck2010,Bayesian:Stuart2010}.
+% CLASSICAL INVERSION % MULTILEVEL MODELING
+While classical Bayesian inversion allows to estimate constant model parameters, the additional identification of hyperparameters requires hierarchical modeling approaches.
+Hierarchical models were mainly developed in biological statistics \cite{Multilevel:Davidian2003,Multilevel:Banks2012}
+and they are only slowly being adopted within the engineering community \cite{Multilevel:Rocquigny2009,Multilevel:Celeux2010,Multilevel:Barbillon2011}.
+\par % MOTIVATION: FRAMEWORK
+The goal of this paper is the development of a framework along with computational tools for attacking inverse problems under aleatory and epistemic parameter uncertainty.
+We combine classical inversion and hierarchical modeling into a Bayesian multilevel framework that allows to tackle the general class of problems that the uncertainty characterization subproblem typifies.
+% BAYESIAN MULTILEVEL MODELING
+Within a probabilistic setting this eventually allows for an elegant formulation and efficient numerical solution.
+% PERFECT DATA
+The foundations of inverse modeling in conjunction with ``perfect'' data, i.e.\ in the zero-noise limit, and parameter uncertainty are laid.
+Randomness in the data is then solely attributed to a probability model of the input arguments of a computational ``blackbox'' solver.
+% LIKELIHOOD FUNCTION
+The likelihood is formulated as a solution to uncertainty propagation.
+Since this renders its evaluation analytically intractable, statistical estimators based on the Monte Carlo method and kernel density estimation are proposed.
+% POSTERIOR DISTRIBUTION
+In this context the induced type of posterior approximation is investigated.
+% HEURISTIC CONSIDERATIONS
+Heuristic ways of tuning free algorithmic parameters, e.g.\ the kernel bandwidth, are presented.
+% PARTIAL DATA AUGMENTATION
+Partial data augmentation is proposed in order to improve likelihood estimations through automatic kernel bandwidth selection and to enhance the fidelity of the posterior.
+\par % ORGANIZATION
+The manuscript is organized as follows.
+In \cref{sec:JAIS:Multilevel} a generic Bayesian multilevel framework for inversion under uncertainty will be initially formulated.
+For the solution of the NASA Langley UQ challenge we will devise a statistical model involving ``perfect'' data in \cref{sec:JAIS:PerfectData}.
+Computational key challenges posed by Bayesian inference in the present context will be discussed in \cref{sec:JAIS:Computation}.
+The challenge problem will be cast as multilevel inversion in \cref{sec:JAIS:Challenge} and in the subsequent \cref{sec:JAIS:Analysis} our results will be presented.
+In \cref{sec:JAIS:Augmentation} data augmentation will be utilized in order to ensure a sufficient degree of algorithmic efficiency and posterior fidelity.
+We will conclude in \cref{sec:JAIS:Conclusion} where the gathered experience from solving the NASA UQ challenge problem is summarized.

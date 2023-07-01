@@ -1,0 +1,44 @@
+% MULTIVARIATE OUTPUT
+Now we consider vector-valued models \(\mathcal{M} \colon \mathcal{D}_{\bm{x}} \rightarrow \mathds{R}^\dimData\) that map inputs
+\(\bm{x} \in \mathcal{D}_{\bm{x}}\) to multiple outputs \(\tilde{\bm{y}} = \mathcal{M}(\bm{x}) \in \mathds{R}^\dimData\) with \(\dimData \in \mathds{N}_{>0}\).
+Each component of the output vector \(\tilde{\bm{y}} = (\tilde{y}_1,\ldots,\tilde{y}_\dimData)^\top\)
+is predicted as \(\tilde{y}_i = \mathcal{M}_{\tilde{y}_i}(\bm{x}) \in \mathds{R}\) for \(i=1,\ldots,\dimData\)
+by a function of all inputs denoted as \(\mathcal{M}_{\tilde{y}_i} \colon \mathcal{D}_{\bm{x}} \rightarrow \mathds{R}\).
+In explicit notation this can be written as
+\begin{equation} \label{eq:UQ:VectorModel}
+  \tilde{\bm{y}}
+  = \begin{pmatrix}
+      \tilde{y}_1 \\
+      \vdots \\
+      \tilde{y}_\dimData \\
+    \end{pmatrix}
+  = \begin{pmatrix}
+      \mathcal{M}_{\tilde{y}_1}(\bm{x}) \\
+      \vdots \\
+      \mathcal{M}_{\tilde{y}_\dimData}(\bm{x}) \\
+    \end{pmatrix}.
+\end{equation}
+% VECTOR SPACES
+One should distinguish between the predicted output \(\tilde{\bm{y}} \in \mathds{R}^\dimData\) as an element in the vector space \(\mathds{R}^\dimData\)
+and the predicting model \(\mathcal{M}_{\tilde{y}_i} \in L_{\pi}^2(\mathcal{D}_{\bm{x}})\) which is assumed to be an element of the function space \(L_{\pi}^2(\mathcal{D}_{\bm{x}})\).
+Accordingly, for \(i=1,\ldots,\dimData\) one can represent, project and approximate each \(\mathcal{M}_{\tilde{y}_i}\) separately with the theory and methods previously discussed.
+\par % CHANGE OF BASIS
+One can also represent the model outputs \(\tilde{\bm{y}} \in \mathds{R}^\dimData\) with respect to another basis of the model output space.
+Let \(\{\bm{\phi}_i\}_{i=1}^\dimData\) be an orthonormal basis of the Euclidean vector pace \(\mathds{R}^\dimData\)
+which is different from the standard reference system \(\{\bm{e}_i\}_{i=1}^\dimData\).
+As an alternative to the naturally suggested representation \(\tilde{\bm{y}} = \sum_{i=1}^\dimData \tilde{y}_i \bm{e}_i\), the model responses can be expanded as
+\begin{equation} \label{eq:UQ:ChangeOfBasis}
+  \tilde{\bm{y}} = \sum\limits_{i=1}^\dimData \tilde{z}_i \bm{\phi}_i.
+\end{equation}
+Here, \(\tilde{\bm{z}} = (\tilde{z}_1,\ldots,\tilde{z}_\dimData)^\top\) is the coordinate vector of the output relative to the alternative basis,
+where each coordinate is given as \(\tilde{z}_i = \tilde{\bm{y}}^\top \bm{\phi}_i = \tilde{\bm{y}} \cdot \bm{\phi}_i\) for \(i=1,\ldots,\dimData\).
+As a function of the uncertain model parameters, each \(\tilde{z}_i = \mathcal{M}_{\tilde{z}_i}(\bm{x})\)
+is predicted by the corresponding scalar-valued function \(\mathcal{M}_{\tilde{z}_i} \in L_{\pi}^2(\mathcal{D}_{\bm{x}})\).
+\par % OPTIMALITY
+Thus far, the canonical representation in \cref{eq:UQ:VectorModel} has been merely reformulated in \cref{eq:UQ:ChangeOfBasis}.
+Even though the two formulations before and after the change a basis are technically equivalent,
+they may differ in their eligibility for signal compaction \cite{Statistics:Ahmed1975,Statistics:Wang2012}.
+If the output dimension is high, it is inconvenient at the very least to have to treat multiple outputs individually.
+Moreover, different model outputs are often redundant to some degree anyhow.
+This motivates to consider bases where the essential features of the model are captured by just a few dominant terms.
+Such considerations are especially important against the backdrop of the following section.

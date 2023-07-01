@@ -1,0 +1,25 @@
+% THREE APPROACHES
+Simple updating, staged estimation and multilevel inversion were proposed as Bayesian approaches to uncertainty reduction and information gathering in hierarchically defined inversed problems.
+Multilevel inversion was shown to outclass simple updating and staged estimation in terms of consistency and effectiveness.
+Specifically it facilitates the coherent inference of the problem unknowns where available prior information and experimental data are optimally combined.
+In the case that intermediate model variables are of inferential interest, this allows for pooling statistical strength.
+% BORROWING STRENGTH
+The potential of borrowing strength was demonstrated for the optimal estimation of material properties.
+The mutual exchange of information between specimens from a statistical ensemble was investigated.
+Ensemble members that are subject to a high degree of uncertainty can be advantageously assessed by exploiting information from members that are more strongly informed by the data.
+In our example application this allowed to mitigate the influence of high measurement uncertainty.
+\par % HMC PERFORMANCE
+Moreover posterior exploration in high-dimensional parameter spaces was addressed.
+HMC was proven to be a practical and highly efficient sampler for hierarchical problems.
+For the system under consideration it outperforms RWM by two orders of magnitude as measured by the number of effective posterior samples that can be simulated within a given execution time. 
+Put another way, for achieving a certain number of effective draws it reduces the execution time by two orders of magnitude.
+% MORE COMPLEX MODELS 
+That way the HMC algorithm enables uncertainty quantification in more complex problems where the employment of classical MCMC techniques would be unfeasible.
+The high computational cost associated with traditional algorithms may easily exceed the available budget
+for problems that involve more sophisticated representations of uncertainty or more resource intensive forward models.
+\par % STOCHASTIC MODELS
+With increasing dimensionality of the parameter space, e.g.\ due to a refined uncertainty model, HMC promises to yield relative speedups that are even higher than the one observed in our benchmark application.
+% DETERMINISTIC MODELS
+For more advanced forward models, efficient and sufficiently accurate means to evaluate their derivatives have to be devised.
+A promising idea is the use of surrogate models such as polynomial chaos expansions.
+Research in this direction is in progress.

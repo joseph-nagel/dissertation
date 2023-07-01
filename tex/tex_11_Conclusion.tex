@@ -1,0 +1,128 @@
+% SYNOPSIS: MAIN QUESTIONS
+After the reading it is now time to retrospect and recapitulate.
+The starting points of this dissertation were two quite broad research questions.
+First of all, how can we cope with both epistemic uncertainty and aleatory variability in Bayesian inverse problems?
+Second of all, how can we overcome the limitations of sampling-based methods for computing the posterior probability distribution?
+The provided answers and some of the ensuing issues are summarized and discussed in these concluding remarks.
+
+\section{Hierarchical modeling}
+% ALEATORY VARIABILITY
+In reply to the first guiding research question, a hierarchical formulation and integrative solution of Bayesian inverse problems under uncertainty and variability was presented in \cref{sec:PEM}.
+It allows one to perform uncertainty quantification and data analysis in complex experimental situations,
+where a forward model predicts the observable quantities, but the inputs are uncertain or variable.
+% FORWARD MODEL INPUTS
+Different types of forward model inputs were distinguished in this respect.
+There are global model parameters that are constant throughout and unknown.
+Further unknowns are variable quantities that take on different values during the experimentation.
+Their distributions are determined by hyperparameters that are often unknown, or else, they are already well-known or even controllable.
+% GENERAL APPRAISAL
+The epistemic uncertainty of the global parameters can be reduced within the developed multilevel framework and one can infer the population distributions of the variable quantities.
+An optimal combination of the information available from models, experiments and experts is achieved that way.
+On this basis, various aspects of ensemble heterogeneity and temporal or spatial variation can be studied.
+\par % HIGH RELEVANCE
+Since Bayesian inverse problems in the presence of uncertainties are often strongly simplified and their solutions are occasionally misunderstood,
+it is believed that this work is of high relevance and value.
+Variable quantities are indeed often mistreated as constants in current practice and a popular fallacy is to misinterpret subjective Bayesian measures of uncertainty,
+especially posterior probabilities, as objective frequencies.
+The hierarchical framework establishes a solid foundation for inverse problems under uncertainty and thereby clarifies these matters.
+Its potency and flexibility were demonstrated in a number of realistic engineering applications.
+It will continue to be used in the future.
+
+\section{Hamiltonian Monte Carlo}
+% COMPUTATIONAL CHALLENGE
+As it was discussed, Bayesian inversion in the presence of multiple sources and types of uncertainty poses considerable computational challenges.
+The high-dimensionality of the parameter space causes difficulties for traditional Markov chain Monte Carlo sampling techniques,
+while a lower-dimensional but yet mostly equivalent reformulation calls for costly evaluations of an integrated likelihood function instead.
+% HAMILTONIAN MONTE CARLO
+Hamiltonian Monte Carlo was proposed as an efficient sampling algorithm in \cref{sec:JRUES}.
+This is a gradient-driven sampler with ancillary parameters which is inspired by systems from classical physics.
+Here the posterior is explored through a point mass moving in a potential well that is proportional to minus its log-density.
+It was shown that this updating scheme is ideally suited for the high-dimensional spaces arising in hierarchical inverse problems.
+The posterior was sampled almost independently and a simple Metropolis--Hastings algorithm was easily outperformed.
+\par % POLYNOMIAL CHAOS EXPANSIONS
+Future research efforts will involve the employment of polynomial chaos expansions in hierarchical models.
+After the specification of an appropriate weight function for the model input parameters and the assignment of the associated orthogonal polynomials as basis functions,
+accordingly constructed metamodels will accelerate the computations.
+In conjunction with Hamiltonian Monte Carlo sampling, they could also assist in finding the necessary derivatives of the forward model and the posterior log-density,
+which would offer an alternative to adjoint modeling, automatic differentiation and finite differencing.
+This idea is actually not limited to hierarchical models only, it can be used in non-hierarchical problems just as well.
+In turn, this raises the question of how accurate the derivatives of a polynomial approximation of the forward model are.
+
+\section{Realistic applications}
+% NASA LANGLEY CHALLENGE
+The developed multilevel framework was used for solving the identification problem of the NASA Langley challenge in \cref{sec:JAIS}.
+Here the goal was to calibrate an unmanned aircraft model subjected to adverse conditions such as structural damage or component failure.
+A physical model, experimental data and statistical information regarding the uncertainty and variability of the relevant quantities were provided by the challenge organizers.
+This was translated into a Bayesian hierarchical model whose parameters are related to aerodynamic conditions and the loss of control effectiveness.
+An oddity of the challenge consisted in the fact that the forward model is perfect in the sense that the data are noise-free.
+As a consequence, the likelihood function had to be constructed as the solution to a subsidiary uncertainty propagation problem.
+The latter could be addressed by Monte Carlo simulation and kernel density estimation, which was accompanied by a deformation of the corresponding posterior distribution.
+Even though it was tried to investigate and moderate this undesirable side effect based on heuristic checks and partial data augmentation,
+the rigorous analysis of the induced posterior approximations remains an important issue for the future.
+\par % BAYESIAN ASSESSMENT OF MASONRY
+Hierarchical Bayesian modeling was also employed for assessing masonry wall compressive strengths in \cref{sec:ICASP}.
+The most important property of structural masonry is the compressive strength perpendicular to the bed joints.
+Statistically predicting this key characteristic of masonry walls based on tests of brick units and mortar samples,
+that belong to the same population used in the construction of the wall, was the objective of this study.
+Previous efforts in that direction fail in providing satisfactory predictions and quantifying the inevitable uncertainties.
+A probabilistic model based on lognormal distributions with unknown hyperparameters was constructed.
+It was trained with full-scale tests of masonry walls and tests of the corresponding brick and mortar ensembles,
+that were executed by Dr.\ Nebojsa Mojsilovic at the Institute of Structural Engineering of ETH Z\"{u}rich.
+The statistically predictive relationship that was obtained hereby could be validated by applying it to an independent test set.
+Its performance proved to be superior to previous attempts, which in the future,
+when more data will become available and more complex models can be created and calibrated, is even expected to improve.
+Adaptations of the approach taken will be useful for the investigation of many kinds of composite systems that are constructed of similar elements from certain populations.
+\par % HYDROLOGICAL MODEL CALIBRATION
+Another application of Bayesian inference to a real-world engineering problem was considered in \cref{sec:Hydrology}.
+The ambition was to calibrate a dynamic urban drainage simulator, not under parametric variability, but in the presence of various forms of modeling errors.
+Experimental data, runs of the hydrological simulator and a prior distribution were made available to that end by the Swiss Federal Institute of Aquatic Science and Technology.
+A difficulty was that the forward model was not provided in an executable form, such that it could not be run for arbitrary input values.
+Therefore, a response surface was fitted to the training runs at hand.
+This was done by reducing the large number of time-variant response variables by means of principal component analysis
+and metamodeling the lower number of principal components with sparse polynomial chaos expansions.
+In order to account for correlated random errors and systematic model discrepancy, sophisticated statistical models had to be deployed.
+The whole chain of analyses made model corrections possible and resulted in well-calibrated predictions.
+Beyond the hydrological case study performed, the proposed combination of methods will generally facilitate to deal with legacy code and data.
+
+\section{Novel methods}
+% SPECTRAL BAYESIAN INFERENCE
+A novel method for computing the posterior distribution by means of spectral likelihood expansions was developed in \cref{sec:JCP}.
+Spectral Bayesian inference tries to beat the convergence rate of Monte Carlo approaches, where samples are treated and processed locally,
+by exploiting global structures of the problem and regularity properties of the likelihood function, in particular its smoothness as measured by its differentiability.
+Based on an expansion of the likelihood in terms of polynomials that are orthogonal with respect to the prior weight, an orthogonal series representation of the joint posterior density was derived.
+The nonparametric expression was interpreted as a perturbation series around the prior, which eventually suggested an adaptive procedure based on a recurrent baseline density change.
+While the posterior marginals emerge as sub-expansions, the model evidence and the posterior moments are related to the expansion coefficients.
+Furthermore, posterior uncertainty propagation can be accomplished by prior polynomial chaos expansions.
+Classical distribution fitting and an inverse heat conduction problem served as low-dimensional application examples for demonstrating and benchmarking this rather unconventional technique.
+% VARIATIONAL METHODS / LAPLACE APPROXIMATIONS
+One of the next steps will be to combine spectral Bayesian inference with variational strategies and Laplace approximations.
+A rough approximation of the posterior can be found first with one of those well-established techniques.
+The obtained approximation could then be used as an auxiliary expansion baseline and it would be appropriately corrected so as to approach the true posterior.
+In turn, this will require to construct polynomial chaos expansions with arbitrary input measures, which will then help in tackling higher-dimensional problems.
+% OTHER OPEN QUESTIONS
+Whether there are bases that are more beneficial to likelihood expansions than multivariate polynomials is an interesting open research question.
+The most important question might be how to assess the errors in the computed expansions coefficients and their impact on the actually relevant posterior moments and expectation values.
+\par % OPTIMAL TRANSPORT THEORY
+Another recently devised method for computational Bayesian inference was investigated in \cref{sec:Transport}.
+It is based on the diligent construction of a deterministic coupling of distributions or a transformation of random variables.
+The basic idea is to find a transport map that morphs a prior-distributed random vector into a posterior-distributed one.
+Motivated by optimal transportation theory, an appropriate map can be found by solving an optimization problem featuring an information-theoretic optimality criterion.
+More specifically, the Kullback--Leibler divergence from the back-transformed posterior to the prior is minimized.
+This approach was implemented and discussed in the context of variational inference.
+The bottom line is that transformations of the prior establish a remarkably flexible class of candidate posteriors, but the actual computation of a transport map is expensive.
+% COMBINATION WITH SAMPLING
+It is envisaged to combine inferential mapping with Monte Carlo sampling.
+Indeed, one could transform some standard distribution, which is easy to sample from, into a distribution that mimics the posterior, which in turn would aid in assessing the exact posterior.
+By the same token, one could also transform the posterior in such a way that it resembles some familiar probability distribution.
+\par % SAMPLING-FREE INFERENCE
+Spectral likelihood expansions and optimal inferential maps strike radically different paths of computing the posterior distribution.
+Notwithstanding that they may not yet be as full-fledged as Markov chain theory,
+they have the potential to attain maturity in the future and to lay a new foundation for computational Bayesian inference.
+This would answer the second research question of how to remedy the major shortcomings and numerous inconveniences of Markov chain Monte Carlo sampling.
+
+\vspace{3.5ex}											% from /usr/share/texlive/texmf-dist/tex/latex/sectsty/sectsty.sty
+% SYNOPSIS: CONCLUSIONS
+All in all, the made developments allow for a thorough and efficient data and uncertainty analysis.
+The framework for Bayesian inversion under multiple types of uncertainty enables the principled study of many complex systems.
+Moreover, the presented numerical approaches to Bayesian inference offer completely new possibilities of representing and characterizing the posterior.
+These approaches establish promising alternatives to conventional methods and they will hopefully stimulate many future developments.
